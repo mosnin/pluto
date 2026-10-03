@@ -136,16 +136,16 @@ test('privacy filter cache install endpoint accepts only same-origin browser wri
   }
 })
 
-test('privacy filter cache requires an explicit Pinokio home', async () => {
+test('privacy filter cache requires an explicit Tartarus home', async () => {
   const { mod, restore } = loadCacheWithAxiosMock({
     get: async () => {
       throw new Error('download should not start')
     }
   })
   try {
-    assert.throws(() => mod.cacheRoot({}), /Pinokio home directory is required/)
-    await assert.rejects(() => mod.status({}, { dtype: 'q8' }), /Pinokio home directory is required/)
-    await assert.rejects(() => mod.ensure({}, { dtype: 'q8' }), /Pinokio home directory is required/)
+    assert.throws(() => mod.cacheRoot({}), /Tartarus home directory is required/)
+    await assert.rejects(() => mod.status({}, { dtype: 'q8' }), /Tartarus home directory is required/)
+    await assert.rejects(() => mod.ensure({}, { dtype: 'q8' }), /Tartarus home directory is required/)
   } finally {
     restore()
   }

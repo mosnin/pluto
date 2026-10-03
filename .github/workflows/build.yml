@@ -32,7 +32,7 @@ jobs:
           gh release create "v$PACKAGE_VERSION" --draft \
             --title "v$PACKAGE_VERSION" \
             --notes-file RELEASE.md
-#            --notes "Pinokio version $PACKAGE_VERSION."
+#            --notes "Tartarus version $PACKAGE_VERSION."
 
   windows-unsigned:
     if: false
@@ -104,8 +104,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           #path: dist-win32
-          #path: dist-win32/win-unpacked/Pinokio.exe
-          path: dist-win32/Pinokio.exe
+          #path: dist-win32/win-unpacked/Tartarus.exe
+          path: dist-win32/Tartarus.exe
           retention-days: 1
 
       - id: Sign
@@ -177,7 +177,7 @@ jobs:
 #      # Replace the unsigned exe with the signed exe
 #      - name: Replace with signed exe
 #        run: |
-#          copy /Y ".\signed-windows\Pinokio.exe" ".\dist-win32\win-unpacked\Pinokio.exe"
+#          copy /Y ".\signed-windows\Tartarus.exe" ".\dist-win32\win-unpacked\Tartarus.exe"
 #        shell: cmd
 
 ### sign end
@@ -212,7 +212,7 @@ jobs:
           gh release upload "v$PACKAGE_VERSION" ./signed-windows/*.exe ./dist-win32/latest.yml ./dist-win32/*.exe.blockmap --clobber
           #gh release create "v$PACKAGE_VERSION" ./dist-win32/*.exe \
           #  --title "Release v$PACKAGE_VERSION" \
-          #  --notes "Pinokio version $PACKAGE_VERSION."
+          #  --notes "Tartarus version $PACKAGE_VERSION."
 
   mac:
 #    if: false
@@ -376,30 +376,30 @@ jobs:
             workdir="$(mktemp -d)"
             dpkg-deb -x "$deb" "$workdir/root"
 
-            if ! grep -R --binary-files=without-match -q '/opt/Pinokio/pinokio-bin' "$workdir/root"; then
-              echo "Could not find /opt/Pinokio/pinokio-bin fallback in extracted package" >&2
+            if ! grep -R --binary-files=without-match -q '/opt/Tartarus/tartarus-bin' "$workdir/root"; then
+              echo "Could not find /opt/Tartarus/tartarus-bin fallback in extracted package" >&2
               exit 1
             fi
 
             pty_node="$(pick_file \
-              "$workdir/root/opt/Pinokio/resources/app.asar.unpacked/node_modules/@homebridge/node-pty-prebuilt-multiarch/build/Release/pty.node" \
-              "$workdir/root/opt/Pinokio/resources/app.asar.unpacked/node_modules/pinokiod/node_modules/@homebridge/node-pty-prebuilt-multiarch/build/Release/pty.node" \
+              "$workdir/root/opt/Tartarus/resources/app.asar.unpacked/node_modules/@homebridge/node-pty-prebuilt-multiarch/build/Release/pty.node" \
+              "$workdir/root/opt/Tartarus/resources/app.asar.unpacked/node_modules/pinokiod/node_modules/@homebridge/node-pty-prebuilt-multiarch/build/Release/pty.node" \
             )" || {
               echo "Missing patched pty.node in ARM64 package" >&2
               exit 1
             }
 
             watcher_node="$(pick_file \
-              "$workdir/root/opt/Pinokio/resources/app.asar.unpacked/node_modules/@parcel/watcher/build/Release/watcher.node" \
-              "$workdir/root/opt/Pinokio/resources/app.asar.unpacked/node_modules/pinokiod/node_modules/@parcel/watcher/build/Release/watcher.node" \
+              "$workdir/root/opt/Tartarus/resources/app.asar.unpacked/node_modules/@parcel/watcher/build/Release/watcher.node" \
+              "$workdir/root/opt/Tartarus/resources/app.asar.unpacked/node_modules/pinokiod/node_modules/@parcel/watcher/build/Release/watcher.node" \
             )" || {
               echo "Missing patched watcher.node in ARM64 package" >&2
               exit 1
             }
 
             watcher_platform_node="$(pick_file \
-              "$workdir/root/opt/Pinokio/resources/app.asar.unpacked/node_modules/@parcel/watcher-linux-arm64-glibc/watcher.node" \
-              "$workdir/root/opt/Pinokio/resources/app.asar.unpacked/node_modules/pinokiod/node_modules/@parcel/watcher-linux-arm64-glibc/watcher.node" \
+              "$workdir/root/opt/Tartarus/resources/app.asar.unpacked/node_modules/@parcel/watcher-linux-arm64-glibc/watcher.node" \
+              "$workdir/root/opt/Tartarus/resources/app.asar.unpacked/node_modules/pinokiod/node_modules/@parcel/watcher-linux-arm64-glibc/watcher.node" \
             )" || {
               echo "Missing @parcel/watcher-linux-arm64-glibc payload in ARM64 package" >&2
               exit 1

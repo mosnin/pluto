@@ -33,7 +33,7 @@ const normalizeText = (value) => String(value || "").replace(/\r\n/g, "\n")
 
 const skillsRoot = (kernel) => {
   if (!kernel || !kernel.homedir || typeof kernel.path !== "function") {
-    throw new Error("Pinokio home is not configured.")
+    throw new Error("Tartarus home is not configured.")
   }
   return path.resolve(kernel.path("skills"))
 }
@@ -313,7 +313,7 @@ const composeBuiltinSkillContent = async (kernel, id) => {
     return [
       "---",
       "name: gepeto",
-      "description: Guide for building 1-click launchers and building apps with launchers built-in using Pinokio",
+      "description: Guide for building 1-click launchers and building apps with launchers built-in using Tartarus",
       "---",
       "",
       agentsContent.trim(),

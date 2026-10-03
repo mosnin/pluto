@@ -461,7 +461,7 @@ function createTaskPackageService({ kernel }) {
       dir,
       message,
       author: {
-        name: "Pinokio",
+        name: "Tartarus",
         email: "noreply@pinokio.local"
       }
     });

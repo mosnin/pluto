@@ -1,8 +1,11 @@
-# Pinokio
+# Tartarus
 
-Launch Anything.
+![Tartarus](brand/tartarus-1024.png)
 
-> **Repo layout (Tartarus fork):** this repo contains both halves of the app.
+A 1-click launcher for open-source apps, with an all-black interface.
+Tartarus is a fork of [Pinokio](https://github.com/pinokiocomputer/pinokio) (MIT).
+
+> **Repo layout:** this repo contains both halves of the app.
 > The Electron desktop shell lives at the root, and the backend server + UI
 > (forked from [pinokiod](https://github.com/pinokiocomputer/pinokiod), MIT)
 > lives in `backend/`. The root `package.json` installs it via
@@ -10,6 +13,10 @@ Launch Anything.
 > Upstream: [pinokio](https://github.com/pinokiocomputer/pinokio) and
 > [pinokiod](https://github.com/pinokiocomputer/pinokiod). Pull upstream backend
 > changes with `git subtree pull --prefix=backend https://github.com/pinokiocomputer/pinokiod.git main`.
+>
+> `extras/` holds the other upstream Pinokio repos, kept for reference:
+> `extras/psp` (theme kit), `extras/gepeto` (launcher-script generator) and
+> `extras/docs` (the program.pinokio.computer docs site).
 
 # Script Policy
 

@@ -53,7 +53,7 @@ module.exports = function registerFileRoutes(app, { kernel, getTheme, exists }) 
       }
       const relativeToHome = path.relative(kernel.homedir, normalizedRoot);
       if (relativeToHome.startsWith('..') || path.isAbsolute(relativeToHome)) {
-        throw createHttpError(400, 'Workspace outside Pinokio home');
+        throw createHttpError(400, 'Workspace outside Tartarus home');
       }
       const relativeToApi = path.relative(apiRoot, normalizedRoot);
       if (relativeToApi.startsWith('..') || path.isAbsolute(relativeToApi)) {

@@ -61,8 +61,8 @@ const PinokioPathRemoval = (() => {
       <div class="pinokio-path-blocker-wait">
         <i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
         <span>${blockers.length > 0
-          ? `Close the ${blockers.length === 1 ? "app" : "apps"} above. Pinokio will retry automatically.`
-          : "Resolve the access issue. Pinokio will retry automatically."}</span>
+          ? `Close the ${blockers.length === 1 ? "app" : "apps"} above. Tartarus will retry automatically.`
+          : "Resolve the access issue. Tartarus will retry automatically."}</span>
       </div>
     </div>`
   }
@@ -2222,7 +2222,7 @@ if (typeof hotkeys === 'function') {
   <div class="pinokio-fatal-panel">
     <div class="pinokio-fatal-header">
       <div>
-        <h2>Pinokio crashed</h2>
+        <h2>Tartarus crashed</h2>
         <small data-field="subtitle"></small>
       </div>
       <button class="pinokio-fatal-close" type="button" aria-label="Dismiss crash message" data-action="fatal-dismiss">×</button>
@@ -2349,7 +2349,7 @@ if (typeof hotkeys === 'function') {
       return;
     }
     const lines = [];
-    lines.push(lastFatalPayload.title || 'Pinokio crashed');
+    lines.push(lastFatalPayload.title || 'Tartarus crashed');
     lines.push(`When: ${new Date(lastFatalPayload.timestamp || Date.now()).toLocaleString()}`);
     if (lastFatalPayload.origin) {
       lines.push(`Origin: ${lastFatalPayload.origin}`);
@@ -2392,8 +2392,8 @@ if (typeof hotkeys === 'function') {
     const sanitized = {
       id: typeof payload.id === 'string' ? payload.id : `fatal-${safeTimestamp}`,
       type: 'kernel.fatal',
-      title: typeof payload.title === 'string' ? payload.title : 'Pinokio crashed',
-      message: typeof payload.message === 'string' ? payload.message : 'Pinokio encountered a fatal error.',
+      title: typeof payload.title === 'string' ? payload.title : 'Tartarus crashed',
+      message: typeof payload.message === 'string' ? payload.message : 'Tartarus encountered a fatal error.',
       stack: typeof payload.stack === 'string' ? payload.stack : '',
       origin: typeof payload.origin === 'string' ? payload.origin : null,
       timestamp: safeTimestamp,
@@ -3041,7 +3041,7 @@ if (typeof window !== 'undefined' && !window.__pinokioNavigateListenerInstalled)
       } catch (_) {}
       return;
     }
-    // Only translate the two local Pinokio actions emitted by the registry.
+    // Only translate the two local Tartarus actions emitted by the registry.
     const localInstall =
       target.origin === 'http://localhost:42000' &&
       (
@@ -3054,9 +3054,9 @@ if (typeof window !== 'undefined' && !window.__pinokioNavigateListenerInstalled)
           /^(?:sha256:)?[0-9a-f]{64}$/i.test(target.searchParams.get('hash') || '')
         )
       );
-    // Handle trusted Explore installs here so Pinokio replaces the parent page, not the iframe.
+    // Handle trusted Explore installs here so Tartarus replaces the parent page, not the iframe.
     if (fromExplore && localInstall) {
-      // LAN/Home Server clients must use the Pinokio origin they can actually reach.
+      // LAN/Home Server clients must use the Tartarus origin they can actually reach.
       if (target.origin !== window.location.origin) {
         target = new URL(`${target.pathname}${target.search}${target.hash}`, window.location.origin);
       }
@@ -3065,7 +3065,7 @@ if (typeof window !== 'undefined' && !window.__pinokioNavigateListenerInstalled)
     }
     // If focus was recovered through the Explore fallback, reject every non-allowlisted action.
     if (exploreFallback) return;
-    // Keep the existing generic iframe navigation restricted to the current Pinokio origin.
+    // Keep the existing generic iframe navigation restricted to the current Tartarus origin.
     if (target.origin !== window.location.origin) {
       try {
         console.warn('[pinokio:navigate] blocked origin', target.origin);
@@ -3611,7 +3611,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
       } catch (error) {
-        console.warn('Pinokio layout split failed, falling back to messaging.', error);
+        console.warn('Tartarus layout split failed, falling back to messaging.', error);
       }
     }
 

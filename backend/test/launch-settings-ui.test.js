@@ -566,9 +566,9 @@ test("global home server popover exposes machine and app sharing from the navbar
   assert.match(assets, /data-home-server-switch/)
   assert.match(assets, /const switchChecked = status === "on" \|\| status === "starting"/)
   assert.match(assets, /Use this computer as a Home Server/)
-  assert.match(assets, /open Pinokio and running app Web UIs from phones, tablets, and other computers/)
+  assert.match(assets, /open Tartarus and running app Web UIs from phones, tablets, and other computers/)
   assert.match(assets, /Turning on Home Server/)
-  assert.match(assets, /Preparing Pinokio and running app Web UIs for phones, tablets, and other computers/)
+  assert.match(assets, /Preparing Tartarus and running app Web UIs for phones, tablets, and other computers/)
   assert.match(assets, /Links will appear here when Home Server is ready/)
   assert.match(assets, /Preparing Home Server link/)
   assert.match(assets, /could not turn on Home Server/)
@@ -684,7 +684,7 @@ test("home server dropdown exposes router-discovered non-Pinokio routes separate
     router_info: [
       {
         name: "node",
-        title: "Pinokio",
+        title: "Tartarus",
         port: "42000",
         external_hosts: [{ url: "192.168.86.229:42003", scope: "lan", interface: "en0" }]
       },

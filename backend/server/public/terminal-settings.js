@@ -1359,7 +1359,7 @@
           return true;
         } catch (error) {
           if (typeof console !== 'undefined' && typeof console.warn === 'function') {
-            console.warn('Pinokio: force resize handler failed', error);
+            console.warn('Tartarus: force resize handler failed', error);
           }
         }
       }

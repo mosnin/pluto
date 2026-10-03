@@ -689,7 +689,7 @@ const showStartupError = ({ message, detail, error } = {}) => {
   const formatted = detail || formatStartupError(error)
   updateSplashWindow({
     state: 'error',
-    message: message || 'Pinokio could not start',
+    message: message || 'Tartarus could not start',
     detail: formatted,
     logPath: getLogFileHint(),
     icon: getSplashIcon()
@@ -1405,7 +1405,7 @@ const buildScreenshotRelayInjection = () => {
 
       const log = (label, payload) => {
         try {
-          console.log('[Pinokio Screenshot Relay] ' + label + ' ' + safeStringify(payload))
+          console.log('[Tartarus Screenshot Relay] ' + label + ' ' + safeStringify(payload))
         } catch (_) {
           // ignore logging failures
         }
@@ -1693,7 +1693,7 @@ const buildScreenshotRelayInjection = () => {
       }, true)
     } catch (error) {
       try {
-        console.warn('[Pinokio Screenshot Relay] relay-install-error ' + (error && error.message ? error.message : String(error)))
+        console.warn('[Tartarus Screenshot Relay] relay-install-error ' + (error && error.message ? error.message : String(error)))
       } catch (_) {
         // ignore logging failures
       }
@@ -1788,9 +1788,9 @@ const safeCaptureStringify = (value) => {
 
 const captureLog = (label, payload) => {
   try {
-    console.log('[Pinokio Capture] ' + label + ' ' + safeCaptureStringify(payload))
+    console.log('[Tartarus Capture] ' + label + ' ' + safeCaptureStringify(payload))
   } catch (_) {
-    console.log('[Pinokio Capture] ' + label)
+    console.log('[Tartarus Capture] ' + label)
   }
 }
 
@@ -2362,7 +2362,7 @@ const buildPinokioInjectRuntimeBootstrap = () => {
             throw new Error('window.$pinokio.inject() must be called while an injector is loading.')
           }
           if (!definition || typeof definition !== 'object' || typeof definition.mount !== 'function') {
-            throw new Error('Pinokio injectors must provide a mount(ctx) function.')
+            throw new Error('Tartarus injectors must provide a mount(ctx) function.')
           }
           if (current.registered) {
             throw new Error('Injector registered more than once during a single mount.')
@@ -2687,9 +2687,9 @@ const buildPermissionMessage = (platform, denied) => {
     ? (hints[denied[0]] || '')
     : ''
   if (hint) {
-    return `Pinokio needs ${label} access. Enable it in ${hint}.`
+    return `Tartarus needs ${label} access. Enable it in ${hint}.`
   }
-  return `Pinokio needs ${label} access. Please enable it in your OS privacy settings.`
+  return `Tartarus needs ${label} access. Please enable it in your OS privacy settings.`
 }
 
 const installPermissionHandlers = () => {
@@ -3442,7 +3442,7 @@ const attach = (event, webContents) => {
         overrideBrowserWindowOptions: {
           ...communityWindowBounds,
           autoHideMenuBar: true,
-          title: 'Pinokio Community',
+          title: 'Tartarus Community',
           webPreferences: {
             session: session.defaultSession,
             webSecurity: true,
@@ -3804,7 +3804,7 @@ document.querySelector("form").addEventListener("submit", (e) => {
 
     updateSplashWindow({
       state: 'loading',
-      message: 'Starting Pinokio…',
+      message: 'Starting Tartarus…',
       icon: getSplashIcon()
     })
     try {
@@ -3814,8 +3814,8 @@ document.querySelector("form").addEventListener("submit", (e) => {
         const portInUse = await pinokiod.running(pinokiod.port)
         if (portInUse) {
           showStartupError({
-            message: 'Pinokio is already running',
-            detail: `Pinokio detected another instance listening on port ${pinokiod.port}. Please close the other instance before launching a new one.`
+            message: 'Tartarus is already running',
+            detail: `Tartarus detected another instance listening on port ${pinokiod.port}. Please close the other instance before launching a new one.`
           })
           return
         }

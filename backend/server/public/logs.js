@@ -745,7 +745,7 @@
       const title = document.createElement('h3')
       title.className = 'universal-launcher-title'
       title.id = 'logs-ask-ai-launcher-title'
-      title.textContent = 'Ask Pinokio'
+      title.textContent = 'Ask Tartarus'
       titleRow.appendChild(title)
 
       const description = document.createElement('p')
@@ -757,7 +757,7 @@
       const closeButton = document.createElement('button')
       closeButton.type = 'button'
       closeButton.className = 'universal-launcher-close'
-      closeButton.setAttribute('aria-label', 'Close Ask Pinokio')
+      closeButton.setAttribute('aria-label', 'Close Ask Tartarus')
       closeButton.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>'
       header.appendChild(closeButton)
 
@@ -775,7 +775,7 @@
 
       const promptTitle = document.createElement('div')
       promptTitle.className = 'universal-launcher-section-title'
-      promptTitle.textContent = 'What should Pinokio do?'
+      promptTitle.textContent = 'What should Tartarus do?'
       promptHeading.appendChild(promptTitle)
 
       const composer = document.createElement('div')
@@ -1307,7 +1307,7 @@
     }
     defaultDraftTitle() {
       const payload = this.report || {}
-      const appTitle = payload.title || payload.app_id || 'Pinokio app'
+      const appTitle = payload.title || payload.app_id || 'Tartarus app'
       return this.truncateDraftTitle(`Issue report: ${appTitle}`, DRAFT_TITLE_MAX_LENGTH)
     }
     truncateDraftTitle(value, maxLength = DRAFT_TITLE_DISPLAY_LENGTH) {
@@ -1356,7 +1356,7 @@
     }
     suggestDraftTitle() {
       const payload = this.report || {}
-      const appTitle = payload.title || payload.app_id || 'Pinokio app'
+      const appTitle = payload.title || payload.app_id || 'Tartarus app'
       const sections = Array.isArray(payload.sections) ? payload.sections : []
       const preparedSections = []
       let newestModified = 0
@@ -1470,7 +1470,7 @@
         `App: ${payload.title || payload.app_id || 'unknown'} (${payload.app_id || 'unknown'})`,
         payload.repo_url ? `Repo: ${payload.repo_url}` : null,
         `Generated: ${payload.generated_at || new Date().toISOString()}`,
-        `Pinokio: ${payload.pinokiod || 'unknown'}`,
+        `Tartarus: ${payload.pinokiod || 'unknown'}`,
         `Platform: ${payload.platform || 'unknown'} ${payload.arch || ''}`.trim(),
         `Node: ${payload.node || 'unknown'}`,
         '',
@@ -1786,7 +1786,7 @@
     }
     buildDraftMetadata() {
       const payload = this.report || {}
-      const appTitle = payload.title || payload.app_id || 'Pinokio app'
+      const appTitle = payload.title || payload.app_id || 'Tartarus app'
       const title = this.draftTitleInput
         ? this.draftTitleValue()
         : (this.draftTitleValue() || `Issue report: ${appTitle}`)

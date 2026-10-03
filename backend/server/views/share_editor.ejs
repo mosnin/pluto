@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   <main>
     <div id='editor'>
       <h1>Share Apps</h1>
-      <div>You can open up your local Pinokio node to the outside world, or any other device on the same network, instantly.</div>
+      <div>You can open up your local Tartarus node to the outside world, or any other device on the same network, instantly.</div>
       <hr>
       <div class='env-item'>
         <% if (config.PINOKIO_SHARE_CLOUDFLARE.toString() === "true") { %>
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <% } %>
         <label for="cloudflare"><i class="fa-brands fa-cloudflare"></i> Run a Public Node</label>
         <ul>
-          <li>This will let you share your local Pinokio app to the public internet, which anyone with a URL can access.</li>
+          <li>This will let you share your local Tartarus app to the public internet, which anyone with a URL can access.</li>
           <li>Powered by <a href="https://www.cloudflare.com/products/tunnel/" target="_blank" features="browser">Cloudflare Tunnel</a></li>
           <li>You can manually configure this in through the Configure menu (set PINOKIO_SHARE_CLOUDFLARE to true)</li>
         </ul>

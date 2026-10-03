@@ -24,7 +24,7 @@
     create_app: {
       label: 'Create app',
       title: 'Create App',
-      description: 'Create a reusable Pinokio app.',
+      description: 'Create a reusable Tartarus app.',
       usesName: true,
       targetLabel: 'Creates in PINOKIO_HOME/api',
       promptLabel: 'What should this app do?',
@@ -34,12 +34,12 @@
       advancedHref: '/init',
     },
     ask: {
-      label: 'Ask Pinokio',
-      title: 'Ask Pinokio',
-      description: 'Requires AI agent access. Ask a question or describe work for Pinokio to run with the selected tool or agent.',
+      label: 'Ask Tartarus',
+      title: 'Ask Tartarus',
+      description: 'Requires AI agent access. Ask a question or describe work for Tartarus to run with the selected tool or agent.',
       usesName: false,
       targetLabel: '',
-      promptLabel: 'What should Pinokio do?',
+      promptLabel: 'What should Tartarus do?',
       promptPlaceholder: 'Examples: "Would llama.cpp work on my machine?", "What is using the most memory right now?", "Generate a video of a cat.", "Is https://github.com/foo/bar safe to install?"',
       toolLabel: 'Choose tool',
       confirmLabel: 'Run',
@@ -47,12 +47,12 @@
     create_plugin: {
       label: 'Create plugin',
       title: 'Create Plugin',
-      description: 'Create a new Pinokio plugin folder and open it with the selected tool.',
+      description: 'Create a new Tartarus plugin folder and open it with the selected tool.',
       usesName: true,
       targetLabel: 'Creates in PINOKIO_HOME/plugin',
       promptLabel: 'What should this plugin do?',
-      promptPlaceholder: 'Describe the Pinokio plugin you want to build.',
-      promptSeed: 'A Pinokio plugin for: ',
+      promptPlaceholder: 'Describe the Tartarus plugin you want to build.',
+      promptSeed: 'A Tartarus plugin for: ',
       confirmLabel: 'Create',
     },
   };
@@ -417,10 +417,10 @@
   function getIntentImportTitle(intent) {
     const normalizedIntent = normalizeIntent(intent);
     if (normalizedIntent === 'create_app') {
-      return 'Import Pinokio app repo';
+      return 'Import Tartarus app repo';
     }
     if (normalizedIntent === 'create_plugin') {
-      return 'Import Pinokio plugin repo';
+      return 'Import Tartarus plugin repo';
     }
     return 'Import task repo';
   }
@@ -428,23 +428,23 @@
   function getIntentImportIntro(intent) {
     const normalizedIntent = normalizeIntent(intent);
     if (normalizedIntent === 'create_app') {
-      return 'Only repositories already structured as Pinokio apps will work here.';
+      return 'Only repositories already structured as Tartarus apps will work here.';
     }
     if (normalizedIntent === 'create_plugin') {
-      return 'Only repositories already structured as Pinokio plugins will work here.';
+      return 'Only repositories already structured as Tartarus plugins will work here.';
     }
-    return 'Only repositories already structured as Pinokio task packages will work here.';
+    return 'Only repositories already structured as Tartarus task packages will work here.';
   }
 
   function getIntentImportHelpHtml(intent) {
     const normalizedIntent = normalizeIntent(intent);
     if (normalizedIntent === 'create_app') {
-      return '<p>This is for importing an existing Pinokio launcher repo into <code>PINOKIO_HOME/api</code>.</p><p>Arbitrary GitHub repos will not work unless they already follow the Pinokio app format.</p><p>To make your own from scratch, switch back to <strong>Create</strong>.</p>';
+      return '<p>This is for importing an existing Tartarus launcher repo into <code>PINOKIO_HOME/api</code>.</p><p>Arbitrary GitHub repos will not work unless they already follow the Tartarus app format.</p><p>To make your own from scratch, switch back to <strong>Create</strong>.</p>';
     }
     if (normalizedIntent === 'create_plugin') {
-      return '<p>This is for importing an existing Pinokio plugin repo into <code>PINOKIO_HOME/plugin</code>.</p><p>Arbitrary GitHub repos will not work unless they already follow the Pinokio plugin format.</p><p>To make your own from scratch, switch back to <strong>Create</strong>.</p>';
+      return '<p>This is for importing an existing Tartarus plugin repo into <code>PINOKIO_HOME/plugin</code>.</p><p>Arbitrary GitHub repos will not work unless they already follow the Tartarus plugin format.</p><p>To make your own from scratch, switch back to <strong>Create</strong>.</p>';
     }
-    return '<p>This is for importing an existing task package into <code>PINOKIO_HOME/tasks</code>.</p><p>Arbitrary GitHub repos will not work unless they already follow the Pinokio task package format.</p><p>To make your own from scratch, switch back to <strong>Ask</strong> or save a prompt as a task.</p>';
+    return '<p>This is for importing an existing task package into <code>PINOKIO_HOME/tasks</code>.</p><p>Arbitrary GitHub repos will not work unless they already follow the Tartarus task package format.</p><p>To make your own from scratch, switch back to <strong>Ask</strong> or save a prompt as a task.</p>';
   }
 
   function extractUrlLikeNameSuggestion(value) {
@@ -626,7 +626,7 @@
     const title = isTaskDownload ? 'Download task from Git URL' : 'Download from Git URL';
     const subtitle = isTaskDownload
       ? 'Install a reusable task package into your task library.'
-      : `Clone a ${intent === 'create_plugin' ? 'plugin' : 'project'} repo into Pinokio.`;
+      : `Clone a ${intent === 'create_plugin' ? 'plugin' : 'project'} repo into Tartarus.`;
     const note = isTaskDownload
       ? '<span>Will install into <code>~/tasks</code>.</span>'
       : `<span>Will save into <code>~/${escapeHtml(relativePath)}</code>.</span>`;

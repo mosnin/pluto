@@ -114,7 +114,7 @@
               <p class="task-eyebrow">Login / Hugging Face</p>
             </div>
             <h1 class="task-title">Authorize Hugging Face</h1>
-            <p class="task-description">Copy the device code, open Hugging Face, then approve the login. Pinokio will continue when the token is saved.</p>
+            <p class="task-description">Copy the device code, open Hugging Face, then approve the login. Tartarus will continue when the token is saved.</p>
             <div class="task-badge-row task-header-badges">
               <span class="task-badge task-badge-accent" id="hf-badge">Starting</span>
               <span class="task-badge task-badge-neutral">Managed by huggingface_hub</span>
@@ -130,7 +130,7 @@
               </div>
               <div class="hf-state-copy">
                 <h2 class="hf-state-title" id="hf-title">Checking Hugging Face login</h2>
-                <p class="hf-state-detail" id="hf-detail">Pinokio is checking whether a Hugging Face token is already saved.</p>
+                <p class="hf-state-detail" id="hf-detail">Tartarus is checking whether a Hugging Face token is already saved.</p>
                 <div class="hf-action-row">
                   <button class="task-button primary hidden" id="hf-login" type="button">
                     <i class="fa-solid fa-key" aria-hidden="true"></i>
@@ -213,7 +213,7 @@
         badge: "Needs attention",
         icon: "fa-solid fa-triangle-exclamation",
         title: "Login needs attention",
-        detail: "Pinokio could not complete the Hugging Face browser login."
+        detail: "Tartarus could not complete the Hugging Face browser login."
       })
     }
 
@@ -281,7 +281,7 @@
           badge: "Connected",
           icon: "fa-solid fa-circle-check",
           title: "Hugging Face connected",
-          detail: `Pinokio is signed in${username}.`,
+          detail: `Tartarus is signed in${username}.`,
           done: true
         })
       } catch (_) {
@@ -289,7 +289,7 @@
           badge: "Connected",
           icon: "fa-solid fa-circle-check",
           title: "Hugging Face connected",
-          detail: "Pinokio is signed in.",
+          detail: "Tartarus is signed in.",
           done: true
         })
       }
@@ -312,7 +312,7 @@
           badge: "Signed out",
           icon: "fa-solid fa-circle-xmark",
           title: "Hugging Face signed out",
-          detail: "Pinokio removed the saved Hugging Face token.",
+          detail: "Tartarus removed the saved Hugging Face token.",
           done: true,
           loginLabel: "Log In Again"
         })
@@ -381,7 +381,7 @@
         badge: "Preparing",
         icon: "fa-solid fa-circle-notch fa-spin",
         title: "Preparing Hugging Face",
-        detail: "Pinokio is requesting a Hugging Face device code."
+        detail: "Tartarus is requesting a Hugging Face device code."
       })
 
       const response = await postJSON(LOGIN_URL)
@@ -403,7 +403,7 @@
         badge: "Waiting",
         icon: "fa-solid fa-circle-notch fa-spin",
         title: "Authorize Hugging Face",
-        detail: "Use the button to copy the code and open Hugging Face. Keep this page open while Pinokio waits."
+        detail: "Use the button to copy the code and open Hugging Face. Keep this page open while Tartarus waits."
       })
       startPolling()
     }

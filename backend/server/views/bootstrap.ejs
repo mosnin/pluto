@@ -112,12 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (home && home.length > 0) {
 
       if (!isASCII(home)) {
-        alert("The Pinokio home folder cannot contain non ASCII characters. Select a different path.")
+        alert("The Tartarus home folder cannot contain non ASCII characters. Select a different path.")
         return
       }
 
       if (includesSpace(home)) {
-        alert("The Pinokio home folder cannot contain blank spaces. Select a different path.")
+        alert("The Tartarus home folder cannot contain blank spaces. Select a different path.")
         return
       }
 
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class='field'>
       <div class='explain'>
         <div class='label'>Select an install folder and press "Setup"</div>
-        <input id='home' type='text' value="<%=home%>" placeholder="Pinokio file system home">
+        <input id='home' type='text' value="<%=home%>" placeholder="Tartarus file system home">
       </div>
       <button id='bootstrap' class='btn'><i class="fa-solid fa-play"></i> Setup</button>
       <button id='next' class='btn hidden'><i class="fa-solid fa-rocket"></i> Launch</button>

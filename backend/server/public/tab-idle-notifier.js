@@ -1377,13 +1377,13 @@ const ensureTabAccessories = aggregateDebounce(() => {
     }
     const tab = link.querySelector('.tab');
     const title = tab ? tab.textContent.trim() : 'Tab activity';
-    //const subtitle = title || 'Pinokio';
+    //const subtitle = title || 'Tartarus';
     //const message = state.lastInput ? `Last input: ${state.lastInput}` : 'Tab is now idle.';
     const message = state.lastInput ? `From: "${state.lastInput}"` : "Tab is now idle."
     const image = resolveTabImage(link);
 
     const payload = {
-      title: 'Pinokio',
+      title: 'Tartarus',
       //subtitle,
       message,
       timeout: 60,

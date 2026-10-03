@@ -659,7 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   if (inspectorButton && !isDesktop) {
-    const message = 'The 1-click inspect feature is only available inside the Pinokio desktop app.';
+    const message = 'The 1-click inspect feature is only available inside the Tartarus desktop app.';
 
     inspectorButton.addEventListener('click', (event) => {
       event.preventDefault();
@@ -668,7 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (window.Swal?.fire) {
         window.Swal.fire({
 //          icon: 'info',
-          title: 'Switch to Pinokio Desktop',
+          title: 'Switch to Tartarus Desktop',
           html: `<div class="simple-modal-desc2"><div>${message}</div><img src="/inspect.gif"/></div>`,
           showConfirmButton: false,
           customClass: {

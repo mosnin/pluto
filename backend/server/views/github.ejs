@@ -155,8 +155,8 @@
   const connectionLabel = isGithubConnected ? "Connected" : "Not connected";
   const connectionIcon = isGithubConnected ? "fa-solid fa-circle-check" : "fa-regular fa-circle";
   const connectionDetail = isGithubConnected
-    ? "Git Credential Manager is ready for GitHub operations inside Pinokio."
-    : "Connect GitHub to clone private repositories and publish from Pinokio.";
+    ? "Git Credential Manager is ready for GitHub operations inside Tartarus."
+    : "Connect GitHub to clone private repositories and publish from Tartarus.";
 %>
 <body class="<%= theme %> main-sidebar-page task-launcher-page task-page setup-page github-page" data-agent="<%= agent %>" data-page="github-config">
   <%- include('partials/app_navheader', { agent }) %>
@@ -209,7 +209,7 @@
             <div class="task-section-head">
               <div>
                 <h2 class="task-section-title">Git identity</h2>
-                <p class="task-section-subcopy">These values appear as the author on commits created from Pinokio shells.</p>
+                <p class="task-section-subcopy">These values appear as the author on commits created from Tartarus shells.</p>
               </div>
               <div class="task-section-note">gitconfig</div>
             </div>

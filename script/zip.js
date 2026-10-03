@@ -4,8 +4,8 @@ const fs = require('fs')
 const version = process.env.npm_package_version
 
 // Windows
-let exePath = path.resolve(__dirname, `../dist/Pinokio Setup ${version}.exe`)
-let zipPath = path.resolve(__dirname, `../dist/Pinokio-${version}-win32.zip`)
+let exePath = path.resolve(__dirname, `../dist/Tartarus Setup ${version}.exe`)
+let zipPath = path.resolve(__dirname, `../dist/Tartarus-${version}-win32.zip`)
 exec(`zip -j "${zipPath}" "${exePath}"`, (error, stdout, stderr) => {
   if (error) {
     console.error(`Error executing command: ${error}`);
@@ -22,17 +22,17 @@ exec(`zip -j "${zipPath}" "${exePath}"`, (error, stdout, stderr) => {
 
 // find dmg files
 const macPaths = [{
-  dmg: path.resolve(__dirname, `../dist/Pinokio-${version}-arm64.dmg`),
-  //temp: path.resolve(__dirname, `../dist/Pinokio-${version}-darwin-arm64-temp`),
-  temp: `Pinokio-${version}-darwin-arm64`,
-  //zip: path.resolve(__dirname, `../dist/Pinokio-${version}-darwin-arm64.zip`),
-  zip: `Pinokio-${version}-darwin-arm64.zip`
+  dmg: path.resolve(__dirname, `../dist/Tartarus-${version}-arm64.dmg`),
+  //temp: path.resolve(__dirname, `../dist/Tartarus-${version}-darwin-arm64-temp`),
+  temp: `Tartarus-${version}-darwin-arm64`,
+  //zip: path.resolve(__dirname, `../dist/Tartarus-${version}-darwin-arm64.zip`),
+  zip: `Tartarus-${version}-darwin-arm64.zip`
 }, {
-  dmg: path.resolve(__dirname, `../dist/Pinokio-${version}.dmg`),
-  //temp: path.resolve(__dirname, `../dist/Pinokio-${version}-darwin-intel-temp`),
-  temp: `Pinokio-${version}-darwin-intel`,
-  //zip: path.resolve(__dirname, `../dist/Pinokio-${version}-darwin-intel.zip`)
-  zip: `Pinokio-${version}-darwin-intel.zip`
+  dmg: path.resolve(__dirname, `../dist/Tartarus-${version}.dmg`),
+  //temp: path.resolve(__dirname, `../dist/Tartarus-${version}-darwin-intel-temp`),
+  temp: `Tartarus-${version}-darwin-intel`,
+  //zip: path.resolve(__dirname, `../dist/Tartarus-${version}-darwin-intel.zip`)
+  zip: `Tartarus-${version}-darwin-intel.zip`
 }]
 let sentinelPath = path.resolve(__dirname, `../assets/Sentinel.app`)
 for(let macPath of macPaths) {
@@ -71,10 +71,10 @@ for(let macPath of macPaths) {
 //  }
 }
 let rmFiles = [
-  `Pinokio-${version}-arm64-mac.zip`,
-  `Pinokio-${version}-mac.zip`,
-//  `Pinokio-${version}-darwin-arm64`,
-//  `Pinokio-${version}-darwin-intel`,
+  `Tartarus-${version}-arm64-mac.zip`,
+  `Tartarus-${version}-mac.zip`,
+//  `Tartarus-${version}-darwin-arm64`,
+//  `Tartarus-${version}-darwin-intel`,
 ]
 for(let f of rmFiles) {
   try {

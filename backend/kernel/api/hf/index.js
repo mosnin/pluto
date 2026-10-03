@@ -99,7 +99,7 @@ class HF {
         <div class="hf-login-modal-copy ${copyClass}">${escapeHtml(copyText)}</div>
         <div class="hf-login-modal-code" aria-label="Hugging Face device code">${code}</div>
         ${expires}
-        <p>Open Hugging Face to finish login. Pinokio will continue automatically.</p>
+        <p>Open Hugging Face to finish login. Tartarus will continue automatically.</p>
       </div>
     `
   }

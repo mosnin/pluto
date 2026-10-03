@@ -1,9 +1,9 @@
 {
-  "name": "Pinokio",
+  "name": "Tartarus",
   "private": true,
   "version": "8.2.0",
-  "homepage": "https://pinokio.co",
-  "description": "pinokio",
+  "homepage": "https://github.com/mosnin/pluto",
+  "description": "Tartarus: a 1-click launcher for open-source apps",
   "main": "main.js",
   "email": "cocktailpeanuts@proton.me",
   "author": "https://twitter.com/cocktailpeanut",
@@ -26,7 +26,7 @@
     "fix": "brew install fpm"
   },
   "build": {
-    "appId": "computer.pinokio",
+    "appId": "computer.tartarus",
     "afterPack": "after-pack.js",
     "afterSign": "electron-builder-notarize",
     "directories": {
@@ -35,8 +35,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "pinokiocomputer",
-        "repo": "pinokio"
+        "owner": "mosnin",
+        "repo": "pluto"
       }
     ],
     "asarUnpack": [
@@ -67,7 +67,7 @@
     ],
     "protocols": [
       {
-        "name": "pinokio",
+        "name": "Tartarus",
         "schemes": [
           "pinokio"
         ]
@@ -88,8 +88,8 @@
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.inherit.plist",
       "extendInfo": {
-        "NSMicrophoneUsageDescription": "Pinokio needs microphone access for apps that use audio.",
-        "NSCameraUsageDescription": "Pinokio needs camera access for apps that use video."
+        "NSMicrophoneUsageDescription": "Tartarus needs microphone access for apps that use audio.",
+        "NSCameraUsageDescription": "Tartarus needs camera access for apps that use video."
       }
     },
     "dmg": {
@@ -142,7 +142,7 @@
       ]
     },
     "win": {
-      "artifactName": "Pinokio.${ext}",
+      "artifactName": "Tartarus.${ext}",
       "signtoolOptions": {
         "sign": "./build/sign.js"
       },

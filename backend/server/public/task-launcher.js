@@ -173,7 +173,7 @@
 
     const sheetDescription = document.createElement("div");
     sheetDescription.className = "task-tool-sheet-description";
-    sheetDescription.textContent = "Choose how Pinokio should run this task.";
+    sheetDescription.textContent = "Choose how Tartarus should run this task.";
     sheetHeading.appendChild(sheetDescription);
 
     const closeButton = document.createElement("button");
@@ -462,7 +462,7 @@
 
     const labelFieldLabel = document.createElement("span");
     labelFieldLabel.className = "task-label";
-    labelFieldLabel.textContent = "Label shown in Pinokio";
+    labelFieldLabel.textContent = "Label shown in Tartarus";
     labelField.appendChild(labelFieldLabel);
 
     const labelInput = document.createElement("input");

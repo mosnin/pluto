@@ -1108,7 +1108,7 @@ class Vault {
     const apiRoot = path.resolve(home, "api")
     const sources = [
       {
-        id: "pinokio", kind: "pinokio", label: "Pinokio",
+        id: "pinokio", kind: "pinokio", label: "Tartarus",
         root: home, parent_id: null
       },
       {
@@ -1424,7 +1424,7 @@ class Vault {
     if (!stat.isDirectory()) throw new Error("Choose a folder, not a file.")
     if (isPathWithin(home, canonical)) {
       throw new Error(
-        "That folder is already inside Pinokio and is included in scans.")
+        "That folder is already inside Tartarus and is included in scans.")
     }
     return canonical
   }
@@ -3355,7 +3355,7 @@ class Vault {
       : null
     // The authorised set, not the requested id: a scoped page must not be able
     // to read another location by naming it, and a rail entry standing for a
-    // group of locations -- Pinokio, Apps -- owns no files of its own, so it
+    // group of locations -- Tartarus, Apps -- owns no files of its own, so it
     // resolves to its descendants rather than to an empty tree.
     const sourceIds = this.scopeSourceIds(scopeId, locationId)
     const source = sourceIds.length === 1

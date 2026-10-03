@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Pinokio</title>
+<title>Tartarus</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <link href="/xterm.min.css" rel="stylesheet" />
@@ -515,12 +515,12 @@ input:checked + .slider:before {
           <h3>
             <img class='icon' src="<%=icon%>">
             <div class='col'>
-              <div class='title'>Pinokio</div>
+              <div class='title'>Tartarus</div>
               <% if (proxy) { %>
                 <div class='description'><a href="<%=proxy.proxy%>" target="_blank"><%=proxy.proxy%></a> → <a href="<%=localhost%>" target="_blank"><%=localhost%></a></div>
                 <a class='wifi-qr badge' data-qr="<%=qr%>" data-url="<%=proxy.proxy%>"><i class="fa-solid fa-qrcode"></i> Scan QR Code</a>
               <% } else { %>
-                <div class='description'>Share Pinokio <a href="<%=localhost%>" target="_blank"><%=localhost%></a> with other devices on the same network</div>
+                <div class='description'>Share Tartarus <a href="<%=localhost%>" target="_blank"><%=localhost%></a> with other devices on the same network</div>
               <% } %>
               <div class='btn-container'>
                 <% if (proxy) { %>
@@ -559,7 +559,7 @@ input:checked + .slider:before {
       </div>
       <!--
       <div class='container-row'>
-        <div class='header-label-sub'><i class="fa-solid fa-dice-d6"></i> Pinokio</div>
+        <div class='header-label-sub'><i class="fa-solid fa-dice-d6"></i> Tartarus</div>
         <% apps.forEach((item) => { %>
           <a class='line align-top' href="<%=item.link%>">
             <h3>
@@ -787,7 +787,7 @@ document.querySelector("main").addEventListener("click", async (e) => {
       },
       showConfirmButton: false,
       html: `<div class='min-modal'>
-      <div>Access Pinokio from</div>
+      <div>Access Tartarus from</div>
       <div>any local network device</div>
       <div><img src="${qr}"></div>
   <a href="${url}" target="_blank">${url}</a>

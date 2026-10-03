@@ -596,7 +596,7 @@ class Shell {
 
     if (params.sudo) {
       let options = {
-        name: "Pinokio",
+        name: "Tartarus",
 //        env: {}
 //        icns: '/Applications/Electron.app/Contents/Resources/Electron.icns', // (optional)
       };

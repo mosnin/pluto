@@ -1138,12 +1138,12 @@ class Bin {
       if (buildNumber < 18309) {
         // must use conpty for node-pty, and conpty is only supported in win>=18309
         console.log("Windows buildNumber", buildNumber)
-        throw new Error(`Pinokio supports Windows release 18309 and up (current system: ${buildNumber}`)
+        throw new Error(`Tartarus supports Windows release 18309 and up (current system: ${buildNumber}`)
       }
 
 //      if (buildNumber > 25000) {
 //        console.log("Windows buildNumber", buildNumber)
-//        throw new Error(`Pinokio does not currently support Windows Canary (versions 25000 and up). The current system is ${buildNumber}`)
+//        throw new Error(`Tartarus does not currently support Windows Canary (versions 25000 and up). The current system is ${buildNumber}`)
 //        
 //      }
     }

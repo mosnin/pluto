@@ -21,7 +21,7 @@ class VS {
   <ol style="padding-inline-start:20px">
     <li>Launch <b>Visual Studio Installer</b> on Windows</li>
     <li>Find <b>Visual Studio Build Tools 2019</b> and <b>Uninstall</b></li>
-    <li>And relaunch Pinokio</li>
+    <li>And relaunch Tartarus</li>
   </ol></div>`
         /*
         ondata({

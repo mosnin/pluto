@@ -1025,7 +1025,7 @@ body.dark .appcanvas {
             // Types of links in the tab
             if (String(port) === "<%=port%>") {
               // 1. running from <%=port%> => find a frame whose base URL matches the tab's base URL
-              // Pinokio links
+              // Tartarus links
               let targetPath = new URL(target.href).pathname
               let framePath = new URL(frame.src).pathname
               if (targetPath === framePath) {

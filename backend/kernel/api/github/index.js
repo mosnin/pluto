@@ -264,7 +264,7 @@ class Github {
     const headers = {
       "Accept": "application/vnd.github+json",
       "Authorization": `Bearer ${token}`,
-      "User-Agent": "Pinokio",
+      "User-Agent": "Tartarus",
       "X-GitHub-Api-Version": "2022-11-28"
     }
     const options = { method, headers }

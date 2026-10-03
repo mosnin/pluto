@@ -109,7 +109,7 @@ const formatCachePreflightError = (error) => {
 }
 
 const logCachePreflight = (message) => {
-  console.log(`[Pinokio cache preflight] ${message}`)
+  console.log(`[Tartarus cache preflight] ${message}`)
 }
 
 const probeCacheDir = async (dirPath) => {
@@ -231,7 +231,7 @@ const ensurePinokioCacheDirs = async (kernel, options = {}) => {
       .join(", ")
     logCachePreflight(`failed ${message}`)
     if (throwOnFailure) {
-      throw new Error(`Pinokio could not create writable cache directories: ${message}`)
+      throw new Error(`Tartarus could not create writable cache directories: ${message}`)
     }
   } else {
     kernel.cacheDirErrors = []
@@ -335,7 +335,7 @@ const ENVS = async () => {
       "#",
       "# GRADIO_ALLOWED_PATHS",
       "#",
-      "# This allows every Gradio app installed under Pinokio to serve files",
+      "# This allows every Gradio app installed under Tartarus to serve files",
       "# outside of each app's root folder, which is useful for many cases.",
       "# Do not touch this unless you want to add additional paths",
       "#",
@@ -376,7 +376,7 @@ const ENVS = async () => {
       "#",
       "# PINOKIO_SHARE_VAR",
       "#",
-      "# When you set this local variable from any script, it will trigger Pinokio",
+      "# When you set this local variable from any script, it will trigger Tartarus",
       "# share actions (local sharing, cloudflare, ...)",
       "#",
       "# You can customize whether to avoid this using PINOKIO_SHARE_CLOUDFLARE",
@@ -451,7 +451,7 @@ const ENVS = async () => {
 //      "#",
 //      "# PINOKIO_PORT",
 //      "#",
-//      "# The server port Pinokio will use. By default it's 80 but you can",
+//      "# The server port Tartarus will use. By default it's 80 but you can",
 //      "# Change it to anything else",
 //      "#",
 //      "##########################################################################",
@@ -909,7 +909,7 @@ const init = async (options, kernel) => {
             "",
             "The following instructions come from `SOUL.md`.",
             "",
-            "If this section conflicts with the general Pinokio defaults earlier in this document, follow this section.",
+            "If this section conflicts with the general Tartarus defaults earlier in this document, follow this section.",
             "",
             "If there is no conflict, follow both.",
           ].join("\n")
@@ -955,7 +955,7 @@ const init = async (options, kernel) => {
     }
   }
 
-  // Keep Pinokio-managed skills in sync for the home root.
+  // Keep Tartarus-managed skills in sync for the home root.
   if (isHomeRoot) {
     try {
       await ManagedSkills.syncManagedSkills(kernel)

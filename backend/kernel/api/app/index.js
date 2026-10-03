@@ -331,8 +331,8 @@ AppAPI.prototype.installIntroHtml = function installIntroHtml(appName, installUr
   const safeName = escapeHtml(appName)
   const safeUrl = escapeHtml(installUrl)
   return `
-    <p>Pinokio could not find <strong>${safeName}</strong> on this system.</p>
-    <p>Click <em>Install ${safeName}</em> to open the official download page (${safeUrl}). Keep this window open; Pinokio will monitor for the installation automatically.</p>
+    <p>Tartarus could not find <strong>${safeName}</strong> on this system.</p>
+    <p>Click <em>Install ${safeName}</em> to open the official download page (${safeUrl}). Keep this window open; Tartarus will monitor for the installation automatically.</p>
   `
 }
 

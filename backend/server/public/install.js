@@ -155,7 +155,7 @@ const setInlineInstallStatus = ({ state, title, detailHtml, iconClass }) => {
   document.body.classList.add('pinokio-install-status-visible')
 }
 
-// Ensure the requested install path stays within the Pinokio home directory
+// Ensure the requested install path stays within the Tartarus home directory
 const normalizeInstallPath = (rawPath) => {
   if (typeof rawPath !== 'string') {
     return null
@@ -370,7 +370,7 @@ const install = async (name, url, term, socket, options) => {
             setInlineInstallStatus({
               state: 'error',
               title: 'Download failed',
-              detailHtml: '<p>Pinokio could not clone the repository. Check the terminal output for details.</p>',
+              detailHtml: '<p>Tartarus could not clone the repository. Check the terminal output for details.</p>',
               iconClass: 'fa-solid fa-triangle-exclamation'
             })
             n.Noty({
@@ -427,7 +427,7 @@ const install = async (name, url, term, socket, options) => {
         setInlineInstallStatus({
           state: 'error',
           title: 'Download failed',
-          detailHtml: '<p>Pinokio could not clone the repository.</p>',
+          detailHtml: '<p>Tartarus could not clone the repository.</p>',
           iconClass: 'fa-solid fa-triangle-exclamation'
         })
         n.Noty({

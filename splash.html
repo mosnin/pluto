@@ -120,9 +120,9 @@ body.error .loader {
 </head>
 <body>
 <div class="card">
-  <img class="logo" id="logo" src="assets/icon.png" alt="Pinokio" onerror="this.onerror=null;this.src='assets/icon_small.png'">
+  <img class="logo" id="logo" src="assets/icon.png" alt="Tartarus" onerror="this.onerror=null;this.src='assets/icon_small.png'">
   <div class="text">
-    <p class="title" id="title">Starting Pinokio…</p>
+    <p class="title" id="title">Starting Tartarus…</p>
     <p class="version" id="version" hidden></p>
     <p class="subtitle" id="subtitle">This should only take a moment.</p>
   </div>
@@ -133,7 +133,7 @@ body.error .loader {
 <script>
   const params = new URLSearchParams(window.location.search)
   const state = params.get('state') || 'loading'
-  const message = params.get('message') || 'Starting Pinokio…'
+  const message = params.get('message') || 'Starting Tartarus…'
   const detail = params.get('detail')
   const logPath = params.get('log')
   const icon = params.get('icon')
@@ -156,7 +156,7 @@ body.error .loader {
     document.body.classList.add('error')
     const friendly = detail && detail.trim().length > 0
       ? detail
-      : 'Please review the Pinokio logs for more information.'
+      : 'Please review the Tartarus logs for more information.'
     document.getElementById('loader').hidden = true
     const detailEl = document.getElementById('detail')
     detailEl.textContent = friendly
@@ -166,7 +166,7 @@ body.error .loader {
       ? `Logs: ${logPath}`
       : 'Logs: ~/.pinokio/logs/stdout.txt'
     hintEl.hidden = false
-    document.getElementById('subtitle').textContent = 'Something stopped Pinokio from starting.'
+    document.getElementById('subtitle').textContent = 'Something stopped Tartarus from starting.'
   } else {
     document.getElementById('subtitle').textContent = 'This should only take a moment.'
   }

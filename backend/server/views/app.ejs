@@ -8730,8 +8730,8 @@ body.dark .pinokio-custom-terminal-header {
                   </div>
                   <div class="app-autolaunch-modal-actions">
                     <div class="app-autolaunch-switch-group">
-                      <span class="app-autolaunch-switch-caption">Start with Pinokio</span>
-                      <button type="button" class="app-autolaunch-switch" role="switch" aria-checked="<%= autolaunch_app.autolaunch_enabled ? 'true' : 'false' %>" data-app-autolaunch-switch aria-label="Start with Pinokio" title="Start with Pinokio is <%= autolaunch_app.autolaunch_enabled ? 'on' : 'off' %>">
+                      <span class="app-autolaunch-switch-caption">Start with Tartarus</span>
+                      <button type="button" class="app-autolaunch-switch" role="switch" aria-checked="<%= autolaunch_app.autolaunch_enabled ? 'true' : 'false' %>" data-app-autolaunch-switch aria-label="Start with Tartarus" title="Start with Tartarus is <%= autolaunch_app.autolaunch_enabled ? 'on' : 'off' %>">
                         <span class="app-autolaunch-switch-label" data-app-autolaunch-switch-label><%= autolaunch_app.autolaunch_enabled ? 'ON' : 'OFF' %></span>
                         <span class="app-autolaunch-switch-thumb" aria-hidden="true"></span>
                       </button>
@@ -8969,7 +8969,7 @@ body.dark .pinokio-custom-terminal-header {
               <button type='button' class='btn2 community-drawer-refresh' disabled data-tippy-content="Refresh" aria-label="Refresh feed">
                 <i class="fa-solid fa-rotate-right"></i>
               </button>
-              <button type='button' class='btn2 community-drawer-toggle' data-tippy-content="Connect to Pinokio Network" aria-label="Connect to Pinokio Network">
+              <button type='button' class='btn2 community-drawer-toggle' data-tippy-content="Connect to Tartarus Network" aria-label="Connect to Tartarus Network">
                 <i class="fa-solid fa-link"></i>
               </button>
               <button type='button' class='btn2 community-drawer-expand' data-tippy-content="Expand panel" aria-label="Expand panel" aria-pressed="false">
@@ -9020,9 +9020,9 @@ body.dark .pinokio-custom-terminal-header {
       </div>
     <% } %>
   </div>
-  <button type='button' class='mobile-menu-backdrop' data-mobile-menu-backdrop aria-label="Close Pinokio menu" hidden></button>
+  <button type='button' class='mobile-menu-backdrop' data-mobile-menu-backdrop aria-label="Close Tartarus menu" hidden></button>
   <nav class='mobile-bottom-nav' aria-label="Mobile navigation">
-    <button type='button' class='btn2 mobile-bottom-nav__button mobile-nav-menu' data-mobile-proxy="#menu-mobile" aria-expanded="false" aria-label="Open Pinokio menu">
+    <button type='button' class='btn2 mobile-bottom-nav__button mobile-nav-menu' data-mobile-proxy="#menu-mobile" aria-expanded="false" aria-label="Open Tartarus menu">
       <img class='mobile-bottom-nav__logo' src="/pinokio-black.png" alt="" aria-hidden="true">
     </button>
     <div class='mobile-bottom-nav__identity' title="<%=config.title || name%>" aria-label="<%=config.title || name%>">
@@ -9117,7 +9117,7 @@ body.dark .pinokio-custom-terminal-header {
       <i class="fa-solid fa-xmark"></i>
     </button>
     <img class='mobile-menu-fallback__logo' src="/pinokio-black.png" alt="" aria-hidden="true">
-    <div>Pinokio</div>
+    <div>Tartarus</div>
   </div>
   <div class='mobile-menu-fallback__body'>
     <div class='workspace-mode-switch' role="tablist" aria-label="Workspace mode">
@@ -11111,7 +11111,7 @@ const rerenderMenuSection = (container, html) => {
       setBrowserviewNetworkStatus({
         state: "blocked",
         title: "Network sharing is not ready",
-        detail: "The local app is running, but Pinokio has not created a network route for this Web UI yet.",
+        detail: "The local app is running, but Tartarus has not created a network route for this Web UI yet.",
         route,
         actions: true
       })
@@ -11134,7 +11134,7 @@ const rerenderMenuSection = (container, html) => {
       setBrowserviewNetworkStatus({
         state: "blocked",
         title: "Web UI is not responding",
-        detail: "Pinokio created the network route, but the Web UI did not respond yet.",
+        detail: "Tartarus created the network route, but the Web UI did not respond yet.",
         route,
         actions: true
       })
@@ -11224,7 +11224,7 @@ const rerenderMenuSection = (container, html) => {
         //if (String(port) === "<%=port%>") {
         if (String(port) === String(location.port) || /https:\/\/.+\.localhost/.test(origin)) {
           // 1. running from <%=port%> => find a frame whose base URL matches the tab's base URL
-          // Pinokio links
+          // Tartarus links
           let targetPath = new URL(target.href).pathname
           let framePath = new URL(frame.src).pathname
           if (targetPath === framePath) {
@@ -19273,12 +19273,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!icon) return
     if (nextEnabled) {
       icon.className = "fa-solid fa-link-slash"
-      toggleBtn.setAttribute("aria-label", "Disconnect from Pinokio Network")
-      setTooltip(toggleBtn, "Disconnect from Pinokio Network")
+      toggleBtn.setAttribute("aria-label", "Disconnect from Tartarus Network")
+      setTooltip(toggleBtn, "Disconnect from Tartarus Network")
     } else {
       icon.className = "fa-solid fa-link"
-      toggleBtn.setAttribute("aria-label", "Connect to Pinokio Network")
-      setTooltip(toggleBtn, url ? "Connect to Pinokio Network" : "Unavailable")
+      toggleBtn.setAttribute("aria-label", "Connect to Tartarus Network")
+      setTooltip(toggleBtn, url ? "Connect to Tartarus Network" : "Unavailable")
     }
   }
 
@@ -19360,7 +19360,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (homeBtn) {
         homeBtn.disabled = true
-        setTooltip(homeBtn, "Connect to Pinokio Network")
+        setTooltip(homeBtn, "Connect to Tartarus Network")
       }
       setNavDisabled(true)
       setToggleState(false)
@@ -19567,10 +19567,10 @@ document.addEventListener("DOMContentLoaded", () => {
       connectBtn.textContent = "Unavailable"
     }
     if (emptyTitle) {
-      emptyTitle.textContent = "No Pinokio Network link for this workspace."
+      emptyTitle.textContent = "No Tartarus Network link for this workspace."
     }
     if (emptyNote) {
-      emptyNote.textContent = "Publish the repo to enable Pinokio Network updates."
+      emptyNote.textContent = "Publish the repo to enable Tartarus Network updates."
     }
   }
   initCommunityWidth()

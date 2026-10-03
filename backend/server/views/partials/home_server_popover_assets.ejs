@@ -785,7 +785,7 @@ body.dark .home-server-popover__qr-close:focus-visible {
           <div class="home-server-popover__app-main">
             <span class="home-server-popover__app-dot" aria-hidden="true"></span>
             <div>
-              <div class="home-server-popover__app-name">${escapeHtml(shell.name || "Pinokio")}</div>
+              <div class="home-server-popover__app-name">${escapeHtml(shell.name || "Tartarus")}</div>
               <div class="home-server-popover__app-url" title="${safeUrl}">${safeUrl}</div>
             </div>
           </div>
@@ -868,13 +868,13 @@ body.dark .home-server-popover__qr-close:focus-visible {
         <div class="home-server-popover__section">
           <div class="home-server-popover__section-label">Available machines</div>
           <div class="home-server-popover__empty">
-            <div class="home-server-popover__empty-title">No other Pinokio machines found</div>
+            <div class="home-server-popover__empty-title">No other Tartarus machines found</div>
             <div class="home-server-popover__empty-copy">Other machines appear here when Home Server is on there too.</div>
           </div>
         </div>`
     }
     const rendered = rows.map((machine) => {
-      const name = escapeHtml(machine.name || machine.host || "Pinokio")
+      const name = escapeHtml(machine.name || machine.host || "Tartarus")
       const host = escapeHtml(machine.host || "")
       const url = typeof machine.url === "string" && machine.url ? machine.url : ""
       const detail = url || "Home Server address unavailable"
@@ -968,7 +968,7 @@ body.dark .home-server-popover__qr-close:focus-visible {
       <div class="home-server-popover__callout-icon"><i class="fa-solid fa-wifi" aria-hidden="true"></i></div>
       <div>
         <div class="home-server-popover__callout-title">Use this computer as a Home Server</div>
-        <div class="home-server-popover__callout-copy">Turn it on to open Pinokio and running app Web UIs from phones, tablets, and other computers on this network.</div>
+        <div class="home-server-popover__callout-copy">Turn it on to open Tartarus and running app Web UIs from phones, tablets, and other computers on this network.</div>
       </div>
     </div>
     ${footerHtml({ note: false })}`
@@ -978,7 +978,7 @@ body.dark .home-server-popover__qr-close:focus-visible {
       <span class="home-server-popover__spinner" aria-hidden="true"></span>
       <div>
         <div class="home-server-popover__callout-title">Turning on Home Server...</div>
-        <div class="home-server-popover__callout-copy">Preparing Pinokio and running app Web UIs for phones, tablets, and other computers on this network.</div>
+        <div class="home-server-popover__callout-copy">Preparing Tartarus and running app Web UIs for phones, tablets, and other computers on this network.</div>
       </div>
     </div>
     <div class="home-server-popover__warning">Links will appear here when Home Server is ready.</div>
@@ -987,12 +987,12 @@ body.dark .home-server-popover__qr-close:focus-visible {
     ${renderHeader(data)}
     <div class="home-server-popover__empty">
       <div class="home-server-popover__empty-title">Install Home Server support</div>
-      <div class="home-server-popover__empty-copy">Pinokio needs its local networking component before it can share this computer on your home network.</div>
+      <div class="home-server-popover__empty-copy">Tartarus needs its local networking component before it can share this computer on your home network.</div>
     </div>
     ${footerHtml({ primaryHref: setupHref(), primaryLabel: "Install Home Server support", note: false })}`
   const renderError = (message) => `
     ${renderHeader({ status: "error" })}
-    <div class="home-server-popover__warning is-error">${escapeHtml(message || "Pinokio could not turn on Home Server. Your apps are still running locally on this computer.")}</div>
+    <div class="home-server-popover__warning is-error">${escapeHtml(message || "Tartarus could not turn on Home Server. Your apps are still running locally on this computer.")}</div>
     ${footerHtml({ retry: true, note: false })}`
   const render = (data) => {
     const status = data && data.status ? data.status : "off"

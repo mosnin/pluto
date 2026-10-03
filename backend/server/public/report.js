@@ -21,7 +21,7 @@ const Reporter = () => {
       html: `<div class='desc'>
   <ol>
     <li>Download logs.zip</li>
-    <li>Go to the <a target="_blank" href="https://discord.gg/TQdNwadtE4">Pinokio Discord</a> #support channel</li>
+    <li>Go to the <a target="_blank" href="https://discord.gg/TQdNwadtE4">Tartarus Discord</a> #support channel</li>
     <li>Create a detailed post and attach the logs.zip file.</li>
   </ol>
   <div class='footer'>

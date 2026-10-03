@@ -480,7 +480,7 @@
 
     const headerIcon = document.createElement('img');
     headerIcon.src = '/pinokio-black.png';
-    headerIcon.alt = 'Pinokio logo';
+    headerIcon.alt = 'Tartarus logo';
     headerIcon.className = 'create-launcher-modal-logo';
     iconWrapper.appendChild(headerIcon);
 

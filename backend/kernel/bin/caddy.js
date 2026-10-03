@@ -55,7 +55,7 @@ class Caddy {
     }
     const stopped = await this.waitForStopped()
     if (!stopped) {
-      throw new Error("Pinokio could not stop Caddy before replacing the managed Conda runtime.")
+      throw new Error("Tartarus could not stop Caddy before replacing the managed Conda runtime.")
     }
     return true
   }

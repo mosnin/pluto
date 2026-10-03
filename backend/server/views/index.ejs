@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Pinokio</title>
+<title>Tartarus</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <link href="/xterm.min.css" rel="stylesheet" />
@@ -2048,7 +2048,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ignore hash jumps, javascript: URLs, and empty hrefs
     const rawHref = anchor.getAttribute("href") || "";
     if (!rawHref || rawHref.startsWith("#") || /^javascript:/i.test(rawHref)) return;
-    // Prevent cross-origin navigations from being delayed—they don’t hit Pinokio anyway
+    // Prevent cross-origin navigations from being delayed—they don’t hit Tartarus anyway
     const url = new URL(anchor.href, location.href);
     if (url.origin !== location.origin) return;
     event.preventDefault();
@@ -3513,7 +3513,7 @@ const showHomeAppShareModal = async (button) => {
   if (status && status.installed === false) {
     title = "Install Home Server support"
     html = renderHomeShareSetupHtml({
-      detail: "Pinokio needs its local networking component before it can share app Web UIs on your home network.",
+      detail: "Tartarus needs its local networking component before it can share app Web UIs on your home network.",
       actions: [homeShareActionHtml(homeShareSetupUrl(), "Install Home Server support")]
     })
   } else if (status && status.active === false) {
@@ -3525,7 +3525,7 @@ const showHomeAppShareModal = async (button) => {
   } else if (status && status.running === false) {
     title = "Home Server is starting"
     html = renderHomeShareSetupHtml({
-      detail: "Pinokio is preparing home-network links for app Web UIs. Open Home Server settings to check it.",
+      detail: "Tartarus is preparing home-network links for app Web UIs. Open Home Server settings to check it.",
       actions: [homeShareActionHtml("/network", "Open Home Server settings")]
     })
   } else if (wifiUrl) {
@@ -3542,7 +3542,7 @@ const showHomeAppShareModal = async (button) => {
   } else {
     title = "No Web UI address yet"
     html = renderHomeShareSetupHtml({
-      detail: `${appName} is running, but Pinokio has not found a Web UI URL to open from another device yet.`,
+      detail: `${appName} is running, but Tartarus has not found a Web UI URL to open from another device yet.`,
       actions: [`<button type="button" class="home-app-share-modal__action is-primary" data-home-share-retry>Retry</button>`]
     })
   }
@@ -4135,7 +4135,7 @@ document.addEventListener("keydown", (e) => {
         },
         showConfirmButton: false,
         html: `<div class='min-modal'>
-        <div>Access Pinokio from</div>
+        <div>Access Tartarus from</div>
         <div>any local network device</div>
         <div><img src="<%=qr%>"></div>
     <a href="<%=proxy.proxy%>" target="_blank"><%=proxy.proxy%></a>
@@ -4172,7 +4172,7 @@ document.addEventListener("keydown", (e) => {
         },
         showConfirmButton: false,
         html: `<div class='min-modal'>
-        <div>Access Pinokio from anywhere</div>
+        <div>Access Tartarus from anywhere</div>
         <div>(powered by cloudflare tunnel)</div>
         <div><img src="<%=qr_cloudflare%>"></div>
     <a href="<%=cloudflare_pub%>" target="_blank"><%=cloudflare_pub%></a>

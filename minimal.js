@@ -113,7 +113,7 @@ const showStartupError = ({ message, detail, error } = {}) => {
   const formatted = detail || formatStartupError(error)
   updateSplashWindow({
     state: 'error',
-    message: message || 'Pinokio could not start',
+    message: message || 'Tartarus could not start',
     detail: formatted,
     logPath: getLogFileHint(),
     icon: getSplashIcon()
@@ -151,7 +151,7 @@ app.whenReady().then(async () => {
   configurePinokioUserAgent({ app, session: session.defaultSession })
   updateSplashWindow({
     state: 'loading',
-    message: 'Starting Pinokio…',
+    message: 'Starting Tartarus…',
     icon: getSplashIcon()
   })
   try {
@@ -159,8 +159,8 @@ app.whenReady().then(async () => {
       const portInUse = await pinokiod.running(pinokiod.port)
       if (portInUse) {
         showStartupError({
-          message: 'Pinokio is already running',
-          detail: `An existing Pinokio instance is using port ${pinokiod.port}. Please close it before launching another.`
+          message: 'Tartarus is already running',
+          detail: `An existing Tartarus instance is using port ${pinokiod.port}. Please close it before launching another.`
         })
         return
       }
@@ -231,12 +231,12 @@ app.whenReady().then(async () => {
     { label: 'Restart', click: () => { app.relaunch(); app.exit(); } },
     { label: 'Quit', click: () => app.quit() }
   ]);
-  tray.setToolTip('Pinokio');
+  tray.setToolTip('Tartarus');
   tray.setContextMenu(contextMenu);
   const showNotification = (options = {}) => {
     try {
       new Notification({
-        title: 'Pinokio',
+        title: 'Tartarus',
         body: 'Running in background',
         ...options
       }).show()
@@ -249,7 +249,7 @@ app.whenReady().then(async () => {
       darwin: () => {
         try {
           tray.setHighlightMode('always')
-          tray.setTitle('Pinokio running')
+          tray.setTitle('Tartarus running')
           setTimeout(() => tray.setHighlightMode('selection'), 4000)
           setTimeout(() => tray.popUpContextMenu(contextMenu), 150)
         } catch (err) {
@@ -259,7 +259,7 @@ app.whenReady().then(async () => {
       },
       win32: () => {
         try {
-          app.setAppUserModelId('Pinokio')
+          app.setAppUserModelId('Tartarus')
         } catch (err) {
           console.warn('Failed to set AppUserModelID', err)
         }

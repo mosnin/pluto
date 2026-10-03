@@ -41,7 +41,7 @@ function normalizeDtype(value) {
 function cacheRoot(kernel) {
   const home = kernel && typeof kernel.homedir === 'string' ? kernel.homedir : ''
   if (!home.trim()) {
-    throw new Error('Pinokio home directory is required for privacy filter cache.')
+    throw new Error('Tartarus home directory is required for privacy filter cache.')
   }
   return path.resolve(home, 'cache', 'privacy-filter', 'models')
 }

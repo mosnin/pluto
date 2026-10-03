@@ -830,7 +830,7 @@ function push(params) {
     notifyParams.contentImage = notifyParams.image
   }
   if (!notifyParams.title) {
-    notifyParams.title = "Pinokio"
+    notifyParams.title = "Tartarus"
   }
   if (!notifyParams.contentImage) {
     notifyParams.contentImage = resolveAsarPath(path.resolve(__dirname, "../server/public/pinokio-black.png"))
@@ -845,7 +845,7 @@ function push(params) {
     notifyParams.icon = resolveAsarPath(notifyParams.icon)
   }
   if (platform === 'win32') {
-    // Ensure Windows toast branding aligns with Pinokio assets.
+    // Ensure Windows toast branding aligns with Tartarus assets.
     if (!notifyParams.icon && notifyParams.contentImage) {
       notifyParams.icon = resolveAsarPath(notifyParams.contentImage)
     }

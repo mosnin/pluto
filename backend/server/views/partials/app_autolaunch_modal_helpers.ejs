@@ -171,9 +171,9 @@
     const enabled = !!(state && state.autolaunch_enabled)
     status.textContent = enabled ? "On" : "Off"
     button.dataset.enabled = enabled ? "true" : "false"
-    button.setAttribute("aria-label", `Autolaunch. Start with Pinokio ${enabled ? "On" : "Off"}`)
+    button.setAttribute("aria-label", `Autolaunch. Start with Tartarus ${enabled ? "On" : "Off"}`)
     switchButton.setAttribute("aria-checked", enabled ? "true" : "false")
-    switchButton.title = `Start with Pinokio is ${enabled ? "on" : "off"}`
+    switchButton.title = `Start with Tartarus is ${enabled ? "on" : "off"}`
     switchLabel.textContent = enabled ? "ON" : "OFF"
     root.classList.toggle("enabled", enabled)
   }

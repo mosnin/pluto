@@ -1,7 +1,7 @@
 // put this preload for main-window to give it prompt()
 const { ipcRenderer, } = require('electron')
 const PINOKIO_INSPECTOR_ENABLED = false
-const inspectorDisabled = () => Promise.reject(new Error('Pinokio inspector is disabled.'))
+const inspectorDisabled = () => Promise.reject(new Error('Tartarus inspector is disabled.'))
 window.prompt = function(title, val){
   return ipcRenderer.sendSync('prompt', {title, val})
 }
@@ -1292,17 +1292,17 @@ if (isEmbeddedFrame) {
   ipcRenderer.on('pinokio:capture-debug-log', (_event, payload) => {
     try {
       const serialized = JSON.stringify(payload)
-      console.log('[Pinokio Capture]', serialized)
+      console.log('[Tartarus Capture]', serialized)
     } catch (error) {
-      console.log('[Pinokio Capture]', payload)
+      console.log('[Tartarus Capture]', payload)
     }
   })
 
   const logCaptureEvent = (label, payload) => {
     try {
-      console.log('[Pinokio Capture]', JSON.stringify({ label, payload }))
+      console.log('[Tartarus Capture]', JSON.stringify({ label, payload }))
     } catch (error) {
-      console.log('[Pinokio Capture]', label)
+      console.log('[Tartarus Capture]', label)
     }
   }
 

@@ -78,7 +78,7 @@ const fixture = (items = [], overrides = {}) => {
     file_action: null,
     sources: [
       {
-        id: "pinokio", kind: "pinokio", label: "Pinokio",
+        id: "pinokio", kind: "pinokio", label: "Tartarus",
         root: "/pinokio", parent_id: null, available: true, shareable: true
       },
       {
@@ -1572,7 +1572,7 @@ describe("Save Space interface", () => {
 
     assert.ok(prompt)
     assert.equal(prompt.hidden, false)
-    assert.match(prompt.textContent, /Save space outside Pinokio/)
+    assert.match(prompt.textContent, /Save space outside Tartarus/)
     assert.match(prompt.textContent,
       /Some files may be taking up space more than once\./)
     assert.match(prompt.querySelector("[data-find-folders]").textContent,

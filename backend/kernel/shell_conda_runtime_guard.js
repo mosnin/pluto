@@ -724,11 +724,11 @@ function formatRawNotice(skip) {
   const target = skip.target && skip.target.kind ? skip.target.kind : 'unknown'
   return [
     '',
-    '[Pinokio] Skipped Conda setup command.',
-    `[Pinokio] Command: ${JSON.stringify(skip.command)}`,
-    "[Pinokio] The command targets Pinokio's protected base Conda setup.",
-    `[Pinokio] Reason: ${skip.reason || 'protected base Conda setup'}`,
-    `[Pinokio] Target: ${target}`,
+    '[Tartarus] Skipped Conda setup command.',
+    `[Tartarus] Command: ${JSON.stringify(skip.command)}`,
+    "[Tartarus] The command targets Tartarus's protected base Conda setup.",
+    `[Tartarus] Reason: ${skip.reason || 'protected base Conda setup'}`,
+    `[Tartarus] Target: ${target}`,
     '',
   ].join('\r\n')
 }
@@ -746,7 +746,7 @@ function formatNotifyHtml(skipped) {
   const rows = [
     `<b style="display:block;">${escapeHtml('Command skipped')}</b>`,
     commandHtml,
-    `<span>${escapeHtml('No action needed. Pinokio already includes Conda.')}</span>`,
+    `<span>${escapeHtml('No action needed. Tartarus already includes Conda.')}</span>`,
   ].filter(Boolean).join('')
   return `<div style="display:flex;flex-direction:column;gap:8px;">${rows}</div>`
 }

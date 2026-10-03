@@ -40,7 +40,7 @@ else
   SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
 fi
 
-OPT_BIN="/opt/Pinokio/${exeName}-bin"
+OPT_BIN="/opt/Tartarus/${exeName}-bin"
 LOCAL_BIN="$SCRIPT_DIR/${exeName}-bin"
 
 if [ -x "$OPT_BIN" ]; then

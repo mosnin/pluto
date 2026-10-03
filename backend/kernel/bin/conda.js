@@ -17,7 +17,7 @@ const CONDA_ROOT_DIR = "miniforge"
 const LEGACY_CONDA_ROOT_DIR = "miniconda"
 
 class Conda {
-  description = "Pinokio uses Conda to install various useful programs in an isolated manner."
+  description = "Tartarus uses Conda to install various useful programs in an isolated manner."
   urls = {
     darwin: {
       x64: `${MINIFORGE_BASE_URL}/Miniforge3-MacOSX-x86_64.sh`,
@@ -264,8 +264,8 @@ report_errors: false`)
       }
       const reason = error && (error.code || error.message) ? error.code || error.message : String(error)
       throw new Error([
-        `Pinokio needs to replace the Conda runtime at ${target}, but it could not delete that folder.`,
-        "Close Pinokio and any terminals or editors using Pinokio, delete that folder manually, then reopen Pinokio.",
+        `Tartarus needs to replace the Conda runtime at ${target}, but it could not delete that folder.`,
+        "Close Tartarus and any terminals or editors using Tartarus, delete that folder manually, then reopen Tartarus.",
         `Original error: ${reason}`,
       ].join("\n"))
     }

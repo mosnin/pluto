@@ -50,7 +50,7 @@ function createContentValidationService({ kernel }) {
       type,
       title,
       subjectTitle: subjectTitle || title,
-      summary: `This ${article} is installed, but Pinokio cannot use it until its manifest is fixed.`,
+      summary: `This ${article} is installed, but Tartarus cannot use it until its manifest is fixed.`,
       message: normalizedErrors.length > 0 ? normalizedErrors[0].message : `${title}.`,
       errors: normalizedErrors,
       folderPath: folderPath || "",
@@ -188,7 +188,7 @@ function createContentValidationService({ kernel }) {
         errors: [
           buildError(
             "Plugin path is invalid.",
-            "Open this plugin from a valid Pinokio plugin path."
+            "Open this plugin from a valid Tartarus plugin path."
           ),
         ],
         detailUrl: "/plugins",
@@ -201,7 +201,7 @@ function createContentValidationService({ kernel }) {
         errors: [
           buildError(
             "This managed plugin path is no longer used.",
-            "Open the built-in Pinokio plugin instead."
+            "Open the built-in Tartarus plugin instead."
           ),
         ],
         detailUrl: "/plugins",

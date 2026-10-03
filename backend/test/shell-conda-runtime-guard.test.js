@@ -679,7 +679,7 @@ test('rewrite logs every skipped command and shows one warning per flow', () => 
   }, context)
 
   const notifyEvents = events.filter((event) => event.type === 'notify')
-  const rawEvents = events.filter((event) => /\[Pinokio\] Command:/.test(event.stream.raw || ''))
+  const rawEvents = events.filter((event) => /\[Tartarus\] Command:/.test(event.stream.raw || ''))
 
   assert.equal(notifyEvents.length, 1)
   assert.equal(rawEvents.length, 2)
@@ -687,13 +687,13 @@ test('rewrite logs every skipped command and shows one warning per flow', () => 
   assert.equal(notifyEvents[0].stream.type, 'warning')
   assert.match(notifyEvents[0].stream.html, /Command skipped/)
   assert.match(notifyEvents[0].stream.html, /conda install conda=25\.5\.1 -y/)
-  assert.match(notifyEvents[0].stream.html, /No action needed\. Pinokio already includes Conda/)
+  assert.match(notifyEvents[0].stream.html, /No action needed\. Tartarus already includes Conda/)
   assert.doesNotMatch(notifyEvents[0].stream.html, /Reason:/)
   assert.doesNotMatch(notifyEvents[0].stream.html, /Conda setup skipped/)
   assert.doesNotMatch(notifyEvents[0].stream.html, /Details are in the terminal\/log/)
   assert.doesNotMatch(notifyEvents[0].stream.html, /Pinokio is continuing/)
   assert.match(rawEvents[0].stream.raw, /conda install conda=25\.5\.1 -y/)
-  assert.match(rawEvents[0].stream.raw, /targets Pinokio's protected base Conda setup/)
+  assert.match(rawEvents[0].stream.raw, /targets Tartarus's protected base Conda setup/)
 })
 
 test('guard escapes skipped command text in notification html', () => {

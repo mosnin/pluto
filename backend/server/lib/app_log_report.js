@@ -342,7 +342,7 @@ class AppLogReportService {
       `App: ${metadata.title} (${metadata.app_id})`,
       metadata.repo_url ? `Repo: ${metadata.repo_url}` : null,
       `Generated: ${metadata.generated_at}`,
-      `Pinokio: ${metadata.pinokiod || 'unknown'}`,
+      `Tartarus: ${metadata.pinokiod || 'unknown'}`,
       `Platform: ${metadata.platform} ${metadata.arch}`,
       `Node: ${metadata.node}`,
       '',

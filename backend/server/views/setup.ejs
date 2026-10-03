@@ -24,8 +24,8 @@
   const targetPath = current || "/";
   const readyTitle = install_required ? "System requirements need attention" : "System ready";
   const readyDescription = install_required
-    ? "Install or refresh what Pinokio needs before reopening this destination."
-    : "Everything Pinokio needs is already available. Continue to reopen this destination.";
+    ? "Install or refresh what Tartarus needs before reopening this destination."
+    : "Everything Tartarus needs is already available. Continue to reopen this destination.";
   const setupSidebarSelected = (() => {
     if (setupMode === "network" || targetPath.indexOf("/network") === 0) return "network";
     if (setupMode === "connect" || targetPath.indexOf("/connect") === 0 || targetPath.indexOf("/github") === 0) return "connect";
@@ -49,13 +49,13 @@
           <div class="task-shell-header-main">
             <% if (requirements_pending) { %>
               <h1 class="task-title">Checking system requirements</h1>
-              <p class="task-description">Pinokio is checking what this machine needs before reopening <code><%= targetPath %></code>.</p>
+              <p class="task-description">Tartarus is checking what this machine needs before reopening <code><%= targetPath %></code>.</p>
             <% } else if (!install_required && wait === "caddy") { %>
               <h1 class="task-title">Finishing secure localhost setup</h1>
-              <p class="task-description">Pinokio is applying secure localhost settings and will reopen <code><%= targetPath %></code> when ready.</p>
+              <p class="task-description">Tartarus is applying secure localhost settings and will reopen <code><%= targetPath %></code> when ready.</p>
             <% } else if (error) { %>
               <h1 class="task-title">Setup could not continue</h1>
-              <p class="task-description">Pinokio hit an environment issue while preparing <code><%= targetPath %></code>.</p>
+              <p class="task-description">Tartarus hit an environment issue while preparing <code><%= targetPath %></code>.</p>
             <% } else { %>
               <h1 class="task-title"><%= readyTitle %></h1>
               <p class="task-description"><%= readyDescription %> Target: <code><%= targetPath %></code>.</p>
@@ -141,7 +141,7 @@
                     <div>
                       <h2 class="task-section-title">Ready to continue</h2>
                       <p class="task-section-subcopy">
-                        <%= install_required ? `${attentionCount} ${attentionCount === 1 ? 'update is' : 'updates are'} needed before Pinokio can continue.` : 'No updates are needed. You can continue immediately.' %>
+                        <%= install_required ? `${attentionCount} ${attentionCount === 1 ? 'update is' : 'updates are'} needed before Tartarus can continue.` : 'No updates are needed. You can continue immediately.' %>
                       </p>
                     </div>
                   </div>
@@ -174,7 +174,7 @@
                   </form>
 
                   <p class="task-inline-help">
-                    <%= install_required ? 'This uses the same install flow as before.' : 'Pinokio can reopen the same destination without reinstalling anything.' %>
+                    <%= install_required ? 'This uses the same install flow as before.' : 'Tartarus can reopen the same destination without reinstalling anything.' %>
                   </p>
 
                   <div class="setup-secondary-actions">
@@ -300,7 +300,7 @@
         pushWaitDebugEvent("secure localhost flags saved")
         renderWaitDebug()
 
-        setWaitLabel("Restarting Pinokio...")
+        setWaitLabel("Restarting Tartarus...")
         pushWaitDebugEvent("restart requested")
         renderWaitDebug()
         try {
@@ -342,14 +342,14 @@
                 lastKnownPhase = startupStatus.phase
                 const phaseMessage = startupStatus.phase === "ready"
                   ? "Secure router is almost ready..."
-                  : `Restarting Pinokio... (${startupStatus.phase.replace(/_/g, " ")})`
+                  : `Restarting Tartarus... (${startupStatus.phase.replace(/_/g, " ")})`
                 setWaitLabel(phaseMessage)
               }
               renderWaitDebug({ startedAt, routerStatus, startupStatus, serverDebug })
 
               if (startupStatus && startupStatus.phase === "error") {
                 clearInterval(interval)
-                reject(new Error(lastKnownError || "Pinokio failed to restart cleanly"))
+                reject(new Error(lastKnownError || "Tartarus failed to restart cleanly"))
                 return
               }
 
@@ -375,7 +375,7 @@
         location.href = <%- JSON.stringify(targetPath) %>
       } catch (error) {
         console.error("secure router setup failed", error)
-        showWaitError(error && error.message ? error.message : "Failed to restart Pinokio")
+        showWaitError(error && error.message ? error.message : "Failed to restart Tartarus")
       }
     <% } %>
   })

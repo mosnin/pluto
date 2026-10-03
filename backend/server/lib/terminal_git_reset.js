@@ -143,13 +143,13 @@ const createTerminalGitResetHandler = ({
   const execGit = async (repoPath, args) => {
     const env = getExecEnv()
     if (!env) {
-      const error = new Error("Pinokio environment is not ready yet. Please try again.")
+      const error = new Error("Tartarus environment is not ready yet. Please try again.")
       error.code = "EUNAVAILABLE"
       throw error
     }
     const candidates = getGitBinaryCandidates()
     if (candidates.length === 0) {
-      const error = new Error("Git executable not found in Pinokio environment.")
+      const error = new Error("Git executable not found in Tartarus environment.")
       error.code = "ENOENT"
       throw error
     }
@@ -190,7 +190,7 @@ const createTerminalGitResetHandler = ({
         throw error
       }
     }
-    const fallbackError = lastError || new Error("Git executable not found in Pinokio environment.")
+    const fallbackError = lastError || new Error("Git executable not found in Tartarus environment.")
     if (!fallbackError.code) {
       fallbackError.code = "ENOENT"
     }
@@ -349,7 +349,7 @@ const createTerminalGitResetHandler = ({
       if (error && error.code === "ENOENT") {
         res.status(503).json({
           ok: false,
-          error: "Git executable is unavailable in the current Pinokio environment. Install Git from Tools and retry."
+          error: "Git executable is unavailable in the current Tartarus environment. Install Git from Tools and retry."
         })
         return
       }

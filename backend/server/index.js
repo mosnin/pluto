@@ -358,7 +358,7 @@ class Server {
       id: `fatal-${timestamp}`,
       type: 'kernel.fatal',
       severity: 'fatal',
-      title: 'Pinokio crashed',
+      title: 'Tartarus crashed',
       message,
       stack,
       origin,
@@ -377,7 +377,7 @@ class Server {
       if (typeof Util.emitPushEvent === 'function') {
         Util.emitPushEvent(payload)
       } else {
-        Util.push({ title: 'Pinokio crashed', message })
+        Util.push({ title: 'Tartarus crashed', message })
       }
     } catch (err) {
       console.error('Failed to emit fatal notification:', err)
@@ -1724,7 +1724,7 @@ class Server {
 //        console.log("semver satisfied", config.version, this.kernel.schema)
       } else {
         console.log("semver NOT satisfied", config.version, this.kernel.schema)
-        err = `Please update to the latest Pinokio (current script version: ${config.version}, supported: ${this.kernel.schema})`
+        err = `Please update to the latest Tartarus (current script version: ${config.version}, supported: ${this.kernel.schema})`
       }
     }
 
@@ -3251,11 +3251,11 @@ class Server {
       let configArray = [{
         key: "home",
         val: this.kernel.homedir,
-        placeholder: "Enter the absolute path to use as your Pinokio home folder (D:\\pinokio, /Users/alice/pinokiofs, etc.)"
+        placeholder: "Enter the absolute path to use as your Tartarus home folder (D:\\pinokio, /Users/alice/pinokiofs, etc.)"
 //      }, {
 //        key: "drive",
 //        val: path.resolve(this.kernel.homedir, "drive"),
-//        placeholder: "Pinokio virtual drives folder"
+//        placeholder: "Tartarus virtual drives folder"
       }, {
         key: "theme",
         val: this.theme,
@@ -4949,7 +4949,7 @@ class Server {
       if (process.env.Path) env.Path = process.env.Path
       if (process.env.PATH) env.PATH = process.env.PATH
       sudo.exec(message, {
-        name: "Pinokio",
+        name: "Tartarus",
         env,
       }, (err, stdout, stderr) => {
         if (err) {
@@ -6619,7 +6619,7 @@ class Server {
 
 
 
-    // start proxy for Pinokio itself
+    // start proxy for Tartarus itself
 //    await this.kernel.api.startProxy("/", `http://127.0.0.1:${this.port}`, "/")
 
 //    if (!debug) {
@@ -7699,7 +7699,7 @@ class Server {
         installed,
         category,
         categoryTitle: category === "ide" ? "Desktop Plugin" : "Terminal Plugin",
-        categorySubtitle: category === "ide" ? "Launch externally" : "Launch in Pinokio",
+        categorySubtitle: category === "ide" ? "Launch externally" : "Launch in Tartarus",
         detailUrl: normalizedPluginPath
           ? `/plugin?path=${encodeURIComponent(normalizedPluginPath)}`
           : "",
@@ -7738,7 +7738,7 @@ class Server {
         }
       })
       return [
-        { key: "cli", title: "Terminal Plugins", subtitle: "Launch in Pinokio", items: buckets.cli },
+        { key: "cli", title: "Terminal Plugins", subtitle: "Launch in Tartarus", items: buckets.cli },
         { key: "ide", title: "Desktop Plugins", subtitle: "Launch externally", items: buckets.ide },
       ]
     }
@@ -7859,7 +7859,7 @@ class Server {
         installed: null,
         category,
         categoryTitle: category === "ide" ? "Desktop Plugin" : "Terminal Plugin",
-        categorySubtitle: category === "ide" ? "Launch externally" : "Launch in Pinokio",
+        categorySubtitle: category === "ide" ? "Launch externally" : "Launch in Tartarus",
         detailUrl: `/plugin?path=${encodeURIComponent(normalizedPluginPath)}`,
       }
     }
@@ -8155,7 +8155,7 @@ class Server {
         })
       } else if (ownership === "managed") {
         badges.push({
-          label: "Managed by Pinokio",
+          label: "Managed by Tartarus",
           tone: "neutral"
         })
       } else {
@@ -8201,7 +8201,7 @@ class Server {
       let sourceValue = plugin && plugin.pluginPath ? plugin.pluginPath.replace(/^\//, "") : "Plugin menu item"
       let statusValue = "Not managed in local plugin workspace"
       let githubPanelTitle = "Bundled plugin"
-      let githubPanelCopy = "This plugin is available in Pinokio, but its source is not managed inside your local <code>plugin</code> workspace yet."
+      let githubPanelCopy = "This plugin is available in Tartarus, but its source is not managed inside your local <code>plugin</code> workspace yet."
       let localChangesCopy = "Review the modified plugin files before you commit or publish."
       if (ownership === "local") {
         sourceLabel = "Local folder"
@@ -8214,16 +8214,16 @@ class Server {
       } else if (ownership === "managed") {
         sourceLabel = "Managed folder"
         sourceValue = shareState.localLabel
-        statusValue = changes.length > 0 ? pluralizeTaskFiles(changes.length) : "Updated with Pinokio"
-        githubPanelTitle = "Managed by Pinokio"
-        githubPanelCopy = "This plugin lives inside Pinokio-managed source. Open the folder if you need to inspect it, but don&apos;t treat it as your own publishable repo."
-        localChangesCopy = "These edits live inside Pinokio-managed source and may be overwritten by future Pinokio updates."
+        statusValue = changes.length > 0 ? pluralizeTaskFiles(changes.length) : "Updated with Tartarus"
+        githubPanelTitle = "Managed by Tartarus"
+        githubPanelCopy = "This plugin lives inside Tartarus-managed source. Open the folder if you need to inspect it, but don&apos;t treat it as your own publishable repo."
+        localChangesCopy = "These edits live inside Tartarus-managed source and may be overwritten by future Tartarus updates."
       } else if (ownership === "system") {
         sourceLabel = "System plugin"
         sourceValue = shareState.localLabel || sourceValue
         statusValue = "Read-only"
-        githubPanelTitle = "Built in to Pinokio"
-        githubPanelCopy = "This plugin ships with Pinokio and is not editable from the local plugin workspace."
+        githubPanelTitle = "Built in to Tartarus"
+        githubPanelCopy = "This plugin ships with Tartarus and is not editable from the local plugin workspace."
       }
       const changePreview = changes.slice(0, 6).map((change) => ({
         file: change && change.file ? change.file : "",
@@ -8247,7 +8247,7 @@ class Server {
         githubPanelCopy,
         localChangesCopy,
         remoteLabel,
-        launchSummary: plugin && plugin.category === "ide" ? "Launches externally" : "Launches inside Pinokio",
+        launchSummary: plugin && plugin.category === "ide" ? "Launches externally" : "Launches inside Tartarus",
       }
     }
     this.app.get("/plugins", ex(async (req, res) => {
@@ -9953,7 +9953,7 @@ class Server {
         mode: options.mode === "edit" ? "edit" : "create",
         pageTitle: options.pageTitle || "Create Task",
         titleText: options.titleText || "Create a reusable task.",
-        descriptionText: options.descriptionText || "Write the prompt template once, mark any <code>{{variable}}</code> placeholders, and Pinokio turns them into structured inputs automatically.",
+        descriptionText: options.descriptionText || "Write the prompt template once, mark any <code>{{variable}}</code> placeholders, and Tartarus turns them into structured inputs automatically.",
         formAction: options.formAction || "/tasks",
         submitLabel: options.submitLabel || "Save task",
         backHref: options.backHref || "/tasks",
@@ -10694,12 +10694,12 @@ class Server {
         let configArray = [{
           key: "home",
           val: this.kernel.homedir ? this.kernel.homedir : _home,
-          placeholder: "Enter the absolute path to use as your Pinokio home folder (D\\pinokio, /Users/alice/pinokiofs, etc.)"
+          placeholder: "Enter the absolute path to use as your Tartarus home folder (D\\pinokio, /Users/alice/pinokiofs, etc.)"
 //        }, {
 //          key: "drive",
 //          val: path.resolve(this.kernel.homedir, "drive"),
 //          description: ["Virtual drive folder (Don't change it unless you know what you're doing)"],
-//          placeholder: "Pinokio virtual drives folder"
+//          placeholder: "Tartarus virtual drives folder"
         }, {
           key: "theme",
           val: this.theme,
@@ -11707,7 +11707,7 @@ class Server {
         if (!usesWorkspaceTaskTarget(task.config)) {
           res.status(400).json({
             ok: false,
-            error: "Only workspace tasks can launch from Ask Pinokio."
+            error: "Only workspace tasks can launch from Ask Tartarus."
           })
           return
         }
@@ -13293,7 +13293,7 @@ class Server {
     this.app.get("/settings/docs/:skill/download", ex(async (req, res) => {
       const skill = typeof req.params.skill === "string" ? req.params.skill.trim().toLowerCase() : ""
       if (!this.kernel || !this.kernel.homedir) {
-        res.status(404).send("Pinokio home not configured")
+        res.status(404).send("Tartarus home not configured")
         return
       }
       const managedSkill = await ManagedSkills.getManagedSkill(this.kernel, skill, { sync: false })
@@ -16372,7 +16372,7 @@ class Server {
         machine: peerInfo && peerInfo.name ? peerInfo.name : (this.kernel.peer && this.kernel.peer.name ? this.kernel.peer.name : ""),
         host: peerInfo && peerInfo.host ? peerInfo.host : "",
         shell: shellUrl ? {
-          name: "Pinokio",
+          name: "Tartarus",
           url: shellUrl
         } : null,
         apps,
@@ -16798,7 +16798,7 @@ class Server {
     }))
     this.app.post("/pinokio/install/exists", ex(async (req, res) => {
       if (!this.kernel || !this.kernel.homedir) {
-        return res.status(500).json({ error: "Pinokio home directory not set" })
+        return res.status(500).json({ error: "Tartarus home directory not set" })
       }
 
       const body = req.body && typeof req.body === "object" ? req.body : {}

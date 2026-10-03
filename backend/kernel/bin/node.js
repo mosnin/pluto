@@ -11,7 +11,7 @@ const normalizeVersion = (version) => {
 }
 
 class Node {
-  description = "Installs Node.js and pnpm in the Pinokio environment."
+  description = "Installs Node.js and pnpm in the Tartarus environment."
   cmd() {
     return `nodejs=${NODE_VERSION} pnpm=${PNPM_VERSION}`
   }
