@@ -1,0 +1,11 @@
+.btn {
+  background: greenyellow !important;
+  color: rgba(0,0,0,0.8) !important;
+}
+body, .terminal-container {
+  background: #0f1610 !important;
+}
+header, footer {
+  color:: #637d75 !important;
+  background: #0f1610 !important;
+}
