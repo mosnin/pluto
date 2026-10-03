@@ -816,9 +816,9 @@ test("home actions drawer background follows the home page surface", async () =>
   const homeView = await fs.readFile(path.resolve(root, "server/views/index.ejs"), "utf8")
 
   assert.match(homeView, /body\.is-home \{[\s\S]*--home-page-nav-bg: #ffffff;[\s\S]*background: #ffffff;/)
-  assert.match(homeView, /body\.dark\.is-home \{[\s\S]*--home-page-nav-bg: #1b1c1d;[\s\S]*background: #1b1c1d;/)
+  assert.match(homeView, /body\.dark\.is-home \{[\s\S]*--home-page-nav-bg: #090909;[\s\S]*background: #090909;/)
   assert.match(homeView, /\.home-actions-dialog \{[\s\S]*background: var\(--home-page-nav-bg, #ffffff\);/)
-  assert.match(homeView, /body\.dark \.home-actions-dialog \{[\s\S]*background: var\(--home-page-nav-bg, #1b1c1d\);/)
+  assert.match(homeView, /body\.dark \.home-actions-dialog \{[\s\S]*background: var\(--home-page-nav-bg, #090909\);/)
   assert.doesNotMatch(homeView, /body\.dark \.home-actions-dialog \{[\s\S]*background: rgba\(18, 20, 25, 0\.98\);/)
 })
 

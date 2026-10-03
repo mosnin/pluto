@@ -1,0 +1,62 @@
+/* Tartarus global theme. Injected after every page's own styles
+ * (see the TARTARUS_HEAD middleware in server/index.js). */
+
+:root {
+  color-scheme: dark;
+  --tartarus-bg: #000000;
+  --tartarus-surface: #0a0a0a;
+  --tartarus-border: #1c1c1c;
+  --tartarus-text: #ededed;
+  --tartarus-muted: #8a8a8a;
+}
+
+html,
+body.dark {
+  background-color: var(--tartarus-bg) !important;
+}
+
+body.dark {
+  --dark-bg: var(--tartarus-bg);
+  --dark-nav-bg: var(--tartarus-bg);
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+/* Thin, quiet scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #262626 transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+  background-clip: padding-box;
+}
+
+/* Thin-line sidebar toggle to match the Phosphor Light icons */
+body.main-sidebar-page .sidebar-toggle-frame {
+  border-width: 1px;
+}
+body.main-sidebar-page .sidebar-toggle-panel {
+  left: 5px;
+  width: 1px;
+  background: currentColor;
+}
+body.main-sidebar-page .sidebar-toggle-content {
+  height: 1px;
+}

@@ -5,7 +5,7 @@
 }
 
 body.dark {
-  background: rgb(27, 28, 29);
+  background: rgb(9, 9, 9);
 }
 body.dark #open {
   background: rgba(255,255,255,0.1);
@@ -28,8 +28,8 @@ body {
   padding: 80px 100px;
   font: 13px "Helvetica Neue", "Lucida Grande", "Arial";
   /*
-  background: #ECE9E9 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#ECE9E9));
-  background: #ECE9E9 -moz-linear-gradient(top, #fff, #ECE9E9);
+  background: #ebebeb -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#ebebeb));
+  background: #ebebeb -moz-linear-gradient(top, #fff, #ebebeb);
   background-repeat: no-repeat;
   */
   color: #555;
@@ -37,7 +37,7 @@ body {
 }
 h1, h2, h3 {
   font-size: 22px;
-  color: #343434;
+  color: #181818;
 }
 h1 em, h2 em {
   padding: 0 5px;
@@ -60,7 +60,7 @@ ul li {
 }
 ul li:hover {
   cursor: pointer;
-  color: #2e2e2e;
+  color: #141414;
 }
 ul li .path {
   padding-left: 5px;
@@ -81,7 +81,7 @@ a {
   text-decoration: none;
 }
 a:hover {
-  color: #303030;
+  color: #151515;
 }
 #stacktrace {
   margin-top: 15px;

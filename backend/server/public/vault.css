@@ -469,7 +469,7 @@ body[data-vault-mode="app"] .vault-overview {
   color: var(--task-muted);
 }
 .vault-scan-control > .vault-scan-size-menu > .vault-scan-size-trigger.primary {
-  border-left-color: color-mix(in srgb, #101828 22%, var(--task-accent-contrast));
+  border-left-color: color-mix(in srgb, #090909 22%, var(--task-accent-contrast));
 }
 .vault-scan-size-chevron {
   font-size: 8px;
@@ -557,13 +557,13 @@ body[data-vault-mode="app"] .vault-overview {
 .vault-button.primary {
   border-color: var(--task-accent-contrast);
   background: var(--task-accent-contrast);
-  color: #101828;
+  color: #090909;
   font-weight: 650;
 }
 .vault-button.primary:hover {
   border-color: color-mix(in srgb, var(--task-accent-contrast) 88%, var(--task-panel));
   background: color-mix(in srgb, var(--task-accent-contrast) 88%, var(--task-panel));
-  color: #101828;
+  color: #090909;
 }
 .vault-button:disabled { opacity: .5; cursor: default; }
 .vault-icon-button {
@@ -1737,7 +1737,7 @@ body.vault-page .vault-view-tabs {
   padding: 1px 5px;
   border-radius: 5px;
   background: color-mix(in srgb, var(--vault-warning) 72%, var(--task-panel));
-  color: #241300;
+  color: #030303;
   font-weight: 720;
   line-height: 1.35;
   text-align: center;

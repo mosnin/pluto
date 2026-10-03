@@ -144,7 +144,7 @@ const ModalInput = async (params, uri) => {
     ...(isStyledFormModal ? {
       buttonsStyling: false,
       width: modalWidth,
-      backdrop: "rgba(10, 10, 12, 0.42)"
+      backdrop: "rgba(0, 0, 0, 0.42)"
     } : {}),
     //focusConfirm: false,
     confirmButtonText: params.confirm || 'Done',

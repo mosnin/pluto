@@ -74,7 +74,7 @@ body.dark .logs-report-status.is-error {
   border: 1px solid transparent;
   border-radius: 7px;
   padding: 7px 8px;
-  background: rgba(15, 23, 42, 0.025);
+  background: rgba(9, 9, 9, 0.025);
   color: inherit;
   cursor: pointer;
   text-align: left;

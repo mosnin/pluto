@@ -3257,10 +3257,6 @@ class Server {
 //        val: path.resolve(this.kernel.homedir, "drive"),
 //        placeholder: "Tartarus virtual drives folder"
       }, {
-        key: "theme",
-        val: this.theme,
-        options: ["light", "dark"]
-      }, {
         key: "mode",
         val: this.mode,
         options: ["desktop", "background"]
@@ -5312,7 +5308,8 @@ class Server {
   async syncConfig() {
 
     // 1. THEME
-    this.theme = this.kernel.store.get("theme") || "light"
+    // Tartarus ships a single all-black theme.
+    this.theme = "dark"
     this.mode = this.kernel.store.get("mode") || "desktop"
 
     // when loaded in electron but in minimal mode,
@@ -5325,7 +5322,7 @@ class Server {
 
     if (this.theme === "dark") {
       this.colors = {
-        color: "#1b1c1d",
+        color: "#000000",
 //        symbolColor: "white"
         symbolColor: "#F4F4F4"
 //        color: "rgb(31, 29, 39)",
@@ -6713,6 +6710,28 @@ class Server {
     this.app.use(cors({
       origin: '*'
     }));
+
+    // Tartarus: append the global theme + thin icon stylesheets to every
+    // rendered page so they win over each view's own styles.
+    const TARTARUS_HEAD = '<link rel="stylesheet" href="/phosphor/phosphor-light.css"><link rel="stylesheet" href="/tartarus-icons.css"><link rel="stylesheet" href="/tartarus.css">'
+    this.app.use((req, res, next) => {
+      const render = res.render.bind(res)
+      res.render = (view, options, callback) => {
+        if (typeof options === 'function') {
+          callback = options
+          options = {}
+        }
+        render(view, options, (err, html) => {
+          if (!err && typeof html === 'string' && html.includes('</head>')) {
+            html = html.replace('</head>', `${TARTARUS_HEAD}</head>`)
+          }
+          if (callback) return callback(err, html)
+          if (err) return req.next(err)
+          res.send(html)
+        })
+      }
+      next()
+    })
 
     this.app.use((req, res, next) => {
       const userAgent = req.get('User-Agent') || '';

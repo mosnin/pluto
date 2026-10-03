@@ -872,9 +872,9 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   color: #f8fafc;
-  background: rgba(15, 23, 42, 0.97);
+  background: rgba(9, 9, 9, 0.97);
   border-radius: 10px;
-  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.45);
+  box-shadow: 0 16px 32px rgba(9, 9, 9, 0.45);
   padding: 8px;
   display: none;
 }
@@ -894,7 +894,7 @@
 }
 .pinokio-notify-divider {
   height: 1px;
-  background: rgba(148, 163, 184, 0.15);
+  background: rgba(166, 166, 166, 0.15);
   margin: 4px 0;
 }
 .pinokio-notify-item {
@@ -913,10 +913,10 @@
 }
 .pinokio-notify-item:hover,
 .pinokio-notify-item:focus-visible {
-  background: rgba(148, 163, 184, 0.12);
+  background: rgba(166, 166, 166, 0.12);
 }
 .pinokio-notify-item[data-selected="true"] {
-  background: rgba(148, 163, 184, 0.18);
+  background: rgba(166, 166, 166, 0.18);
 }
 .pinokio-notify-item .pinokio-notify-item-icon {
   width: 16px;
@@ -934,7 +934,7 @@
 .pinokio-notify-hint {
   margin: 2px 2px 0;
   font-size: 11px;
-  color: rgba(148, 163, 184, 0.75);
+  color: rgba(166, 166, 166, 0.75);
 }
 .pinokio-notify-loading {
   display: flex;
@@ -942,7 +942,7 @@
   gap: 8px;
   padding: 6px 10px;
   font-size: 12px;
-  color: rgba(148, 163, 184, 0.9);
+  color: rgba(166, 166, 166, 0.9);
 }
 .pinokio-notify-overlay {
   position: fixed;

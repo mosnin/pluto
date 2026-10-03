@@ -52,7 +52,7 @@ test('main sidebar styles the Home Server ON/OFF badge in the tab status column'
   assert.match(style, /\.main-sidebar \.main-sidebar-status-badge\[hidden\]/)
   assert.match(style, /\.main-sidebar \.main-sidebar-status-badge\[data-state="on"\]/)
   assert.match(style, /body\.dark \.main-sidebar \.main-sidebar-status-badge\[data-state="on"\]/)
-  assert.match(badgeRule, /background:\s*rgba\(15,\s*23,\s*42,\s*0\.07\)/)
+  assert.match(badgeRule, /background:\s*rgba\(9,\s*9,\s*9,\s*0\.07\)/)
   assert.match(darkBadgeRule, /background:\s*rgba\(255,\s*255,\s*255,\s*0\.08\)/)
   assert.doesNotMatch(`${badgeRule}\n${darkBadgeRule}`, /rgba\(207,\s*69,\s*69,\s*0\.12\)/)
   assert.doesNotMatch(`${badgeRule}\n${darkBadgeRule}`, /#fca5a5/)

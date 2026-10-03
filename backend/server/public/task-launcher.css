@@ -1,10 +1,10 @@
 body.task-launcher-page {
   --task-bg: #ffffff;
   --task-panel: rgba(255, 255, 255, 0.98);
-  --task-border: rgba(15, 23, 42, 0.12);
-  --task-border-strong: rgba(15, 23, 42, 0.18);
-  --task-text: #101828;
-  --task-muted: #5f6b7a;
+  --task-border: rgba(9, 9, 9, 0.12);
+  --task-border-strong: rgba(9, 9, 9, 0.18);
+  --task-text: #090909;
+  --task-muted: #6d6d6d;
   --task-soft: #eef2f7;
   --task-accent: var(--pinokio-chrome-accent-fg-light);
   --task-accent-surface: var(--pinokio-chrome-accent-bg-light);
@@ -13,7 +13,7 @@ body.task-launcher-page {
   --task-run-button-bg: var(--task-accent-contrast);
   --task-run-button-hover: color-mix(in srgb, var(--task-run-button-bg) 88%, var(--task-panel));
   --task-run-button-color: var(--task-accent-surface);
-  --task-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+  --task-shadow: 0 18px 44px rgba(9, 9, 9, 0.08);
   background: none;
   color: var(--task-text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -33,12 +33,12 @@ body.task-launcher-page::before {
 }
 
 body.dark.task-launcher-page {
-  --task-bg: #1b1c1d;
-  --task-panel: rgba(13, 17, 24, 0.96);
+  --task-bg: #090909;
+  --task-panel: rgba(3, 3, 3, 0.96);
   --task-border: rgba(255, 255, 255, 0.08);
   --task-border-strong: rgba(255, 255, 255, 0.14);
   --task-text: #f5f7fb;
-  --task-muted: #9aa4b2;
+  --task-muted: #a6a6a6;
   --task-soft: rgba(255, 255, 255, 0.04);
   --task-accent: var(--pinokio-chrome-accent-fg-dark);
   --task-accent-surface: var(--pinokio-chrome-accent-bg-dark);
@@ -107,7 +107,7 @@ body.plugin-detail-page .swal2-popup.pinokio-modern-modal {
   border: 1px solid var(--task-border) !important;
   border-radius: 8px !important;
   background: var(--task-panel) !important;
-  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16) !important;
+  box-shadow: 0 18px 50px rgba(9, 9, 9, 0.16) !important;
   color: var(--task-text) !important;
   overflow: hidden !important;
 }
@@ -1346,13 +1346,13 @@ body.dark .task-badge-warning {
 
 body.dark .task-select option {
   background: #ffffff;
-  color: #111827;
+  color: #090909;
 }
 
 body.dark.settings-page .item select option,
 body.dark.settings-page .debug-shell-controls select option {
   background: #ffffff;
-  color: #111827;
+  color: #090909;
 }
 
 .task-textarea {
@@ -2299,7 +2299,7 @@ body.task-share-overlay-open {
 .task-share-overlay-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(8, 10, 14, 0.72);
+  background: rgba(0, 0, 0, 0.72);
 }
 
 .task-share-overlay-panel {
@@ -2862,7 +2862,7 @@ body.connect-page .connect-service-open {
 
 .plugin-modal-overlay {
   z-index: 2200;
-  background: rgba(10, 10, 12, 0.42);
+  background: rgba(0, 0, 0, 0.42);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -2876,7 +2876,7 @@ body.connect-page .connect-service-open {
   border-radius: 8px;
   border: 1px solid var(--task-border);
   background: var(--task-panel);
-  box-shadow: 0 18px 56px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 18px 56px rgba(9, 9, 9, 0.14);
   gap: 0;
   overflow: hidden;
 }

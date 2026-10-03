@@ -638,26 +638,26 @@ class ScreenCaptureModal {
 .modal-overlay{position:fixed;inset:0;padding:24px;display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 160ms ease,visibility 0s linear 160ms;}
 .modal-overlay.is-visible{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s;}
 @media (prefers-reduced-motion: reduce){.modal-overlay{transition:none;}.capture-modal{animation:none;}}
-.capture-modal-overlay{background:rgba(9,11,15,0.34);-webkit-backdrop-filter:none;backdrop-filter:none;}
+.capture-modal-overlay{background:rgba(0, 0, 0,0.34);-webkit-backdrop-filter:none;backdrop-filter:none;}
 body.dark .capture-modal-overlay{background:rgba(0,0,0,0.58);}
-.capture-modal{width:min(360px,calc(100% - 32px));padding:20px;border-radius:8px;background:#fff;border:1px solid rgba(24,24,27,0.12);box-shadow:0 18px 50px rgba(15,23,42,0.16);display:flex;flex-direction:column;gap:14px;text-align:center;color:#18181b;}
-body.dark .capture-modal{background:#1b1c1d;border-color:rgba(255,255,255,0.1);color:rgba(250,250,250,0.94);box-shadow:0 24px 72px rgba(0,0,0,0.42);}
+.capture-modal{width:min(360px,calc(100% - 32px));padding:20px;border-radius:8px;background:#fff;border:1px solid rgba(8, 8, 8,0.12);box-shadow:0 18px 50px rgba(9, 9, 9,0.16);display:flex;flex-direction:column;gap:14px;text-align:center;color:#080808;}
+body.dark .capture-modal{background:#090909;border-color:rgba(255,255,255,0.1);color:rgba(250,250,250,0.94);box-shadow:0 24px 72px rgba(0,0,0,0.42);}
 .capture-modal-title{font-size:16px;line-height:1.25;font-weight:600;letter-spacing:0;color:inherit;}
 body.dark .capture-modal-title{color:inherit;}
-.capture-modal-description{font-size:12px;line-height:1.45;color:#71717a;}
-body.dark .capture-modal-description{color:rgba(229,231,235,0.62);}
+.capture-modal-description{font-size:12px;line-height:1.45;color:#767676;}
+body.dark .capture-modal-description{color:rgba(232, 232, 232,0.62);}
 .capture-modal-actions{display:flex;justify-content:center;gap:8px;}
 .capture-modal-button{min-height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.14s ease,color 0.14s ease,border-color 0.14s ease;}
-.capture-modal-button.primary{background:#18181b;color:#fff;border-color:#18181b;box-shadow:none;}
-.capture-modal-button.primary:hover{background:#27272a;border-color:#27272a;box-shadow:none;transform:none;}
-body.dark .capture-modal-button.primary{background:rgba(250,250,250,0.94);border-color:rgba(250,250,250,0.94);color:#1b1c1d;}
+.capture-modal-button.primary{background:#080808;color:#fff;border-color:#080808;box-shadow:none;}
+.capture-modal-button.primary:hover{background:#111111;border-color:#111111;box-shadow:none;transform:none;}
+body.dark .capture-modal-button.primary{background:rgba(250,250,250,0.94);border-color:rgba(250,250,250,0.94);color:#090909;}
 body.dark .capture-modal-button.primary:hover{background:#fff;border-color:#fff;}
-.capture-modal-button.secondary{background:transparent;color:#52525b;border-color:rgba(24,24,27,0.12);}
-.capture-modal-button.secondary:hover{background:rgba(24,24,27,0.06);border-color:rgba(24,24,27,0.2);box-shadow:none;color:#18181b;}
-body.dark .capture-modal-button.secondary{background:transparent;border-color:rgba(255,255,255,0.1);color:rgba(229,231,235,0.7);}
+.capture-modal-button.secondary{background:transparent;color:#575757;border-color:rgba(8, 8, 8,0.12);}
+.capture-modal-button.secondary:hover{background:rgba(8, 8, 8,0.06);border-color:rgba(8, 8, 8,0.2);box-shadow:none;color:#080808;}
+body.dark .capture-modal-button.secondary{background:transparent;border-color:rgba(255,255,255,0.1);color:rgba(232, 232, 232,0.7);}
 body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.18);color:rgba(250,250,250,0.94);}
 .capture-modal-button:active{transform:translateY(1px);}
-.capture-modal-button:focus-visible{outline:2px solid rgba(24,24,27,0.28);outline-offset:2px;}
+.capture-modal-button:focus-visible{outline:2px solid rgba(8, 8, 8,0.28);outline-offset:2px;}
 .modal-overlay.is-visible .capture-modal{animation:captureModalPop 160ms ease-out;}
 @media (max-width: 640px){.modal-overlay{padding:16px;}.capture-modal{width:calc(100% - 24px);padding:18px;}.capture-modal-actions{flex-direction:column;}.capture-modal-button{width:100%;}}
 @keyframes captureModalPop{from{opacity:0;transform:scale(0.97) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
@@ -815,7 +815,7 @@ body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07
       height:min(80vh,720px);
       display:grid;
       grid-template-rows:auto 1fr auto;
-      background:#111;
+      background:#030303;
       border-radius:14px;
       overflow:hidden;
       box-shadow:0 20px 60px rgba(0,0,0,0.6);
@@ -827,7 +827,7 @@ body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07
       display:flex;
       align-items:center;
       justify-content:space-between;
-      background:#181818;
+      background:#070707;
       border-bottom:1px solid rgba(255,255,255,0.05);
       color:#eee;
     `;
@@ -856,7 +856,7 @@ body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07
     this.btnReset = document.createElement('button');
     this.btnReset.textContent = 'Reset selection';
     this.btnReset.style.cssText = this.buttonStyle({
-      background: '#222',
+      background: '#0d0d0d',
       color: '#ccc'
     });
     this.btnReset.addEventListener('click', () => {
@@ -901,7 +901,7 @@ body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07
       display:flex;
       align-items:center;
       justify-content:space-between;
-      background:#181818;
+      background:#070707;
       border-top:1px solid rgba(255,255,255,0.05);
       color:#ddd;
       font-size:14px;
@@ -927,7 +927,7 @@ body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07
     this.btnCancel = document.createElement('button');
     this.btnCancel.textContent = 'Cancel';
     this.btnCancel.style.cssText = this.buttonStyle({
-      background: '#1a1a1a',
+      background: '#080808',
       color: '#ccc'
     });
     this.btnCancel.addEventListener('click', () => this.handleCancel());
@@ -951,7 +951,7 @@ body.dark .capture-modal-button.secondary:hover{background:rgba(255,255,255,0.07
   }
 
   buttonStyle({ primary = false, background, color } = {}) {
-    const baseBg = primary ? '#3a82ff' : (background || '#252525');
+    const baseBg = primary ? '#3a82ff' : (background || '#0f0f0f');
     const baseColor = primary ? '#fff' : (color || '#eee');
     return `
       padding:10px 18px;
@@ -2122,7 +2122,7 @@ if (typeof hotkeys === 'function') {
       try {
         const style = document.createElement('style');
         style.textContent = `
-.pinokio-notify-indicator{position:fixed;top:12px;right:12px;z-index:2147483647;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(15,23,42,0.92);color:#fff;font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.35)}
+.pinokio-notify-indicator{position:fixed;top:12px;right:12px;z-index:2147483647;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(9, 9, 9,0.92);color:#fff;font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.35)}
 .pinokio-notify-indicator .bell{font-size:14px}
 .pinokio-notify-indicator.show{display:inline-flex;animation:pinokioNotifyPop 160ms ease-out, pinokioNotifyFade 1600ms ease-in 700ms forwards}
 @keyframes pinokioNotifyPop{from{transform:translateY(-6px) scale(.98);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
@@ -2188,22 +2188,22 @@ if (typeof hotkeys === 'function') {
       try {
         const style = document.createElement('style');
         style.textContent = `
-.pinokio-fatal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:2147483646;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.pinokio-fatal-overlay{position:fixed;inset:0;background:rgba(9, 9, 9,0.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:2147483646;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .pinokio-fatal-overlay.show{opacity:1;pointer-events:auto}
-.pinokio-fatal-panel{max-width:960px;width:100%;background:#0f172a;color:#f8fafc;border-radius:18px;box-shadow:0 40px 120px rgba(0,0,0,.55);padding:24px;display:flex;flex-direction:column;gap:16px;border:1px solid rgba(148,163,184,.35);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+.pinokio-fatal-panel{max-width:960px;width:100%;background:#090909;color:#f8fafc;border-radius:18px;box-shadow:0 40px 120px rgba(0,0,0,.55);padding:24px;display:flex;flex-direction:column;gap:16px;border:1px solid rgba(166, 166, 166,.35);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
 .pinokio-fatal-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start}
 .pinokio-fatal-header h2{margin:0;font-size:20px;line-height:1.3;font-weight:700}
-.pinokio-fatal-header small{display:block;margin-top:4px;color:rgba(226,232,240,.85);font-size:13px}
+.pinokio-fatal-header small{display:block;margin-top:4px;color:rgba(233, 233, 233,.85);font-size:13px}
 .pinokio-fatal-message{font-size:15px;line-height:1.6;margin:0;color:#cbd5f5}
-.pinokio-fatal-stack{background:#020617;color:#f1f5f9;font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace;font-size:13px;line-height:1.45;border-radius:12px;padding:16px;max-height:320px;overflow:auto;border:1px solid rgba(15,118,110,.4)}
+.pinokio-fatal-stack{background:#000000;color:#f1f5f9;font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace;font-size:13px;line-height:1.45;border-radius:12px;padding:16px;max-height:320px;overflow:auto;border:1px solid rgba(15,118,110,.4)}
 .pinokio-fatal-meta{font-size:13px;color:#cbd5f5;display:flex;flex-wrap:wrap;gap:12px}
 .pinokio-fatal-actions{display:flex;flex-wrap:wrap;gap:10px}
 .pinokio-fatal-actions button{border:none;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14px;cursor:pointer;transition:opacity .2s ease}
-.pinokio-fatal-actions button.primary{background:#f97316;color:#0f172a}
-.pinokio-fatal-actions button.secondary{background:rgba(148,163,184,.2);color:#e2e8f0}
+.pinokio-fatal-actions button.primary{background:#f97316;color:#090909}
+.pinokio-fatal-actions button.secondary{background:rgba(166, 166, 166,.2);color:#e9e9e9}
 .pinokio-fatal-actions button:hover{opacity:.9}
-.pinokio-fatal-close{background:none;border:none;color:#e2e8f0;font-size:24px;line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px}
-.pinokio-fatal-close:hover{background:rgba(148,163,184,.15)}
+.pinokio-fatal-close{background:none;border:none;color:#e9e9e9;font-size:24px;line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px}
+.pinokio-fatal-close:hover{background:rgba(166, 166, 166,.15)}
 @media (max-width:720px){.pinokio-fatal-panel{padding:18px}.pinokio-fatal-stack{max-height:220px;font-size:12px}}
         `;
         document.head.appendChild(style);

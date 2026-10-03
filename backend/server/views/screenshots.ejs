@@ -488,7 +488,7 @@ body.dark .gallery-item {
   position: relative;
   width: 100%;
   height: 200px;
-  background: #050505;
+  background: #000000;
   overflow: hidden;
 }
 
@@ -787,10 +787,10 @@ body.dark.screenshots-page .gallery-item {
 }
 body.screenshots-page .gallery-item:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 16px 28px rgba(9, 9, 9, 0.08);
 }
 body.screenshots-page .gallery-item-media {
-  background: color-mix(in srgb, var(--task-soft) 38%, #02060d);
+  background: color-mix(in srgb, var(--task-soft) 38%, #000000);
 }
 body.screenshots-page .gallery-item-badge {
   background: color-mix(in srgb, var(--task-bg) 80%, black 20%);
@@ -1279,7 +1279,7 @@ class ScreenshotGallery {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d',
+      cancelButtonColor: '#757575',
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel'
     }).then((result) => {

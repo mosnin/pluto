@@ -967,7 +967,7 @@
         if (!styleInjected) {
           const style = document.createElement('style');
           style.textContent = `
-.pinokio-notify-indicator{position:fixed;top:12px;right:12px;z-index:2147483647;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(15,23,42,0.92);color:#fff;font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.35)}
+.pinokio-notify-indicator{position:fixed;top:12px;right:12px;z-index:2147483647;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(9, 9, 9,0.92);color:#fff;font:600 12px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.35)}
 .pinokio-notify-indicator .bell{font-size:14px}
 .pinokio-notify-indicator.show{display:inline-flex;animation:pinokioNotifyPop 160ms ease-out, pinokioNotifyFade 1600ms ease-in 700ms forwards}
 @keyframes pinokioNotifyPop{from{transform:translateY(-6px) scale(.98);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}

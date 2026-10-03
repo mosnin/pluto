@@ -1,0 +1,11 @@
+/* Phosphor Icons v2.1.2, Light weight (MIT, https://phosphoricons.com) */
+@font-face {
+  font-family: "Phosphor-Light";
+  src:
+    url("./Phosphor-Light.woff2") format("woff2"),
+    url("./Phosphor-Light.woff") format("woff"),
+    url("./Phosphor-Light.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}

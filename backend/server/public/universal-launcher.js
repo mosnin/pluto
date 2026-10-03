@@ -665,7 +665,7 @@
       buttonsStyling: false,
       focusConfirm: false,
       showLoaderOnConfirm: true,
-      backdrop: 'rgba(9, 11, 15, 0.58)',
+      backdrop: 'rgba(0, 0, 0, 0.58)',
       width: 'min(520px, 92vw)',
       customClass: {
         container: 'universal-launcher-download-container',
