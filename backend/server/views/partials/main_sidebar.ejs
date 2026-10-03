@@ -1,0 +1,377 @@
+<%
+  const sidebarSelected = (typeof selected !== "undefined" && selected) ? String(selected) : "";
+%>
+<button type="button" class="main-sidebar-mobile-toggle" data-main-sidebar-toggle aria-label="Open navigation" aria-expanded="false">
+  <i class="fa-solid fa-bars" aria-hidden="true"></i>
+</button>
+<button type="button" class="main-sidebar-mobile-backdrop" data-main-sidebar-backdrop aria-label="Close navigation" hidden></button>
+<button type="button" class="main-sidebar-peek-trigger" data-main-sidebar-peek-trigger aria-label="Show navigation" aria-controls="main-sidebar" aria-expanded="false"></button>
+<aside class="main-sidebar" id="main-sidebar" aria-label="Primary navigation">
+  <nav class="main-sidebar-nav" aria-label="Pinokio navigation">
+    <div class='main-sidebar-section main-sidebar-section-actions' aria-label="Actions">
+      <a class='tab main-sidebar-action <%= sidebarSelected === 'home' ? 'selected' : '' %>' id='home' href="/home"<% if (sidebarSelected === 'home') { %> aria-current="page"<% } %>><i class="fa-solid fa-layer-group main-sidebar-action-icon"></i><div class='caption'>My Apps</div></a>
+      <a class='tab main-sidebar-action <%= sidebarSelected === 'explore' ? 'selected' : '' %>' id='explore' href="/home?mode=explore"<% if (sidebarSelected === 'explore') { %> aria-current="page"<% } %>><i class="fa-solid fa-globe main-sidebar-action-icon"></i><div class='caption'>Explore</div></a>
+      <details class="universal-create-menu">
+        <summary class="tab main-sidebar-action" aria-label="Create options"><i class="fa-solid fa-plus main-sidebar-action-icon"></i><div class='caption'>Create</div></summary>
+        <div class="universal-create-dropdown">
+          <button type="button" data-universal-launcher-open="create_app">Create app</button>
+          <button type="button" data-universal-launcher-open="create_plugin">Create plugin</button>
+        </div>
+      </details>
+      <button type="button" class="tab main-sidebar-action" data-universal-launcher-open="ask" aria-label="Ask Pinokio">
+        <span class="main-sidebar-action-icon ask-pinokio-icon" aria-hidden="true"></span>
+        <div class='caption'>Ask</div>
+      </button>
+    </div>
+
+    <div class='main-sidebar-section' aria-label="Manage">
+      <div class="main-sidebar-section-title">Manage</div>
+      <% if (typeof vaultEnabled === "undefined" || vaultEnabled) { %>
+        <a class="tab <%= sidebarSelected === 'vault' ? 'selected' : '' %>" href="/vault"><i class="fa-solid fa-hard-drive"></i><div class='caption'>Disk Saver</div></a>
+      <% } %>
+      <a class="tab <%= sidebarSelected === 'checkpoints' ? 'selected' : '' %>" href="/checkpoints"><i class="fa-solid fa-clock-rotate-left"></i><div class='caption'>Checkpoints</div></a>
+      <a class="tab <%= sidebarSelected === 'tools' ? 'selected' : '' %>" href="/tools"><i class="fa-solid fa-toolbox"></i><div class='caption'>Tools</div></a>
+      <a class="tab <%= sidebarSelected === 'plugins' ? 'selected' : '' %>" href="/plugins"><i class="fa-solid fa-plug-circle-bolt"></i><div class='caption'>Plugins</div></a>
+      <a class="tab <%= sidebarSelected === 'tasks' ? 'selected' : '' %>" href="/tasks"><i class="fa-solid fa-list-check"></i><div class='caption'>Tasks</div></a>
+      <a class="tab <%= sidebarSelected === 'skills' ? 'selected' : '' %>" href="/skills"><i class="fa-solid fa-wand-magic-sparkles"></i><div class='caption'>Skills</div></a>
+      <a class="tab <%= sidebarSelected === 'logs' ? 'selected' : '' %>" id='genlog' href="/logs"><i class="fa-solid fa-laptop-code"></i><div class='caption'>Logs</div></a>
+    </div>
+
+    <div class='main-sidebar-section' aria-label="Configure">
+      <div class="main-sidebar-section-title">Configure</div>
+      <a href="/network" class="tab <%= sidebarSelected === 'network' ? 'selected' : '' %>" data-main-sidebar-home-server-tab><i class="fa-solid fa-wifi"></i><div class='caption'>Home Server</div><span class="main-sidebar-status-badge" data-main-sidebar-home-server-status aria-hidden="true" hidden></span></a>
+      <a class="tab <%= sidebarSelected === 'autolaunch' ? 'selected' : '' %>" href="/autolaunch"><i class="fa-solid fa-power-off"></i><div class='caption'>Autolaunch</div></a>
+      <a href="/connect" class="tab <%= sidebarSelected === 'connect' ? 'selected' : '' %>"><i class="fa-solid fa-plug"></i><div class='caption'>Login</div></a>
+      <a class="tab <%= sidebarSelected === 'settings' ? 'selected' : '' %>" href="/home?mode=settings"><i class="fa-solid fa-gear"></i><div class='caption'>Settings</div></a>
+    </div>
+
+    <div class='main-sidebar-section main-sidebar-section-connect' aria-label="Community links">
+      <a class="tab" href="https://x.com/cocktailpeanut" target="_blank" rel="noopener noreferrer" data-main-sidebar-browser-link><i class="fa-brands fa-x-twitter"></i><div class='caption'>Updates</div></a>
+      <a class="tab" href="https://discord.gg/TQdNwadtE4" target="_blank" rel="noopener noreferrer" data-main-sidebar-browser-link><i class="fa-brands fa-discord"></i><div class='caption'>Discord</div></a>
+      <a class="tab" href="https://pinokiocomputer.substack.com" target="_blank" rel="noopener noreferrer" data-main-sidebar-browser-link><i class="fa-solid fa-newspaper"></i><div class='caption'>Newsletter</div></a>
+    </div>
+  </nav>
+</aside>
+<script>
+  (() => {
+    const body = document.body;
+
+    const headerToggle = document.getElementById("minimize-header");
+    const sidebar = document.getElementById("main-sidebar");
+    const peekTrigger = document.querySelector("[data-main-sidebar-peek-trigger]");
+
+    if (sidebar) {
+      sidebar.querySelectorAll("[data-main-sidebar-browser-link]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const href = link.getAttribute("href") || "";
+          if (!href) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const agent = document.body ? document.body.getAttribute("data-agent") : null;
+          if (agent === "electron") {
+            window.open(href, "_blank", "browser");
+          } else {
+            window.open(href, "_blank");
+          }
+        });
+      });
+    }
+
+    const initHomeServerStatusBadge = () => {
+      if (!sidebar || window.__pinokioMainSidebarHomeServerStatusInit) return;
+      const homeServerTab = sidebar.querySelector("[data-main-sidebar-home-server-tab]");
+      const homeServerBadge = sidebar.querySelector("[data-main-sidebar-home-server-status]");
+      if (!homeServerTab || !homeServerBadge) return;
+
+      window.__pinokioMainSidebarHomeServerStatusInit = true;
+
+      const renderHomeServerStatus = (data) => {
+        const status = data && data.status ? String(data.status) : "off";
+        const badgeState = status === "on" ? "on" : "off";
+        const label = badgeState === "on" ? "ON" : "OFF";
+        homeServerBadge.textContent = label;
+        homeServerBadge.hidden = false;
+        homeServerBadge.dataset.state = badgeState;
+        homeServerTab.dataset.homeServerStatus = badgeState;
+        homeServerTab.setAttribute("aria-label", `Home Server, ${label}`);
+        homeServerTab.setAttribute("title", `Home Server ${label}`);
+      };
+
+      document.addEventListener("pinokio:home-server-status", (event) => {
+        const detail = event && event.detail ? event.detail : {};
+        renderHomeServerStatus(detail.payload || detail);
+      });
+
+      fetch("/info/home-server", { cache: "no-store" })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Home Server status failed: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(renderHomeServerStatus)
+        .catch(() => {
+          homeServerBadge.hidden = true;
+          delete homeServerBadge.dataset.state;
+          delete homeServerTab.dataset.homeServerStatus;
+          homeServerTab.removeAttribute("aria-label");
+          homeServerTab.removeAttribute("title");
+        });
+    };
+
+    initHomeServerStatusBadge();
+
+    if (body && sidebar && headerToggle && !headerToggle.dataset.mainSidebarHeaderToggle) {
+      headerToggle.dataset.mainSidebarHeaderToggle = "true";
+      headerToggle.classList.add("sidebar-toggle", "main-sidebar-header-toggle");
+      headerToggle.setAttribute("type", "button");
+      headerToggle.setAttribute("aria-controls", "main-sidebar");
+      headerToggle.innerHTML = `
+        <span class="sidebar-toggle-glyph" aria-hidden="true">
+          <span class="sidebar-toggle-frame">
+            <span class="sidebar-toggle-panel"></span>
+            <span class="sidebar-toggle-content"></span>
+          </span>
+        </span>
+      `;
+
+      const updateToggle = (collapsed) => {
+        const expanded = !collapsed;
+        const label = expanded ? "Hide sidebar" : "Show sidebar";
+        headerToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+        headerToggle.setAttribute("aria-label", label);
+        headerToggle.setAttribute("title", label);
+        headerToggle.setAttribute("data-tippy-content", label);
+        headerToggle.dataset.sidebarState = expanded ? "expanded" : "collapsed";
+        if (headerToggle._tippy && typeof headerToggle._tippy.setContent === "function") {
+          headerToggle._tippy.setContent(label);
+        }
+      };
+
+      const desktopPeekMq = window.matchMedia("(min-width: 769px) and (hover: hover) and (pointer: fine)");
+      const storageKey = "pinokio.main-sidebar-collapsed";
+      let peekCloseTimer = 0;
+
+      const isCollapsed = () => body.classList.contains("main-sidebar-collapsed");
+      const isPeeking = () => body.classList.contains("main-sidebar-peeking");
+      const syncSidebarVisibility = () => {
+        const peeking = isPeeking();
+        sidebar.setAttribute("aria-hidden", isCollapsed() && !peeking ? "true" : "false");
+        if (peekTrigger) {
+          peekTrigger.setAttribute("aria-expanded", peeking ? "true" : "false");
+        }
+      };
+      const canPeek = () => desktopPeekMq.matches && isCollapsed() && !body.classList.contains("main-sidebar-mobile-open");
+      const setPeeking = (peeking) => {
+        const next = !!peeking && canPeek();
+        window.clearTimeout(peekCloseTimer);
+        body.classList.toggle("main-sidebar-peeking", next);
+        syncSidebarVisibility();
+      };
+      const shouldKeepPeekOpen = () => {
+        const active = document.activeElement;
+        return (
+          (peekTrigger && peekTrigger.matches(":hover")) ||
+          sidebar.matches(":hover") ||
+          (peekTrigger && active === peekTrigger) ||
+          (active instanceof Node && sidebar.contains(active))
+        );
+      };
+      const closePeekSoon = () => {
+        window.clearTimeout(peekCloseTimer);
+        peekCloseTimer = window.setTimeout(() => {
+          if (shouldKeepPeekOpen()) return;
+          setPeeking(false);
+        }, 120);
+      };
+
+      const setCollapsed = (collapsed, options = {}) => {
+        const next = !!collapsed;
+        if (!next) {
+          body.classList.remove("main-sidebar-peeking");
+        }
+        body.classList.toggle("main-sidebar-collapsed", next);
+        syncSidebarVisibility();
+        updateToggle(next);
+        if (options.persist !== false) {
+          try {
+            window.localStorage.setItem(storageKey, next ? "1" : "0");
+          } catch (_) {}
+        }
+        document.dispatchEvent(new CustomEvent("pinokio:sidebar-state", {
+          detail: { collapsed: next, source: "main-sidebar" }
+        }));
+      };
+
+      let initialCollapsed = false;
+      try {
+        initialCollapsed = window.localStorage.getItem(storageKey) === "1";
+      } catch (_) {}
+      setCollapsed(initialCollapsed, { persist: false });
+      requestAnimationFrame(() => {
+        body.classList.add("main-sidebar-motion-ready");
+      });
+
+      headerToggle.addEventListener("click", (event) => {
+        event.preventDefault();
+        setCollapsed(!body.classList.contains("main-sidebar-collapsed"));
+      });
+
+      if (peekTrigger) {
+        peekTrigger.addEventListener("pointerenter", () => setPeeking(true));
+        peekTrigger.addEventListener("focus", () => setPeeking(true));
+        peekTrigger.addEventListener("click", () => setPeeking(true));
+        peekTrigger.addEventListener("pointerleave", closePeekSoon);
+        peekTrigger.addEventListener("blur", closePeekSoon);
+        sidebar.addEventListener("pointerenter", () => {
+          if (isPeeking()) {
+            window.clearTimeout(peekCloseTimer);
+          }
+        });
+        sidebar.addEventListener("focusin", () => {
+          if (isPeeking()) {
+            window.clearTimeout(peekCloseTimer);
+          }
+        });
+        sidebar.addEventListener("pointerleave", closePeekSoon);
+        sidebar.addEventListener("focusout", closePeekSoon);
+        document.addEventListener("pointerdown", (event) => {
+          if (!isPeeking()) return;
+          const target = event.target;
+          if (target instanceof Node && (sidebar.contains(target) || peekTrigger.contains(target))) return;
+          setPeeking(false);
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isPeeking()) {
+            setPeeking(false);
+            if (typeof peekTrigger.focus === "function") {
+              peekTrigger.focus();
+            }
+          }
+        });
+        const handlePeekMediaChange = () => {
+          if (!desktopPeekMq.matches) {
+            setPeeking(false);
+          }
+        };
+        if (typeof desktopPeekMq.addEventListener === "function") {
+          desktopPeekMq.addEventListener("change", handlePeekMediaChange);
+        } else if (typeof desktopPeekMq.addListener === "function") {
+          desktopPeekMq.addListener(handlePeekMediaChange);
+        }
+      }
+
+      window.PinokioMainSidebar = {
+        setCollapsed,
+        setPeeking,
+        isCollapsed,
+        isPeeking
+      };
+    }
+
+    if (window.__pinokioMainSidebarMobileInit) return;
+    window.__pinokioMainSidebarMobileInit = true;
+
+    const html = document.documentElement;
+    const toggle = document.querySelector("[data-main-sidebar-toggle]");
+    const mobileHomeToggle = document.querySelector("body.main-sidebar-page > header.navheader .home");
+    const backdrop = document.querySelector("[data-main-sidebar-backdrop]");
+    const mobileMq = window.matchMedia("(max-width: 768px)");
+
+    if (!body || !html || !sidebar || !toggle || !backdrop) return;
+
+    const sync = () => {
+      const open = body.classList.contains("main-sidebar-mobile-open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      if (mobileHomeToggle) {
+        if (mobileMq.matches) {
+          const label = open ? "Close navigation" : "Open navigation";
+          mobileHomeToggle.setAttribute("role", "button");
+          mobileHomeToggle.setAttribute("aria-controls", "main-sidebar");
+          mobileHomeToggle.setAttribute("aria-expanded", open ? "true" : "false");
+          mobileHomeToggle.setAttribute("aria-label", label);
+          mobileHomeToggle.setAttribute("title", label);
+        } else {
+          mobileHomeToggle.removeAttribute("role");
+          mobileHomeToggle.removeAttribute("aria-controls");
+          mobileHomeToggle.removeAttribute("aria-expanded");
+          mobileHomeToggle.removeAttribute("aria-label");
+          mobileHomeToggle.removeAttribute("title");
+        }
+      }
+      const icon = toggle.querySelector("i");
+      if (icon) {
+        icon.classList.toggle("fa-bars", !open);
+        icon.classList.toggle("fa-xmark", open);
+      }
+      backdrop.hidden = !open;
+    };
+
+    const close = () => {
+      body.classList.remove("main-sidebar-mobile-open");
+      html.classList.remove("main-sidebar-mobile-open");
+      sync();
+    };
+
+    const open = () => {
+      if (!mobileMq.matches) return;
+      body.classList.add("main-sidebar-mobile-open");
+      html.classList.add("main-sidebar-mobile-open");
+      sync();
+    };
+
+    const toggleMobileSidebar = () => {
+      if (body.classList.contains("main-sidebar-mobile-open")) {
+        close();
+      } else {
+        open();
+      }
+    };
+
+    toggle.addEventListener("click", () => {
+      toggleMobileSidebar();
+    });
+
+    if (mobileHomeToggle) {
+      mobileHomeToggle.addEventListener("click", (event) => {
+        if (!mobileMq.matches) {
+          return;
+        }
+        event.preventDefault();
+        toggleMobileSidebar();
+      });
+    }
+
+    backdrop.addEventListener("click", close);
+
+    sidebar.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("a, button") && mobileMq.matches) {
+        close();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        close();
+      }
+    });
+
+    const handleMediaChange = () => {
+      if (!mobileMq.matches) {
+        close();
+      } else {
+        sync();
+      }
+    };
+
+    if (typeof mobileMq.addEventListener === "function") {
+      mobileMq.addEventListener("change", handleMediaChange);
+    } else if (typeof mobileMq.addListener === "function") {
+      mobileMq.addListener(handleMediaChange);
+    }
+
+    sync();
+  })();
+</script>

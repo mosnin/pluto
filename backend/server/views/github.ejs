@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configure Git</title>
+  <link href="/css/fontawesome.min.css" rel="stylesheet">
+  <link href="/css/solid.min.css" rel="stylesheet">
+  <link href="/css/regular.min.css" rel="stylesheet">
+  <link href="/css/brands.min.css" rel="stylesheet">
+  <link href="/markdown.css" rel="stylesheet">
+  <link href="/noty.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+  <link href="/task-launcher.css" rel="stylesheet">
+  <% if (agent === "electron") { %>
+    <link href="/electron.css" rel="stylesheet"/>
+  <% } %>
+  <style>
+    .github-login-shell {
+      max-width: 980px;
+    }
+    .github-section-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .github-state-panel {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      min-width: 0;
+    }
+    .github-state-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      background: var(--task-chip-bg, var(--task-soft));
+      border: 1px solid var(--task-border);
+      color: var(--task-text);
+    }
+    .github-state-copy {
+      min-width: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .github-state-title {
+      margin: 0;
+      color: var(--task-text);
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .github-state-detail {
+      margin: 0;
+      color: var(--task-muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .github-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .github-account-box {
+      box-sizing: border-box;
+      max-width: 520px;
+      width: 100%;
+      margin: 2px 0 0;
+      padding: 12px 14px;
+      border: 1px solid var(--task-border);
+      border-radius: 8px;
+      background: var(--task-panel);
+      color: var(--task-text);
+      font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .github-readme {
+      display: grid;
+      gap: 10px;
+      color: var(--task-muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .github-readme :first-child {
+      margin-top: 0;
+    }
+    .github-readme :last-child {
+      margin-bottom: 0;
+    }
+    .github-readme p {
+      margin: 0;
+    }
+    .github-readme ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .github-readme code {
+      color: var(--task-text);
+    }
+    .github-config-form {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+    }
+    .github-config-fields {
+      display: grid;
+      gap: 13px;
+      max-width: 520px;
+    }
+    .github-config-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .github-config-submit {
+      min-width: 112px;
+    }
+    .github-config-path {
+      color: var(--task-muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .github-config-feedback {
+      margin: 0;
+    }
+    .github-config-feedback.success {
+      border-color: color-mix(in srgb, #16a34a 22%, transparent);
+      background: color-mix(in srgb, #16a34a 10%, var(--task-panel));
+      color: #166534;
+    }
+    body.dark .github-config-feedback.success {
+      border-color: color-mix(in srgb, #86efac 28%, transparent);
+      background: rgba(34, 197, 94, 0.12);
+      color: #86efac;
+    }
+    @media (max-width: 820px) {
+      .github-section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<%
+  const selected = "connect";
+  const isGithubConnected = typeof hosts === "string" && hosts.trim().length > 0;
+  const connectionLabel = isGithubConnected ? "Connected" : "Not connected";
+  const connectionIcon = isGithubConnected ? "fa-solid fa-circle-check" : "fa-regular fa-circle";
+  const connectionDetail = isGithubConnected
+    ? "Git Credential Manager is ready for GitHub operations inside Pinokio."
+    : "Connect GitHub to clone private repositories and publish from Pinokio.";
+%>
+<body class="<%= theme %> main-sidebar-page task-launcher-page task-page setup-page github-page" data-agent="<%= agent %>" data-page="github-config">
+  <%- include('partials/app_navheader', { agent }) %>
+  <main>
+    <div class="task-container">
+      <section class="task-shell github-login-shell">
+        <header class="task-shell-header">
+          <div class="task-shell-header-main">
+            <div class="task-shell-topline">
+              <p class="task-eyebrow">Login / GitHub</p>
+            </div>
+            <h1 class="task-title">Configure Git</h1>
+            <p class="task-description">Connect GitHub for private repositories and publishing, then set the identity Git writes on commits.</p>
+            <div class="task-badge-row task-header-badges">
+              <span class="task-badge <%= isGithubConnected ? 'task-badge-accent' : 'task-badge-neutral' %>"><%= connectionLabel %></span>
+              <span class="task-badge task-badge-neutral">Git Credential Manager</span>
+              <span class="task-badge task-badge-neutral">~/pinokio/gitconfig</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="task-shell-body">
+          <section class="task-section task-section-subtle">
+            <div class="github-section-grid">
+              <div class="github-state-panel">
+                <div class="github-state-icon" aria-hidden="true">
+                  <i class="<%= connectionIcon %>"></i>
+                </div>
+                <div class="github-state-copy">
+                  <h2 class="github-state-title">GitHub <%= connectionLabel.toLowerCase() %></h2>
+                  <p class="github-state-detail"><%= connectionDetail %></p>
+                  <pre class="github-account-box"><%= isGithubConnected ? hosts : 'not logged in' %></pre>
+                  <div class="github-action-row">
+                    <% items.forEach((item) => { %>
+                      <a class="task-button <%= item.title === 'Login' ? 'primary' : 'danger' %>" href="<%= item.url %>">
+                        <i class="<%= item.icon %>" aria-hidden="true"></i>
+                        <span><%= item.title %></span>
+                      </a>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+              <div class="github-readme">
+                <%- readme %>
+              </div>
+            </div>
+          </section>
+
+          <section class="task-section">
+            <div class="task-section-head">
+              <div>
+                <h2 class="task-section-title">Git identity</h2>
+                <p class="task-section-subcopy">These values appear as the author on commits created from Pinokio shells.</p>
+              </div>
+              <div class="task-section-note">gitconfig</div>
+            </div>
+
+            <form class="github-config-form" data-github-config-form>
+              <div class="github-config-fields">
+                <label class="task-field">
+                  <span class="task-label">Username</span>
+                  <input class="task-input" id="username" type="text" autocomplete="name" value="<%= gitconfig.user && gitconfig.user.name ? gitconfig.user.name : '' %>">
+                </label>
+                <label class="task-field">
+                  <span class="task-label">Email</span>
+                  <input class="task-input" id="email" type="email" autocomplete="email" value="<%= gitconfig.user && gitconfig.user.email ? gitconfig.user.email : '' %>">
+                </label>
+              </div>
+              <div class="github-config-actions">
+                <button class="task-button primary task-run-button github-config-submit" type="submit">
+                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                  <span>Update</span>
+                </button>
+                <span class="github-config-path">Stored in ~/pinokio/gitconfig.</span>
+              </div>
+              <div class="task-status github-config-feedback hidden" data-github-config-feedback></div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+    <%- include('partials/main_sidebar', { selected }) %>
+  </main>
+
+  <script>
+    const configForm = document.querySelector("[data-github-config-form]")
+    const feedback = document.querySelector("[data-github-config-feedback]")
+    const submitButton = configForm.querySelector(".github-config-submit")
+
+    function showFeedback(message, type) {
+      feedback.textContent = message
+      feedback.classList.remove("hidden", "success", "error")
+      feedback.classList.add(type)
+    }
+
+    configForm.addEventListener("submit", async (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+      submitButton.disabled = true
+      submitButton.classList.add("is-busy")
+      try {
+        const res = await fetch("/github/config", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            "user.name": document.querySelector("#username").value,
+            "user.email": document.querySelector("#email").value
+          })
+        })
+        const json = await res.json()
+        if (json.error) {
+          throw new Error(json.error)
+        }
+        showFeedback("Git identity updated.", "success")
+      } catch (error) {
+        showFeedback(error.message || "Git identity could not be updated.", "error")
+      } finally {
+        submitButton.disabled = false
+        submitButton.classList.remove("is-busy")
+      }
+    })
+  </script>
+  <%- include('partials/app_common_scripts') %>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<%- include('launch_settings_dependency_save_factory') %>
+const saveDependencies = createLaunchSettingsDependencySaver({
+  getAppId: () => {
+    const app = currentApp();
+    return app ? app.id : "";
+  },
+  isSaving: () => savingDependencies,
+  setSaving: (value) => { savingDependencies = value; },
+  setBusy: setDetailBusy,
+  setFeedback,
+  onSaved: syncAppState,
+  render: renderCandidates
+});

@@ -1,0 +1,116 @@
+<%
+const homeActionsAppId = item && (item.uri || item.path || item.name) ? String(item.uri || item.path || item.name) : ""
+const homeActionsSettingsHref = homeActionsAppId
+  ? `/v/${encodeURIComponent(homeActionsAppId)}?${new URLSearchParams({
+    pinokio_home_select: JSON.stringify({
+      target: "env-settings",
+      hrefAttr: `/env/api/${homeActionsAppId}?host=app`,
+      textValue: "Settings"
+    })
+  }).toString()}`
+  : ""
+const homeActionsShareReadyUrl = item && typeof item.ready_url === "string" ? item.ready_url : ""
+const homeActionsShareExternalReadyUrls = item && Array.isArray(item.external_ready_urls) ? item.external_ready_urls : []
+%>
+<dialog id='<%= id %>' class='home-actions-dialog' aria-labelledby='<%= id %>-title'>
+  <div class='home-actions-shell'>
+    <div class='home-actions-header'>
+      <div class='home-actions-icon'>
+        <% if (item.icon) { %>
+          <img src='<%= item.icon %>' onerror="this.src='/pinokio-black.png'" alt='' />
+        <% } else { %>
+          <img src='/pinokio-black.png' alt='' />
+        <% } %>
+      </div>
+      <div class='home-actions-heading'>
+        <div class='home-actions-title-row'>
+          <h2 id='<%= id %>-title'><%= item.name %></h2>
+          <% if (item.autolaunch_starting) { %>
+            <% const homeActionsAutolaunchLabel = item.autolaunch_status_label || (item.autolaunch_blocked ? "Blocked" : item.autolaunch_waiting ? "Waiting" : "Starting") %>
+            <span class='home-actions-status home-actions-status--starting' title='<%= homeActionsAutolaunchLabel %>'><%= homeActionsAutolaunchLabel %></span>
+          <% } else if (item.running) { %>
+            <span class='home-actions-status'>Running</span>
+          <% } %>
+        </div>
+        <div class='home-actions-path'><%= item.filepath %></div>
+      </div>
+      <button type='button' class='home-actions-close' aria-label='Close'>
+        <i class='fa-solid fa-xmark' aria-hidden='true'></i>
+      </button>
+    </div>
+
+    <div class='home-actions-body'>
+      <% if (item.menu && item.menu.length > 0) { %>
+        <section class='home-actions-section' aria-labelledby='<%= id %>-run-title'>
+          <div class='home-actions-section-title' id='<%= id %>-run-title'>Run</div>
+          <div class='home-run-menu-list'>
+            <%- include('./home_run_menu', { menu: item.menu, app: item }) %>
+          </div>
+        </section>
+      <% } %>
+
+      <% if (item.running) { %>
+        <section class='home-actions-section' aria-labelledby='<%= id %>-share-title'>
+          <div class='home-actions-section-title' id='<%= id %>-share-title'>Share</div>
+          <div class='home-actions-command-list'>
+            <button
+              type='button'
+              class='home-mode-command home-share-app'
+              data-app-id='<%= homeActionsAppId %>'
+              data-app-name='<%= item.name %>'
+              data-app-ready-url='<%= homeActionsShareReadyUrl %>'
+              data-app-external-ready-urls='<%= JSON.stringify(homeActionsShareExternalReadyUrls) %>'
+            >
+              <i class='fa-solid fa-wifi' aria-hidden='true'></i>
+              <span>Open on another device</span>
+              <span class='home-actions-count'>Home Server</span>
+            </button>
+          </div>
+        </section>
+      <% } %>
+
+      <section class='home-actions-section' aria-labelledby='<%= id %>-app-title'>
+        <div class='home-actions-section-title' id='<%= id %>-app-title'>App</div>
+        <div class='home-actions-command-list'>
+          <button type='button' class='home-mode-command home-browse' data-src='<%= item.view_url %>'>
+            <i class='fa-regular fa-eye' aria-hidden='true'></i>
+            <span>Open without launching</span>
+          </button>
+          <button type='button' class='home-mode-command home-browse' data-src='<%= item.dev_url %>'>
+            <i class='fa-solid fa-code' aria-hidden='true'></i>
+            <span>Open dev mode</span>
+            <% if (item.terminal_online_count > 0) { %>
+              <span class='home-actions-count'><%= item.terminal_online_count %> online</span>
+            <% } %>
+          </button>
+          <% if (homeActionsSettingsHref) { %>
+            <a class='home-mode-command' href='<%= homeActionsSettingsHref %>'>
+              <i class='fa-solid fa-gear' aria-hidden='true'></i>
+              <span>Settings</span>
+            </a>
+          <% } %>
+          <button type='button' class='home-mode-command' data-filepath='<%= item.filepath %>'>
+            <i class='fa-solid fa-folder-open' aria-hidden='true'></i>
+            <span>Open in file explorer</span>
+          </button>
+          <button type='button' class='home-mode-command edit-menu'>
+            <i class='fa-solid fa-pen-to-square' aria-hidden='true'></i>
+            <span>Edit launcher</span>
+          </button>
+          <button type='button' class='home-mode-command copy-menu'>
+            <i class='fa-solid fa-copy' aria-hidden='true'></i>
+            <span>Copy app</span>
+          </button>
+          <button type='button' class='home-mode-command move-menu' <% if (item.running) { %>data-disable='To move the folder, the app should not be running.'<% } %>>
+            <i class='fa-solid fa-right-to-bracket' aria-hidden='true'></i>
+            <span>Move app</span>
+          </button>
+          <button type='button' class='home-mode-command is-danger del' data-src='<%= item.url %>' <% if (item.running) { %>data-disable='To delete the folder, the app should not be running.'<% } %>>
+            <i class='fa-solid fa-trash-can' aria-hidden='true'></i>
+            <span>Delete app</span>
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+</dialog>

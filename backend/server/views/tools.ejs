@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tools</title>
+  <link href="/css/fontawesome.min.css" rel="stylesheet">
+  <link href="/css/solid.min.css" rel="stylesheet">
+  <link href="/css/brands.min.css" rel="stylesheet">
+  <link href="/noty.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+  <link href="/task-launcher.css" rel="stylesheet">
+  <% if (agent === "electron") { %>
+    <link href="/electron.css" rel="stylesheet"/>
+  <% } %>
+  <style>
+    body.tools-page .task-shell-header-main {
+      max-width: 720px;
+    }
+    body.tools-page .task-description {
+      max-width: 70ch;
+    }
+    body.tools-page .tools-summary {
+      align-items: flex-start;
+    }
+    body.tools-page .tools-summary-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 26px;
+      box-sizing: border-box;
+      padding: 0 9px;
+      border: 1px solid var(--task-border);
+      border-radius: 999px;
+      color: var(--task-muted);
+      font-size: 11px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    body.tools-page .tools-summary-item strong {
+      color: var(--task-text);
+      font-weight: 700;
+    }
+    body.tools-page .tools-loading-state {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      min-height: 150px;
+      box-sizing: border-box;
+      padding: 18px;
+      border: 1px solid var(--task-border);
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--task-panel) 96%, var(--task-soft));
+    }
+    body.tools-page .tools-loading-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--task-accent) 10%, transparent);
+      color: var(--task-accent);
+      font-size: 15px;
+    }
+    body.tools-page .tools-loading-title,
+    body.tools-page .tools-bundle-title,
+    body.tools-page .tools-module-title {
+      color: var(--task-text);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    body.tools-page .tools-loading-copy {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+    body.tools-page .tools-loading-text,
+    body.tools-page .tools-bundle-code,
+    body.tools-page .tools-bundle-description {
+      margin: 0;
+      color: var(--task-muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    body.tools-page .tools-bundle-list {
+      display: grid;
+      gap: 10px;
+    }
+    body.tools-page .tools-bundle-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+      border: 1px solid var(--task-border);
+      border-radius: 8px;
+      padding: 14px;
+      background: transparent;
+    }
+    body.tools-page .tools-bundle-main {
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+    body.tools-page .tools-bundle-title-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+    body.tools-page .tools-bundle-title {
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+    body.tools-page .tools-bundle-title,
+    body.tools-page .tools-module-title {
+      overflow-wrap: anywhere;
+    }
+    body.tools-page .tools-bundle-code {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      color: var(--task-muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    body.tools-page .tools-bundle-description {
+      max-width: 72ch;
+      font-size: 13px;
+      line-height: 1.45;
+      opacity: 0.72;
+    }
+    body.tools-page .tools-bundle-detail {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      min-width: 0;
+      font-size: 12px;
+    }
+    body.tools-page .tools-bundle-detail-label {
+      flex: 0 0 auto;
+      width: 108px;
+      color: var(--task-muted);
+      opacity: 0.72;
+    }
+    body.tools-page .tools-bundle-actions {
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+      min-width: 118px;
+    }
+    body.tools-page .tools-bundle-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      color: var(--task-muted);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    body.tools-page .tools-bundle-status.good {
+      color: #166534;
+    }
+    body.tools-page .tools-bundle-status.warn {
+      color: #9a3412;
+    }
+    body.dark.tools-page .tools-bundle-status.good {
+      color: #86efac;
+    }
+    body.dark.tools-page .tools-bundle-status.warn {
+      color: #fdba74;
+    }
+    body.tools-page .tools-package-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 13px;
+      min-width: 0;
+    }
+    body.tools-page .tools-package-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 100%;
+      min-height: 18px;
+      color: var(--task-muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+    body.tools-page .tools-package-pill span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    body.tools-page .tools-package-pill.is-installed {
+      color: var(--task-muted);
+    }
+    body.tools-page .tools-package-pill.needs-install {
+      color: #b91c1c;
+    }
+    body.dark.tools-page .tools-package-pill.needs-install {
+      color: #fca5a5;
+    }
+    body.tools-page .tools-package-pill i {
+      width: 12px;
+      font-size: 11px;
+      text-align: center;
+      flex: 0 0 auto;
+    }
+    body.tools-page .tools-package-pill.is-installed i {
+      color: #15803d;
+    }
+    body.dark.tools-page .tools-package-pill.is-installed i {
+      color: #86efac;
+    }
+    body.tools-page .tools-tabs {
+      margin-bottom: 12px;
+    }
+    body.tools-page .tools-module-section-head {
+      align-items: center;
+    }
+    body.tools-page .tools-tab-button {
+      appearance: none;
+      cursor: pointer;
+      gap: 6px;
+      text-transform: none;
+    }
+    body.tools-page .tools-tab-count {
+      color: var(--task-muted);
+      font-weight: 600;
+    }
+    body.tools-page .tools-tab-button.active .tools-tab-count {
+      color: inherit;
+    }
+    body.tools-page .tools-install-open {
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    body.tools-page .tools-package-panel {
+      display: none;
+    }
+    body.tools-page .tools-package-panel.active {
+      display: grid;
+      gap: 10px;
+    }
+    body.tools-page .tools-install-form {
+      display: grid;
+      gap: 12px;
+    }
+    body.tools-page .tools-install-submit {
+      min-width: 96px;
+      min-height: 38px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    body.tools-page .tools-install-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    body.tools-page .tools-module-list {
+      display: grid;
+      gap: 6px;
+    }
+    body.tools-page .tools-module-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      padding: 10px 0;
+      border-top: 1px solid var(--task-border);
+    }
+    body.tools-page .tools-module-row:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+    body.tools-page .tools-module-row:last-child {
+      padding-bottom: 0;
+    }
+    body.tools-page .pinokio-modern-modal.swal2-popup {
+      background: var(--task-panel) !important;
+      color: var(--task-text) !important;
+      border: 1px solid var(--task-border) !important;
+      border-radius: 8px !important;
+      box-shadow: var(--task-shadow) !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    body.tools-page .pinokio-modern-html {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    body.tools-page .pinokio-modern-close {
+      top: 10px !important;
+      right: 10px !important;
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 6px !important;
+      color: var(--task-muted) !important;
+    }
+    body.tools-page .pinokio-modern-close:hover,
+    body.tools-page .pinokio-modern-close:focus-visible {
+      background: var(--task-soft) !important;
+      color: var(--task-text) !important;
+      outline: none !important;
+    }
+    body.tools-page .pinokio-modal-surface {
+      display: grid;
+      background: var(--task-panel);
+      color: var(--task-text);
+    }
+    body.tools-page .pinokio-modal-header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 14px;
+    }
+    body.tools-page .pinokio-modal-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      background: color-mix(in srgb, var(--task-accent) 10%, transparent);
+      color: var(--task-accent);
+      font-size: 14px;
+    }
+    body.tools-page .pinokio-modal-heading {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      text-align: left;
+    }
+    body.tools-page .pinokio-modal-title {
+      color: var(--task-text);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    body.tools-page .pinokio-modal-subtitle {
+      color: var(--task-muted);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    body.tools-page .pinokio-modal-subtitle code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--task-panel) 88%, var(--task-soft));
+      color: inherit;
+    }
+    body.tools-page .pinokio-modal-body {
+      border-top: 1px solid var(--task-border);
+      background: color-mix(in srgb, var(--task-panel) 96%, var(--task-soft));
+    }
+    body.tools-page .pinokio-modal-body--iframe {
+      height: 520px;
+    }
+    body.tools-page .pinokio-modal-body--iframe iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: var(--task-panel);
+    }
+    @media (max-width: 760px) {
+      body.tools-page .tools-bundle-row {
+        grid-template-columns: 1fr;
+      }
+      body.tools-page .tools-bundle-actions {
+        justify-items: start;
+        min-width: 0;
+      }
+      body.tools-page .tools-bundle-detail {
+        display: grid;
+        gap: 6px;
+      }
+      body.tools-page .tools-bundle-detail-label {
+        width: auto;
+      }
+      body.tools-page .tools-module-section-head {
+        display: grid;
+        gap: 10px;
+      }
+      body.tools-page .tools-install-open,
+      body.tools-page .tools-install-submit {
+        width: 100%;
+      }
+      body.tools-page .tools-install-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<%
+  const bundleList = Array.isArray(bundles) ? bundles : [];
+  const installList = Array.isArray(installs) ? installs : [];
+  const installedBundleCount = bundleList.filter((bundle) => !bundle.install_required).length;
+  const moduleCount = installList.reduce((count, install) => {
+    return count + (Array.isArray(install.modules) ? install.modules.length : 0);
+  }, 0);
+  const managerName = (manager) => {
+    const value = String(manager || "package").trim();
+    if (!value) return "Package";
+    return value
+      .split(/[\s_-]+/)
+      .map((word) => word ? word.charAt(0).toUpperCase() + word.slice(1) : "")
+      .join(" ");
+  };
+  const managerPanelId = (manager) => `tools-${String(manager || "package").replace(/[^a-z0-9_-]/gi, "-").toLowerCase()}-panel`;
+%>
+<body class="<%= theme %> main-sidebar-page task-launcher-page task-page task-library-page tools-page" data-agent="<%= agent %>">
+  <%- include('partials/app_navheader', { agent }) %>
+  <main>
+    <div class="task-container">
+      <section class="task-shell tools-shell">
+        <header class="task-shell-header">
+          <div class="task-shell-header-main">
+            <h1 class="task-title">Tools</h1>
+            <p class="task-description">Package bundles and package-manager modules available on this machine.</p>
+          </div>
+          <div class="task-header-actions tools-summary">
+            <span class="tools-summary-item"><strong><%= installedBundleCount %></strong> of <%= bundleList.length %> bundles ready</span>
+            <span class="tools-summary-item"><strong><%= moduleCount %></strong> modules</span>
+          </div>
+        </header>
+
+        <div class="task-shell-body tools-shell-body">
+          <% if (pending) { %>
+            <section class="task-section task-section-subtle" aria-live="polite">
+              <div class="tools-loading-state">
+                <div class="tools-loading-icon" aria-hidden="true">
+                  <i class="fa-solid fa-circle-notch fa-spin"></i>
+                </div>
+                <div class="tools-loading-copy">
+                  <div class="tools-loading-title">Loading installed tools</div>
+                  <p class="tools-loading-text">Scanning package managers and modules. This page will refresh when the scan finishes.</p>
+                </div>
+              </div>
+            </section>
+          <% } else { %>
+            <section class="task-section" aria-label="Package bundles">
+              <div class="task-section-head">
+                <div>
+                  <h2 class="task-section-title">Package Bundles</h2>
+                  <p class="task-section-subcopy"><%= installedBundleCount %> ready, <%= bundleList.length - installedBundleCount %> need install.</p>
+                </div>
+              </div>
+
+              <% if (!bundleList.length) { %>
+                <div class="task-empty-state">
+                  <p class="task-empty-copy">No package bundles were found.</p>
+                </div>
+              <% } else { %>
+                <div class="tools-bundle-list">
+                  <% bundleList.forEach((bundle) => { %>
+                    <article class="tools-bundle-row <%= !bundle.install_required ? 'is-installed' : 'needs-install' %>">
+                      <div class="tools-bundle-main">
+                        <div>
+                          <div class="tools-bundle-title-line">
+                            <span class="tools-bundle-title"><%= bundle.title %></span>
+                            <span class="tools-bundle-code"><%= bundle.name %></span>
+                          </div>
+                          <p class="tools-bundle-description"><%= bundle.description %></p>
+                        </div>
+
+                        <div class="tools-bundle-detail">
+                          <span class="tools-bundle-detail-label">Packages</span>
+                          <div class="tools-package-list">
+                            <% bundle.requirements.forEach((req) => { %>
+                              <span class="tools-package-pill <%= req.installed ? 'is-installed' : 'needs-install' %>">
+                                <i class="fa-solid <%= req.installed ? 'fa-check' : 'fa-xmark' %>" aria-hidden="true"></i>
+                                <span><%= req.name %></span>
+                              </span>
+                            <% }) %>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="tools-bundle-actions">
+                        <span class="tools-bundle-status <%= !bundle.install_required ? 'good' : 'warn' %>">
+                          <%= !bundle.install_required ? 'Installed' : 'Not installed' %>
+                        </span>
+                        <% if (bundle.install_required) { %>
+                          <a href="<%= bundle.setup %>" class="task-link-button">
+                            <i class="fa-solid fa-download" aria-hidden="true"></i>
+                            <span>Install</span>
+                          </a>
+                        <% } else { %>
+                          <form method="post" action="/pinokio/install?fresh=1">
+                            <input type="hidden" name="requirements" value="<%= JSON.stringify(bundle.requirements) %>">
+                            <input type="hidden" name="callback" value="/tools">
+                            <button class="task-link-button" type="submit">
+                              <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                              <span>Reinstall</span>
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </article>
+                  <% }) %>
+                </div>
+              <% } %>
+            </section>
+
+            <section class="task-section" aria-label="Installed modules">
+              <div class="task-section-head tools-module-section-head">
+                <div>
+                  <h2 class="task-section-title">Modules</h2>
+                </div>
+                <% if (installList.length) { %>
+                  <button class="task-link-button tools-install-open" type="button" data-package-install-open-active>
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                    <span>Install package</span>
+                  </button>
+                <% } %>
+              </div>
+
+              <% if (!installList.length) { %>
+                <div class="task-empty-state">
+                  <p class="task-empty-copy">No package managers were found.</p>
+                </div>
+              <% } else { %>
+                <div class="task-filter-row tools-tabs" role="tablist" aria-label="Package managers">
+                  <% installList.forEach((install, index) => { %>
+                    <% const panelId = managerPanelId(install.package_manager); %>
+                    <button
+                      class="task-filter-chip tools-tab-button <%= index === 0 ? 'active' : '' %>"
+                      type="button"
+                      role="tab"
+                      aria-selected="<%= index === 0 ? 'true' : 'false' %>"
+                      aria-controls="<%= panelId %>"
+                      data-tab="<%= install.package_manager %>">
+                      <span><%= managerName(install.package_manager) %></span>
+                      <span class="tools-tab-count"><%= install.modules.length %></span>
+                    </button>
+                  <% }) %>
+                </div>
+
+                <% installList.forEach((install, index) => { %>
+                  <% const panelId = managerPanelId(install.package_manager); %>
+                  <div
+                    class="tools-package-panel <%= index === 0 ? 'active' : '' %>"
+                    id="<%= panelId %>"
+                    role="tabpanel"
+                    aria-label="<%= managerName(install.package_manager) %> modules"
+                    data-panel="<%= install.package_manager %>">
+                    <% if (!install.modules.length) { %>
+                      <div class="task-empty-state">
+                        <p class="task-empty-copy">No modules installed.</p>
+                      </div>
+                    <% } else { %>
+                      <div class="tools-module-list">
+                        <% install.modules.forEach((module) => { %>
+                          <div class="tools-module-row">
+                            <div class="tools-module-title"><%= module %></div>
+                          </div>
+                        <% }) %>
+                      </div>
+                    <% } %>
+                  </div>
+                <% }) %>
+                <% installList.forEach((install) => { %>
+                  <% const sheetTitleId = `${managerPanelId(install.package_manager)}-install-title`; %>
+                  <div class="task-tool-sheet-layer tools-package-install-layer" data-package-install-layer="<%= install.package_manager %>" hidden>
+                    <button type="button" class="task-tool-sheet-backdrop" aria-label="Close install package dialog" data-package-install-close></button>
+                    <section class="task-tool-sheet tools-package-install-sheet" role="dialog" aria-modal="true" aria-labelledby="<%= sheetTitleId %>">
+                      <div class="task-tool-sheet-header">
+                        <div class="task-tool-sheet-heading">
+                          <div class="task-tool-sheet-title" id="<%= sheetTitleId %>">Install package</div>
+                          <div class="task-tool-sheet-description">Add a package through <%= managerName(install.package_manager) %>.</div>
+                        </div>
+                        <button type="button" class="task-tool-sheet-close" aria-label="Close install package dialog" data-package-install-close>
+                          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                      <form class="task-tool-sheet-body tools-install-form package-install-form" data-manager="<%= install.package_manager %>">
+                        <% if (install.package_manager === 'conda') { %>
+                          <label class="task-field">
+                            <span class="task-label">Channel</span>
+                            <input class="task-input" name="channel" type="text" value="conda-forge" placeholder="Enter channel" autocomplete="off">
+                          </label>
+                          <label class="task-field">
+                            <span class="task-label">Package name</span>
+                            <input class="task-input" name="name" type="text" placeholder="Enter package name" autocomplete="off" required>
+                          </label>
+                        <% } else { %>
+                          <label class="task-field">
+                            <span class="task-label">Package name</span>
+                            <input class="task-input" name="name" type="text" placeholder="Enter package name" autocomplete="off" required>
+                          </label>
+                        <% } %>
+                        <div class="task-actions tools-install-actions">
+                          <button class="task-link-button" type="button" data-package-install-close>Cancel</button>
+                          <button type="submit" class="task-button primary tools-install-submit">
+                            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                            <span>Install</span>
+                          </button>
+                        </div>
+                      </form>
+                    </section>
+                  </div>
+                <% }) %>
+              <% } %>
+            </section>
+          <% } %>
+        </div>
+      </section>
+    </div>
+    <%- include('partials/main_sidebar', { selected: 'tools' }) %>
+  </main>
+
+  <%- include('partials/app_common_scripts') %>
+  <script>
+    const PACKAGE_MANAGER_ICONS = {
+      conda: "fa-solid fa-flask",
+      brew: "fa-solid fa-beer-mug-empty",
+      pip: "fa-brands fa-python",
+      npm: "fa-brands fa-npm",
+      yarn: "fa-brands fa-yarn",
+      cargo: "fa-solid fa-box-open"
+    };
+
+    const escapeHtml = (value) => {
+      if (!value) return "";
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    };
+
+    const toDisplayName = (manager) => {
+      if (!manager) return "Package Manager";
+      return manager
+        .split(/[\s_-]+/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+
+    const buildInstallPayload = (manager, formData) => {
+      const trimmedManager = (manager || "").trim();
+      const normalizedManager = trimmedManager.toLowerCase();
+      const name = (formData.get("name") || "").trim();
+      if (!normalizedManager || !name) {
+        return null;
+      }
+
+      if (normalizedManager === "conda") {
+        let channel = (formData.get("channel") || "").trim();
+        if (!channel) {
+          channel = "conda-forge";
+        }
+        return {
+          manager: normalizedManager,
+          command: `conda install -y --channel ${channel} ${name}`,
+          name,
+          channel
+        };
+      }
+
+      if (normalizedManager === "brew") {
+        return {
+          manager: normalizedManager,
+          command: `brew install ${name}`,
+          name
+        };
+      }
+
+      return {
+        manager: normalizedManager,
+        command: `${normalizedManager} install ${name}`,
+        name
+      };
+    };
+
+    const openPackageInstallModal = ({ manager, command, name, channel }) => {
+      if (typeof Swal === "undefined") {
+        console.error("SweetAlert2 is not available.");
+        return;
+      }
+
+      const icon = PACKAGE_MANAGER_ICONS[manager] || "fa-solid fa-box-open";
+      const displayName = toDisplayName(manager);
+      const safeName = escapeHtml(name);
+      const safeChannel = channel ? escapeHtml(channel) : null;
+      const detailParts = [];
+      if (safeChannel) {
+        detailParts.push(`Channel: ${safeChannel}`);
+      }
+      if (safeName) {
+        detailParts.push(`Package: ${safeName}`);
+      }
+      const detailsHtml = detailParts.join(" - ");
+
+      const sanitizedManager = (manager || "pkg").replace(/[^a-z0-9_-]/gi, "-").toLowerCase();
+      const shellId = encodeURIComponent(`pkg-install-${sanitizedManager}-${Date.now()}`);
+      const params = new URLSearchParams();
+      params.set("path", "~/");
+      params.set("message", command);
+      params.set("target", "_top");
+      const shellUrl = `/shell/${shellId}?${params.toString()}`;
+
+      const modalHtml = `
+        <div class="pinokio-modal-surface">
+          <div class="pinokio-modal-header">
+            <div class="pinokio-modal-icon"><i class="${icon}"></i></div>
+            <div class="pinokio-modal-heading">
+              <div class="pinokio-modal-title">Install with ${escapeHtml(displayName)}</div>
+              <div class="pinokio-modal-subtitle">
+                ${detailsHtml || "Pinokio opens an install terminal for this package manager."}
+              </div>
+            </div>
+          </div>
+          <div class="pinokio-modal-body pinokio-modal-body--iframe">
+            <iframe src="${shellUrl}" allow="fullscreen *;" allowfullscreen></iframe>
+          </div>
+        </div>
+      `;
+
+      Swal.fire({
+        html: modalHtml,
+        customClass: {
+          popup: "pinokio-modern-modal",
+          htmlContainer: "pinokio-modern-html",
+          closeButton: "pinokio-modern-close"
+        },
+        backdrop: "rgba(9, 11, 15, 0.65)",
+        width: "min(760px, 90vw)",
+        showConfirmButton: false,
+        showCloseButton: true,
+        buttonsStyling: false,
+        focusConfirm: false
+      });
+    };
+
+    const packageInstallLayers = () => Array.from(document.querySelectorAll("[data-package-install-layer]"));
+
+    const closePackageInstallLayer = (layer) => {
+      if (!layer) return;
+      layer.hidden = true;
+      layer.setAttribute("aria-hidden", "true");
+
+      const hasOpenLayer = packageInstallLayers().some((item) => !item.hidden);
+      if (!hasOpenLayer) {
+        document.body.classList.remove("task-modal-open");
+      }
+    };
+
+    const openPackageInstallLayer = (manager) => {
+      const layer = packageInstallLayers().find((item) => item.dataset.packageInstallLayer === manager);
+      if (!layer) return;
+
+      packageInstallLayers().forEach((item) => {
+        if (item !== layer) {
+          closePackageInstallLayer(item);
+        }
+      });
+
+      layer.hidden = false;
+      layer.removeAttribute("aria-hidden");
+      document.body.classList.add("task-modal-open");
+
+      const nameInput = layer.querySelector("input[name=\"name\"]");
+      const firstInput = nameInput || layer.querySelector("input");
+      if (firstInput) {
+        setTimeout(() => firstInput.focus(), 0);
+      }
+    };
+
+    const registerPackageInstallSheets = () => {
+      const openButton = document.querySelector("[data-package-install-open-active]");
+      if (openButton) {
+        openButton.addEventListener("click", () => {
+          const activeTab = document.querySelector(".tools-tab-button.active") || document.querySelector(".tools-tab-button");
+          if (activeTab) {
+            openPackageInstallLayer(activeTab.dataset.tab);
+          }
+        });
+      }
+
+      document.querySelectorAll("[data-package-install-close]").forEach((button) => {
+        button.addEventListener("click", () => {
+          closePackageInstallLayer(button.closest("[data-package-install-layer]"));
+        });
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        packageInstallLayers().forEach((layer) => {
+          if (!layer.hidden) {
+            closePackageInstallLayer(layer);
+          }
+        });
+      });
+    };
+
+    const registerPackageInstallForms = () => {
+      const forms = document.querySelectorAll(".package-install-form");
+      forms.forEach((form) => {
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (typeof form.reportValidity === "function" && !form.reportValidity()) {
+            return;
+          }
+
+          const manager = (form.dataset.manager || "").toLowerCase();
+          const formData = new FormData(form);
+          const payload = buildInstallPayload(manager, formData);
+          if (!payload) {
+            const nameInput = form.querySelector("input[name=\"name\"]");
+            if (nameInput) {
+              nameInput.focus();
+            }
+            return;
+          }
+
+          closePackageInstallLayer(form.closest("[data-package-install-layer]"));
+          openPackageInstallModal(payload);
+          form.reset();
+          if (manager === "conda") {
+            const channelInput = form.querySelector("input[name=\"channel\"]");
+            if (channelInput && !channelInput.value) {
+              channelInput.value = "conda-forge";
+            }
+          }
+        });
+      });
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const isPending = <%= pending ? 'true' : 'false' %>;
+
+      if (isPending) {
+        setTimeout(function() {
+          window.location.reload();
+        }, 3000);
+        return;
+      }
+
+      registerPackageInstallSheets();
+      registerPackageInstallForms();
+
+      const tabs = document.querySelectorAll(".tools-tab-button");
+      const panels = document.querySelectorAll(".tools-package-panel");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", function() {
+          const targetTab = this.getAttribute("data-tab");
+
+          tabs.forEach((item) => {
+            item.classList.remove("active");
+            item.setAttribute("aria-selected", "false");
+          });
+          panels.forEach((panel) => {
+            panel.classList.remove("active");
+          });
+
+          this.classList.add("active");
+          this.setAttribute("aria-selected", "true");
+
+          const targetPanel = Array.from(panels).find((panel) => panel.getAttribute("data-panel") === targetTab);
+          if (targetPanel) {
+            targetPanel.classList.add("active");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

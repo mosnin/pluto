@@ -1,0 +1,379 @@
+const assert = require('node:assert/strict')
+const fs = require('node:fs/promises')
+const os = require('node:os')
+const path = require('node:path')
+const test = require('node:test')
+
+const ShellRunTemplate = require('../kernel/api/shell_run_template')
+const Shell = require('../kernel/shell')
+
+function createKernel(root = process.cwd()) {
+  return {
+    homedir: root,
+    bracketedPasteSupport: {},
+    connect: {
+      keys: async () => null
+    },
+    envs: process.env,
+    exists: async (filepath) => {
+      try {
+        await fs.access(filepath)
+        return true
+      } catch (_) {
+        return false
+      }
+    },
+    path: (type, ...parts) => path.join(root, type, ...parts)
+  }
+}
+
+function createShell(kernel = createKernel()) {
+  return new Shell(kernel)
+}
+
+test('renderEnvArgs protects multiline structured shell.run argv values', () => {
+  const rpc = {
+    method: 'shell.run',
+    params: {
+      shell: 'bash',
+      message: {
+        _: ['python', '-c', 'print("a")\nprint("b")']
+      },
+      env: {
+        EXISTING: '1'
+      }
+    }
+  }
+
+  const rendered = ShellRunTemplate.renderEnvArgs({ platform: 'darwin' }, rpc, {})
+
+  assert.notStrictEqual(rendered, rpc)
+  assert.deepEqual(rendered.params.message, {
+    _: ['python', '-c', '__PINOKIO_ENVARG_0__']
+  })
+  assert.equal(rendered.params.env.EXISTING, '1')
+  assert.equal(rendered.params.env.PINOKIO_ARG_0, 'print("a")\nprint("b")')
+  assert.deepEqual(rendered.params._pinokio_env_args, [
+    {
+      name: 'PINOKIO_ARG_0',
+      value: 'print("a")\nprint("b")'
+    }
+  ])
+  assert.equal(rendered.params._pinokio_cmd_delayed_expansion, false)
+})
+
+test('renderEnvArgs is a no-op for non-multiline or raw string shell.run messages', () => {
+  const structured = {
+    method: 'shell.run',
+    params: {
+      message: {
+        _: ['echo', 'hello']
+      }
+    }
+  }
+  const rawString = {
+    method: 'shell.run',
+    params: {
+      message: 'echo one\necho two'
+    }
+  }
+  const differentMethod = {
+    method: 'fs.write',
+    params: {
+      message: {
+        _: ['echo', 'one\ntwo']
+      }
+    }
+  }
+
+  assert.strictEqual(ShellRunTemplate.renderEnvArgs({ platform: 'darwin' }, structured, {}), structured)
+  assert.strictEqual(ShellRunTemplate.renderEnvArgs({ platform: 'darwin' }, rawString, {}), rawString)
+  assert.strictEqual(ShellRunTemplate.renderEnvArgs({ platform: 'darwin' }, differentMethod, {}), differentMethod)
+})
+
+test('renderEnvArgs marks cmd shell runs for delayed expansion', () => {
+  const rpc = {
+    method: 'shell.run',
+    params: {
+      shell: 'cmd.exe',
+      message: {
+        _: ['node', '-e', 'console.log("a")\nconsole.log("b")']
+      }
+    }
+  }
+
+  const rendered = ShellRunTemplate.renderEnvArgs({ platform: 'win32' }, rpc, {})
+
+  assert.equal(rendered.params._pinokio_cmd_delayed_expansion, true)
+  assert.equal(rendered.params.env.PINOKIO_ARG_0, 'console.log("a")\nconsole.log("b")')
+})
+
+test('Shell.buildStructuredMessage expands env arg markers with shell-specific quoting', () => {
+  const shell = createShell()
+  const message = {
+    _: ['python', '-c', '__PINOKIO_ENVARG_0__']
+  }
+
+  assert.equal(
+    shell.buildStructuredMessage(message, 'bash'),
+    '\'python\' \'-c\' "$PINOKIO_ARG_0"'
+  )
+  assert.equal(
+    shell.buildStructuredMessage(message, 'powershell'),
+    '& \'python\' \'-c\' "${env:PINOKIO_ARG_0}"'
+  )
+  assert.equal(
+    shell.buildStructuredMessage(message, 'cmd.exe'),
+    '"python" "-c" "!PINOKIO_ARG_0!"'
+  )
+})
+
+test('Shell.init_env preserves multiline Pinokio argv env values only', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-envarg-'))
+  await fs.mkdir(path.join(root, 'api'), { recursive: true })
+  await fs.writeFile(path.join(root, 'ENVIRONMENT'), 'PINOKIO_TEST_ENV=1\n')
+  const shell = createShell(createKernel(root))
+
+  await shell.init_env({
+    path: process.cwd(),
+    env: {
+      PINOKIO_ARG_0: 'line one\nline two',
+      OTHER_MULTILINE: 'line one\nline two'
+    }
+  })
+
+  assert.equal(shell.env.PINOKIO_ARG_0, 'line one\nline two')
+  assert.equal(shell.env.OTHER_MULTILINE, 'line one line two')
+})
+
+test('Shell.activate keeps managed Python downloads automatic on every platform', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-uv-python-'))
+  const kernel = createKernel(root)
+  kernel.bin = {
+    activationCommands: () => [],
+    path: (...parts) => path.join(root, 'bin', ...parts)
+  }
+
+  for (const [platform, shellName] of [
+    ['linux', 'bash'],
+    ['darwin', 'bash'],
+    ['win32', 'cmd.exe']
+  ]) {
+    const shell = createShell(kernel)
+    shell.platform = platform
+    shell.shell = shellName
+    shell.env = { UV_PYTHON_DOWNLOADS: 'manual' }
+
+    await shell.activate({
+      path: root,
+      message: ['true']
+    })
+
+    assert.equal(shell.env.UV_PYTHON_PREFERENCE, 'only-managed')
+    assert.equal(shell.env.UV_PYTHON_DOWNLOADS, 'automatic')
+  }
+})
+
+test('Shell.activate restores Conda and CUDA library paths after Windows compiler activation', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-windows-lib-'))
+  t.after(() => fs.rm(root, { recursive: true, force: true }))
+  const activateRoot = path.join(root, 'bin', 'miniforge', 'etc', 'conda', 'activate.d', 'pinokio')
+  const compilerScript = path.join(activateRoot, 'vs2019_compiler_vars.bat')
+  const cudaScript = path.join(activateRoot, '~cuda-nvcc_activate.bat')
+  await fs.mkdir(activateRoot, { recursive: true })
+  await fs.writeFile(compilerScript, '@echo off\n')
+  await fs.writeFile(cudaScript, '@echo off\n')
+
+  const kernel = createKernel(root)
+  kernel.bin = {
+    activationCommands: () => [],
+    path: (...parts) => path.join(root, 'bin', ...parts),
+    vs_path_env: {},
+  }
+  const shell = createShell(kernel)
+  shell.platform = 'win32'
+  shell.shell = 'cmd.exe'
+  shell.env = {}
+
+  const params = await shell.activate({
+    build: true,
+    path: root,
+    message: ['uv pip install cupy'],
+  })
+
+  const activation = params.message[0]
+  const compilerIndex = activation.indexOf(`CALL "${compilerScript}"`)
+  const cudaIndex = activation.indexOf(`CALL "${cudaScript}"`)
+  const libraryCommand = 'CALL set "LIB=%%CONDA_PREFIX%%\\Library\\lib;%%CUDA_HOME%%\\lib;%%LIB%%"'
+  const libraryIndex = activation.indexOf(libraryCommand)
+
+  assert.notEqual(compilerIndex, -1)
+  assert.notEqual(cudaIndex, -1)
+  assert.notEqual(libraryIndex, -1)
+  assert.ok(compilerIndex < cudaIndex)
+  assert.ok(cudaIndex < libraryIndex)
+  assert.equal(params.message[1], 'uv pip install cupy')
+})
+
+test('Shell.init_env defaults the uv HTTP timeout without overriding apps', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-uv-timeout-'))
+  await fs.mkdir(path.join(root, 'api'), { recursive: true })
+  await fs.writeFile(path.join(root, 'ENVIRONMENT'), 'PINOKIO_TEST_ENV=1\n')
+
+  const defaultShell = createShell(createKernel(root))
+  await defaultShell.init_env({
+    path: process.cwd(),
+    env: {}
+  })
+  assert.equal(defaultShell.env.UV_HTTP_TIMEOUT, '60')
+
+  const overrideShell = createShell(createKernel(root))
+  await overrideShell.init_env({
+    path: process.cwd(),
+    env: {
+      UV_HTTP_TIMEOUT: '120'
+    }
+  })
+  assert.equal(overrideShell.env.UV_HTTP_TIMEOUT, '120')
+})
+
+test('Shell.init_env disables Hugging Face hub update checks by default without overriding apps', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-hf-env-'))
+  await fs.mkdir(path.join(root, 'api'), { recursive: true })
+  await fs.writeFile(path.join(root, 'ENVIRONMENT'), 'PINOKIO_TEST_ENV=1\n')
+
+  const defaultShell = createShell(createKernel(root))
+  await defaultShell.init_env({
+    path: process.cwd(),
+    env: {}
+  })
+  assert.equal(defaultShell.env.HF_HUB_DISABLE_UPDATE_CHECK, '1')
+  assert.equal(defaultShell.env.HF_TOKEN_PATH, path.join(root, 'cache', 'HF_AUTH', 'token'))
+  assert.equal(defaultShell.env.HF_TOKEN, undefined)
+
+  const overrideShell = createShell(createKernel(root))
+  await overrideShell.init_env({
+    path: process.cwd(),
+    env: {
+      HF_HUB_DISABLE_UPDATE_CHECK: '0',
+      HF_TOKEN_PATH: path.join(root, 'custom', 'hf-token')
+    }
+  })
+  assert.equal(overrideShell.env.HF_HUB_DISABLE_UPDATE_CHECK, '0')
+  assert.equal(overrideShell.env.HF_TOKEN_PATH, path.join(root, 'custom', 'hf-token'))
+})
+
+test('Shell.init_env preserves an app HF_HOME without changing the shared token default', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-hf-app-env-'))
+  const appDir = path.join(root, 'api', 'demo')
+  const scriptPath = path.join(appDir, 'start.js')
+  await fs.mkdir(appDir, { recursive: true })
+  await fs.writeFile(scriptPath, '')
+  await fs.writeFile(path.join(appDir, 'ENVIRONMENT'), 'HF_HOME=./cache/huggingface\n')
+
+  const shell = createShell(createKernel(root))
+  await shell.init_env({
+    path: appDir,
+    $parent: { path: scriptPath },
+    env: {}
+  })
+
+  assert.equal(shell.env.HF_HOME, path.join(appDir, 'cache', 'huggingface'))
+  assert.equal(shell.env.HF_TOKEN_PATH, path.join(root, 'cache', 'HF_AUTH', 'token'))
+
+  await fs.writeFile(
+    path.join(appDir, 'ENVIRONMENT'),
+    'HF_HOME=./cache/huggingface\nHF_TOKEN_PATH=./auth/token\n'
+  )
+  const overrideShell = createShell(createKernel(root))
+  await overrideShell.init_env({
+    path: appDir,
+    $parent: { path: scriptPath },
+    env: {}
+  })
+
+  assert.equal(overrideShell.env.HF_HOME, path.join(appDir, 'cache', 'huggingface'))
+  assert.equal(overrideShell.env.HF_TOKEN_PATH, path.join(appDir, 'auth', 'token'))
+})
+
+test('Shell.init_env keeps Windows Hugging Face symlink defaults scoped to win32', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-hf-win-'))
+  await fs.mkdir(path.join(root, 'api'), { recursive: true })
+  await fs.writeFile(path.join(root, 'ENVIRONMENT'), 'PINOKIO_TEST_ENV=1\n')
+
+  const darwinShell = createShell(createKernel(root))
+  darwinShell.platform = 'darwin'
+  await darwinShell.init_env({
+    path: process.cwd(),
+    env: {}
+  })
+  assert.equal(darwinShell.env.HF_HUB_DISABLE_UPDATE_CHECK, '1')
+  assert.equal(darwinShell.env.HF_HUB_DISABLE_SYMLINKS, undefined)
+
+  const winShell = createShell(createKernel(root))
+  winShell.platform = 'win32'
+  await winShell.init_env({
+    path: process.cwd(),
+    env: {}
+  })
+  assert.equal(winShell.env.HF_HUB_DISABLE_UPDATE_CHECK, '1')
+  assert.equal(winShell.env.HF_HUB_DISABLE_SYMLINKS, '1')
+  assert.equal(winShell.env.HF_HUB_DISABLE_SYMLINKS_WARNING, '1')
+})
+
+test('Shell.init_env gives Windows uv a valid managed certificate directory without overriding apps', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pinokio-shell-ssl-win-'))
+  const managedSslDir = path.join(root, 'bin', 'miniforge', 'Library', 'ssl')
+  const managedCertFile = path.join(managedSslDir, 'cacert.pem')
+  await fs.mkdir(path.join(root, 'api'), { recursive: true })
+  await fs.mkdir(managedSslDir, { recursive: true })
+  await fs.writeFile(path.join(root, 'ENVIRONMENT'), 'PINOKIO_TEST_ENV=1\n')
+  await fs.writeFile(managedCertFile, 'test certificate bundle\n')
+
+  const defaultShell = createShell(createKernel(root))
+  defaultShell.platform = 'win32'
+  await defaultShell.init_env({
+    path: process.cwd(),
+    env: {}
+  })
+  assert.equal(defaultShell.env.SSL_CERT_FILE, managedCertFile)
+  assert.equal(defaultShell.env.SSL_CERT_DIR, managedSslDir)
+
+  const customCertFile = path.join(root, 'custom', 'certs.pem')
+  const customCertDir = path.join(root, 'custom', 'certs')
+  const overrideShell = createShell(createKernel(root))
+  overrideShell.platform = 'win32'
+  await overrideShell.init_env({
+    path: process.cwd(),
+    env: {
+      SSL_CERT_FILE: customCertFile,
+      SSL_CERT_DIR: customCertDir
+    }
+  })
+  assert.equal(overrideShell.env.SSL_CERT_FILE, customCertFile)
+  assert.equal(overrideShell.env.SSL_CERT_DIR, customCertDir)
+
+  const darwinShell = createShell(createKernel(root))
+  darwinShell.platform = 'darwin'
+  await darwinShell.init_env({
+    path: process.cwd(),
+    env: {}
+  })
+  assert.equal(darwinShell.env.SSL_CERT_FILE, undefined)
+  assert.equal(darwinShell.env.SSL_CERT_DIR, undefined)
+})
+
+test('redactEnvArgs summarizes protected argv env values', () => {
+  const redacted = ShellRunTemplate.redactEnvArgs({
+    PINOKIO_ARG_0: 'line one\nline two',
+    REGULAR_VALUE: 'visible'
+  })
+
+  assert.equal(redacted.REGULAR_VALUE, 'visible')
+  assert.deepEqual(redacted.PINOKIO_ARG_0, {
+    type: 'pinokio env arg',
+    lines: 2,
+    preview: 'line one\nline two',
+    truncated: false
+  })
+})

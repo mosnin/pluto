@@ -1,0 +1,4251 @@
+<html>
+<head>
+<title>Pinokio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link href="/xterm.min.css" rel="stylesheet" />
+<link href="/css/fontawesome.min.css" rel="stylesheet">
+<link href="/css/solid.min.css" rel="stylesheet">
+<link href="/css/regular.min.css" rel="stylesheet">
+<link href="/css/brands.min.css" rel="stylesheet">
+<link href="/noty.css" rel="stylesheet"/>
+<link href="/filepond.min.css" rel="stylesheet" />
+<link href="/filepond-plugin-image-preview.min.css" rel="stylesheet" />
+<link href="/filepond-plugin-image-edit.min.css" rel="stylesheet" />
+<link href="/style.css" rel="stylesheet"/>
+<link href="/urldropdown.css" rel="stylesheet" />
+<link href="/tom-select.css" rel="stylesheet" />
+<% if (agent === "electron") { %>
+  <link href="/electron.css" rel="stylesheet"/>
+<% } %>
+<style>
+.bubble {
+  position: relative;
+  background: rgba(0,0,0,0.1);
+  color: #333;
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-size: 14px;
+  flex-grow: 1;
+  line-height: 1.4;
+  margin: 0 10px;
+  font-weight: bold;
+}
+/* Left-side tail */
+.bubble::before {
+  content: "";
+  position: absolute;
+  top: 10px; /* Vertical alignment of the tail */
+  left: -20px; /* Positioning outside the bubble */
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent rgba(0,0,0,0.1) transparent transparent;
+}
+body.dark .bubble {
+  background: rgba(0,0,0,0.4);
+  color: white;
+}
+body.dark .bubble:before {
+  border-color: transparent rgba(0,0,0,0.4) transparent transparent;
+}
+.line2 {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: rgba(0,0,100,0.04);
+}
+.line2 a {
+  text-decoration: none;
+  color: black;
+}
+.status {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+}
+.status.offline {
+  background: silver;
+}
+.status.online {
+  background: yellowgreen;
+}
+.switch {
+  padding: 10px;
+  margin: 10px 0;
+}
+.switch[data-online=true] {
+  color: yellowgreen;
+}
+.button {
+  padding: 10px;
+}
+.on, .off {
+  display: flex;
+  align-items: center;
+}
+header .runner {
+  padding: 10px 0 0;
+}
+.proxy {
+  padding: 0 10px;
+  text-align: right;
+}
+.proxy a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 2px;
+  background: black;
+  color: white;
+}
+.browser-options-btns {
+  display: flex;
+  padding-top: 5px;
+}
+.browser-options-row {
+/*
+  border-top: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  */
+  display: flex;
+  padding: 10px;
+  align-items: flex-start;
+}
+.browser-options-row h3 {
+  margin: 0;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+.browser-options-row .btn.disabled {
+  opacity: 0.7;
+}
+.browser-options-row .btn {
+  font-weight: bold;
+  width: 100px;
+  text-align: center;
+  display: block;
+  margin-right: 10px;
+  flex-shrink: 0;
+  padding: 5px;
+}
+.badge {
+  font-size: 12px;
+  padding: 5px 10px;
+  background: rgba(0,0,100,0.1);
+  border-radius: 5px;
+  display: inline-block;
+  margin-top: 5px;
+}
+a.badge {
+  color: royalblue;
+  text-decoration: none;
+  cursor: pointer;
+}
+.badge a {
+  color: royalblue;
+  text-decoration: none;
+}
+body.dark .btn {
+  color: white;
+}
+body.dark .badge {
+  background: rgba(255,255,255,0.1);
+}
+/*
+body.dark .browser-options-row {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+*/
+body.dark .context-menu-wrapper {
+  background: rgba(0,0,0,0.9) !important;
+  color: white !important;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+.context-menu-wrapper {
+  background: whitesmoke !important;
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 220px;
+  padding: 6px 0;
+}
+.menu-btns {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.home-app-line .menu-btns > .btn {
+  min-height: 22px;
+  margin: 0 !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 6px !important;
+  background: rgba(15, 23, 42, 0.035) !important;
+  color: rgba(31, 41, 55, 0.74) !important;
+  box-sizing: border-box;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: none;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.home-app-line .menu-btns > .open-actions-modal,
+.home-app-line .menu-btns > .open-app-share-modal {
+  width: 28px;
+  min-width: 28px;
+  padding: 0 !important;
+}
+.home-app-line .menu-btns > .open-actions-modal i,
+.home-app-line .menu-btns > .open-app-share-modal i {
+  width: 14px;
+  font-size: 13px;
+}
+body.dark .home-app-line .menu-btns > .btn {
+  border-color: rgba(255, 255, 255, 0.075) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: rgba(229, 231, 235, 0.72) !important;
+}
+.home-app-line .menu-btns > .btn:hover,
+.home-app-line .menu-btns > .btn:focus-visible {
+  border-color: rgba(15, 23, 42, 0.14) !important;
+  background: rgba(15, 23, 42, 0.055) !important;
+  color: rgba(17, 24, 39, 0.9) !important;
+  outline: none;
+}
+body.dark .home-app-line .menu-btns > .btn:hover,
+body.dark .home-app-line .menu-btns > .btn:focus-visible {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(248, 250, 252, 0.9) !important;
+}
+.home-autolaunch-status {
+  min-height: 22px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 7px;
+  border: 1px solid rgba(180, 83, 9, 0.18);
+  border-radius: 6px;
+  background: rgba(180, 83, 9, 0.07);
+  color: rgba(120, 53, 15, 0.9);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+.home-autolaunch-status i {
+  color: inherit !important;
+  font-size: 11px;
+}
+body.dark .home-autolaunch-status {
+  border-color: rgba(214, 164, 81, 0.22);
+  background: rgba(214, 164, 81, 0.1);
+  color: rgba(252, 211, 146, 0.92);
+}
+.home-app-line.autolaunch-starting .title i {
+  color: #b45309 !important;
+}
+body.dark .home-app-line.autolaunch-starting .title i {
+  color: #d6a451 !important;
+}
+.home-app-line.autolaunch-blocked .title i {
+  color: #dc2626 !important;
+}
+body.dark .home-app-line.autolaunch-blocked .title i {
+  color: #f87171 !important;
+}
+.context-menu {
+  position: absolute;
+  right: auto;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+.context-menu:popover-open {
+  border: none;
+  outline: none;
+}
+.context-menu .btn:hover {
+  color: cornflowerblue !important;
+}
+.context-menu .btn {
+  background: none !important;
+  border: none !important;
+  display: block;
+  width: 100%;
+  padding: 7px 14px !important;
+  text-align: left;
+  color: black;
+  margin: 0 !important;
+}
+.context-menu-section-title {
+  padding: 8px 14px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.45);
+}
+.context-menu-divider {
+  height: 1px;
+  margin: 6px 0;
+  background: rgba(0,0,0,0.08);
+}
+body.dark .btn {
+  background: rgba(255,255,255,0.05) !important;
+}
+.app-btns .btn {
+  border-radius: 4px;
+  padding: 8px 10px;
+  width: 70px;
+  /*
+  padding: 6px 10px;
+  */
+  text-align: center;
+}
+body.dark .context-menu .btn {
+  color: white;
+  background: none !important;
+}
+body.dark .context-menu-section-title {
+  color: rgba(255,255,255,0.55);
+}
+body.dark .context-menu-divider {
+  background: rgba(255,255,255,0.08);
+}
+.open-menu, .browse {
+/*
+  width: 80px;
+  */
+  border-radius: 6px !important;
+  /*
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  */
+}
+.terminals-link .terminals-link-indicator {
+  margin-left: 2px;
+  font-size: 12px;
+  opacity: 0.72;
+}
+.terminals-link i {
+  color: inherit !important;
+}
+.menu-btns .shutdown,
+.menu-btns .terminals-link.is-online {
+  padding: 0 7px !important;
+  background: rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(15, 23, 42, 0.09) !important;
+  color: rgba(31, 41, 55, 0.82) !important;
+}
+body.dark .menu-btns .shutdown,
+body.dark .menu-btns .terminals-link.is-online {
+  background: rgba(255, 255, 255, 0.055) !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  color: rgba(229, 231, 235, 0.82) !important;
+}
+.menu-btns .shutdown:hover,
+.menu-btns .shutdown:focus-visible,
+.menu-btns .shutdown:active,
+.menu-btns .terminals-link.is-online:hover,
+.menu-btns .terminals-link.is-online:focus-visible,
+.menu-btns .terminals-link.is-online:active {
+  background: rgba(15, 23, 42, 0.075) !important;
+  border-color: rgba(15, 23, 42, 0.14) !important;
+  color: rgba(17, 24, 39, 0.94) !important;
+  outline: none;
+}
+body.dark .menu-btns .shutdown:hover,
+body.dark .menu-btns .shutdown:focus-visible,
+body.dark .menu-btns .shutdown:active,
+body.dark .menu-btns .terminals-link.is-online:hover,
+body.dark .menu-btns .terminals-link.is-online:focus-visible,
+body.dark .menu-btns .terminals-link.is-online:active {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(248, 250, 252, 0.94) !important;
+}
+.menu-btns .shutdown i,
+.menu-btns .terminals-link.is-online i {
+  color: inherit !important;
+}
+.menu-btns .shutdown i.fa-stop {
+  color: #b45309 !important;
+  font-size: 10px;
+}
+body.dark .menu-btns .shutdown i.fa-stop {
+  color: #d6a451 !important;
+}
+.menu-btns .terminals-link.is-online i.fa-terminal {
+  color: #4b5563 !important;
+}
+body.dark .menu-btns .terminals-link.is-online i.fa-terminal {
+  color: #a7adb7 !important;
+}
+.toggle-star.is-starred i {
+  color: #b8860b;
+}
+body.dark .toggle-star.is-starred i {
+  color: #ffcc66;
+}
+.noty_bar.home-star-toast {
+  max-width: 360px !important;
+  background: linear-gradient(180deg, rgba(24, 28, 39, 0.98), rgba(14, 17, 26, 0.98)) !important;
+  color: #f8f4ea !important;
+  border: 1px solid rgba(255, 214, 102, 0.22) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28) !important;
+}
+.noty_bar.home-star-toast .noty_body {
+  padding: 12px 14px !important;
+}
+.home-star-toast__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.home-star-toast__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: rgba(255, 214, 102, 0.14);
+  color: #ffd666;
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 102, 0.18);
+}
+.home-star-toast__content {
+  min-width: 0;
+}
+.home-star-toast__title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff7d6;
+}
+.home-star-toast__text {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(248, 244, 234, 0.78);
+}
+.open-menu.selected {
+  border: none !important;
+  /*
+  background: none !important;
+  */
+}
+.open-menu.selected span {
+  display: none;
+}
+main {
+  display: flex;
+}
+.submenu .tab {
+  padding: 0;
+}
+.submenu .tab {
+  border-left: 10px solid transparent;
+}
+aside {
+  width: 200px;
+  display: block;
+  flex-shrink: 0;
+}
+body.dark aside .tab:hover, aside .tab:hover {
+  color: royalblue !important;
+  opacity: 1;
+}
+aside .tab i {
+  width: 20px;
+  text-align: center;
+  display: block;
+}
+body.dark aside .tab {
+  color: white;
+}
+aside .tab.hidden {
+  padding: 0;
+}
+aside .tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: black;
+  text-decoration: none;
+  padding: 10px;
+  font-size: 12px;
+  opacity: 0.5;
+  border-left: 10px solid transparent;
+}
+body.dark aside .tab.selected {
+
+  color: white;
+  /*
+  border-left: 10px solid white;
+  */
+}
+aside .tab.selected {
+/*
+  border-left: 10px solid black;
+  */
+  font-weight: bold;
+  opacity: 1;
+}
+aside .btn-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 10px;
+  margin-top: 10px;
+}
+aside .btn-tab .btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  text-align: left;
+  margin: 0;
+  padding: 10px 12px;
+  border: none !important;
+  border-radius: 0 !important;
+  background: rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+body.dark aside .btn-tab .btn {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+aside .btn-tab .btn i {
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+aside .btn-tab .btn .caption {
+  display: block;
+}
+.home-search-form .home-apps-sort {
+  --home-sort-bg: rgba(0, 0, 0, 0.05);
+  --home-sort-border: rgba(0, 0, 0, 0.08);
+  --home-sort-hover-border: rgba(0, 0, 0, 0.12);
+  --home-sort-hover-bg: rgba(0, 0, 0, 0.08);
+  --home-sort-focus-border: rgba(0, 0, 0, 0.14);
+  --home-sort-focus-bg: rgba(0, 0, 0, 0.08);
+  --home-sort-text: rgba(15, 23, 42, 0.9);
+  --home-sort-muted: rgba(15, 23, 42, 0.66);
+  --home-sort-dropdown-bg: rgba(255, 255, 255, 0.98);
+  --home-sort-dropdown-border: rgba(15, 23, 42, 0.12);
+  --home-sort-dropdown-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  --home-sort-option-hover-bg: rgba(15, 23, 42, 0.05);
+  --home-sort-option-hover-text: rgba(15, 23, 42, 0.95);
+  --home-sort-option-selected-bg: rgba(15, 23, 42, 0.08);
+  --home-sort-option-selected-text: rgba(15, 23, 42, 0.96);
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  gap: 5px;
+  height: var(--home-filter-control-height);
+  min-height: var(--home-filter-control-height);
+  padding: 0 12px;
+  border: 1px solid var(--home-sort-border);
+  border-radius: 6px;
+  background: var(--home-sort-bg);
+  color: var(--home-sort-text);
+  box-sizing: border-box;
+  margin-left: auto;
+  align-self: center;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+
+.home-search-form .home-apps-sort:hover {
+  border-color: var(--home-sort-hover-border);
+  background: var(--home-sort-hover-bg);
+}
+
+.home-search-form .home-apps-sort:focus-within {
+  border-color: var(--home-sort-focus-border);
+  background: var(--home-sort-focus-bg);
+}
+
+.home-search-form .home-apps-sort .home-apps-sort-icon {
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.85;
+  flex: 0 0 auto;
+  color: var(--home-sort-muted);
+}
+
+.home-search-form .home-apps-sort .home-apps-sort-caret {
+  font-size: 9px;
+  line-height: 1;
+  opacity: 0.7;
+  pointer-events: none;
+  flex: 0 0 auto;
+  color: var(--home-sort-muted);
+}
+
+.home-search-form .home-apps-sort label {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--home-sort-muted);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.home-search-form .home-apps-sort select {
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  min-width: 88px;
+  height: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.home-search-form .home-apps-sort .ts-wrapper {
+  flex: 0 0 auto;
+  width: 132px;
+  min-width: 132px;
+  height: 100%;
+}
+
+.home-search-form .home-apps-sort .ts-wrapper.single .ts-control {
+  display: flex;
+  align-items: center;
+  border: 0;
+  outline: none;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+  border-radius: 0;
+  cursor: pointer;
+  color: inherit;
+  height: 100%;
+}
+
+.home-search-form .home-apps-sort .ts-control > .item {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--home-sort-text);
+}
+
+.home-search-form .home-apps-sort .ts-control > input {
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--home-sort-text);
+}
+
+.home-search-form .home-apps-sort .ts-dropdown {
+  margin: 8px 0 0;
+  width: 100%;
+  min-width: 100%;
+  border: 1px solid var(--home-sort-dropdown-border);
+  border-radius: 8px;
+  background: var(--home-sort-dropdown-bg);
+  box-shadow: var(--home-sort-dropdown-shadow);
+}
+
+.home-search-form .home-apps-sort .ts-dropdown .ts-dropdown-content {
+  background: transparent;
+}
+
+.home-search-form .home-apps-sort .ts-dropdown .option {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--home-sort-text);
+  padding: 7px 10px;
+  white-space: nowrap;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.home-search-form .home-apps-sort .ts-dropdown .option.active,
+.home-search-form .home-apps-sort .ts-dropdown [data-selectable].option:hover {
+  background: var(--home-sort-option-hover-bg);
+  color: var(--home-sort-option-hover-text);
+}
+
+.home-search-form .home-apps-sort .ts-dropdown .option.selected,
+.home-search-form .home-apps-sort .ts-dropdown .option.selected.active,
+.home-search-form .home-apps-sort .ts-dropdown [data-selectable].option.selected:hover {
+  background: var(--home-sort-option-selected-bg);
+  color: var(--home-sort-option-selected-text);
+}
+
+body.dark .home-search-form .home-apps-sort {
+  --home-sort-bg: rgba(255, 255, 255, 0.06);
+  --home-sort-border: rgba(255, 255, 255, 0.05);
+  --home-sort-hover-border: rgba(255, 255, 255, 0.1);
+  --home-sort-hover-bg: rgba(255, 255, 255, 0.09);
+  --home-sort-focus-border: rgba(255, 255, 255, 0.12);
+  --home-sort-focus-bg: rgba(255, 255, 255, 0.1);
+  --home-sort-text: rgba(226, 232, 240, 0.92);
+  --home-sort-muted: rgba(226, 232, 240, 0.78);
+  --home-sort-dropdown-bg: rgba(24, 24, 27, 0.98);
+  --home-sort-dropdown-border: rgba(255, 255, 255, 0.1);
+  --home-sort-dropdown-shadow: 0 14px 28px rgba(0, 0, 0, 0.42);
+  --home-sort-option-hover-bg: rgba(255, 255, 255, 0.06);
+  --home-sort-option-hover-text: rgba(248, 250, 252, 0.98);
+  --home-sort-option-selected-bg: rgba(255, 255, 255, 0.08);
+  --home-sort-option-selected-text: rgba(248, 250, 252, 0.98);
+}
+
+body.dark .home-search-form .home-apps-sort:hover {
+  border-color: var(--home-sort-hover-border);
+  background: var(--home-sort-hover-bg);
+}
+
+body.dark .home-search-form .home-apps-sort:focus-within {
+  border-color: var(--home-sort-focus-border);
+  background: var(--home-sort-focus-bg);
+}
+
+body.dark .home-search-form .home-apps-sort label {
+  color: var(--home-sort-muted);
+}
+
+body.dark .home-search-form .home-apps-sort select {
+  color: var(--home-sort-text);
+}
+
+body.dark .home-search-form .home-apps-sort .ts-control > .item {
+  color: var(--home-sort-text);
+}
+
+body.dark .home-search-form .home-apps-sort .ts-dropdown {
+  border-color: var(--home-sort-dropdown-border);
+  background: var(--home-sort-dropdown-bg);
+  box-shadow: var(--home-sort-dropdown-shadow);
+}
+
+body.dark .home-search-form .home-apps-sort .ts-dropdown .option {
+  color: var(--home-sort-text);
+}
+
+body.dark .home-search-form .home-apps-sort .ts-dropdown .option.active,
+body.dark .home-search-form .home-apps-sort .ts-dropdown [data-selectable].option:hover {
+  background: var(--home-sort-option-hover-bg);
+  color: var(--home-sort-option-hover-text);
+}
+.home-search-form {
+  --home-filter-control-height: 40px;
+  align-items: center;
+  gap: 8px;
+}
+body.is-home {
+  --home-actions-drawer-width: min(420px, calc(100vw - 240px));
+  --home-actions-drawer-top: 0px;
+  --home-page-nav-bg: #ffffff;
+  --home-page-nav-border: rgba(15, 23, 42, 0.12);
+  --home-page-accent: #6b7280;
+  background: #ffffff;
+  isolation: isolate;
+  min-height: 100vh;
+}
+body.dark.is-home {
+  --home-page-accent: #9ca3af;
+  --home-page-nav-bg: #1b1c1d;
+  --home-page-nav-border: rgba(255, 255, 255, 0.08);
+  background: #1b1c1d;
+}
+body.is-home > header.navheader {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  isolation: isolate;
+}
+body.dark .home-search-form {
+  border-bottom-color: rgba(148, 163, 184, 0.22);
+}
+.home-search-form input[type='search'].flexible {
+  height: var(--home-filter-control-height);
+  min-height: var(--home-filter-control-height);
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+}
+.home-app-line {
+  color: var(--light-color);
+  cursor: pointer;
+}
+body.dark .home-app-line {
+  color: var(--dark-color);
+}
+.home-app-line:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--home-page-accent) 55%, transparent);
+  outline-offset: -2px;
+}
+.home-app-line > h3 {
+  align-items: flex-start;
+  gap: 0;
+}
+.home-app-line .item-icon {
+  align-self: flex-start;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+}
+.home-app-line .item-icon img {
+  width: 40px;
+  height: 40px;
+  display: block;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.home-app-line .description {
+  margin-bottom: 0;
+  line-height: 1.32;
+}
+.home-app-line .menu-btns {
+  margin-top: 4px;
+}
+.menu-btns .home-icon-btn {
+  width: 28px;
+  height: 22px;
+  min-width: 28px;
+  min-height: 22px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+.menu-btns .home-icon-btn:hover,
+.menu-btns .home-icon-btn:focus-visible {
+  color: var(--home-page-accent) !important;
+}
+body.dark .menu-btns .home-icon-btn:hover,
+body.dark .menu-btns .home-icon-btn:focus-visible {
+  color: var(--home-page-accent) !important;
+}
+.menu-btns .home-icon-btn i {
+  color: inherit;
+}
+.menu-btns .toggle-star.is-starred {
+  color: #b8860b !important;
+}
+body.dark .menu-btns .toggle-star.is-starred {
+  color: #ffcc66 !important;
+}
+.home-app-share-swal.swal2-popup {
+  width: min(620px, calc(100vw - 32px));
+  padding: 0;
+  border-radius: 10px;
+}
+.home-app-share-swal .swal2-close {
+  width: 34px;
+  height: 34px;
+  margin: 16px 16px 0 0;
+  border-radius: 8px;
+  color: rgba(15, 23, 42, 0.48);
+  font-size: 28px;
+  line-height: 34px;
+  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+.home-app-share-swal .swal2-close:hover,
+.home-app-share-swal .swal2-close:focus-visible {
+  background: rgba(15, 23, 42, 0.055);
+  color: rgba(15, 23, 42, 0.74);
+  box-shadow: none;
+}
+body.dark .home-app-share-swal .swal2-close {
+  color: rgba(226, 232, 240, 0.5);
+}
+body.dark .home-app-share-swal .swal2-close:hover,
+body.dark .home-app-share-swal .swal2-close:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(226, 232, 240, 0.78);
+}
+.home-app-share-swal .swal2-title {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 11px;
+  margin: 0;
+  padding: 30px 64px 0 30px;
+  text-align: left;
+  font-size: 21px;
+  line-height: 1.22;
+}
+.home-app-share-swal .swal2-html-container {
+  margin: 0;
+  padding: 20px 30px 30px;
+  overflow: visible;
+  text-align: left;
+}
+.home-app-share-modal__title-icon {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 7px;
+  background: rgba(248, 250, 252, 0.74);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 14px;
+  line-height: 1;
+}
+.home-app-share-modal__title-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.home-app-share-modal__title-text {
+  min-width: 0;
+}
+.home-app-share-modal__title-meta {
+  width: fit-content;
+  padding: 2px 7px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.035);
+  color: rgba(15, 23, 42, 0.56);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+body.dark .home-app-share-modal__title-icon {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(226, 232, 240, 0.78);
+}
+body.dark .home-app-share-modal__title-meta {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(226, 232, 240, 0.58);
+}
+.home-app-share-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+.home-app-share-modal__intro {
+  color: rgba(15, 23, 42, 0.68);
+  font-size: 13px;
+  line-height: 1.45;
+}
+body.dark .home-app-share-modal__intro {
+  color: rgba(226, 232, 240, 0.7);
+}
+.home-app-share-modal__scan-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.72);
+}
+body.dark .home-app-share-modal__scan-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+.home-app-share-modal__scan-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.home-app-share-modal__eyebrow {
+  color: rgba(15, 23, 42, 0.88);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+body.dark .home-app-share-modal__eyebrow {
+  color: rgba(226, 232, 240, 0.9);
+}
+.home-app-share-modal__qr {
+  display: flex;
+  width: 178px;
+  height: 178px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 8px;
+  background: #ffffff;
+}
+.home-app-share-modal__qr img {
+  width: 154px;
+  height: 154px;
+  image-rendering: pixelated;
+}
+.home-app-share-modal__share-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.62);
+}
+body.dark .home-app-share-modal__share-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+.home-app-share-modal__url {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 7px;
+  background: rgba(248, 250, 252, 0.82);
+  color: rgba(15, 23, 42, 0.78);
+  font-size: 12px;
+}
+body.dark .home-app-share-modal__url {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(226, 232, 240, 0.78);
+}
+.home-app-share-modal__url span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-app-share-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.home-app-share-modal__action {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 13px;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 7px;
+  background: rgba(248, 250, 252, 0.72);
+  color: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.home-app-share-modal__action.is-primary {
+  border-color: var(--pinokio-chrome-primary-bg, #252b3a);
+  background: var(--pinokio-chrome-primary-bg, #252b3a);
+  color: #ffffff;
+}
+.home-app-share-modal__action:hover,
+.home-app-share-modal__action:focus-visible {
+  border-color: rgba(15, 23, 42, 0.16);
+  background: rgba(248, 250, 252, 0.95);
+}
+.home-app-share-modal__action.is-primary:hover,
+.home-app-share-modal__action.is-primary:focus-visible {
+  background: rgba(15, 23, 42, 0.9);
+}
+body.dark .home-app-share-modal__action {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+body.dark .home-app-share-modal__action.is-primary {
+  border-color: rgba(248, 250, 252, 0.92);
+  background: rgba(248, 250, 252, 0.92);
+  color: rgba(15, 23, 42, 0.94);
+}
+body.dark .home-app-share-modal__action:hover,
+body.dark .home-app-share-modal__action:focus-visible {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.075);
+}
+body.dark .home-app-share-modal__action.is-primary:hover,
+body.dark .home-app-share-modal__action.is-primary:focus-visible {
+  background: rgba(248, 250, 252, 0.84);
+}
+.home-app-share-modal__note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(15, 23, 42, 0.54);
+  font-size: 12px;
+  line-height: 1.4;
+}
+body.dark .home-app-share-modal__note {
+  color: rgba(226, 232, 240, 0.58);
+}
+.home-app-share-modal__setup-card {
+  padding: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.72);
+}
+body.dark .home-app-share-modal__setup-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+@media (max-width: 560px) {
+  .home-app-share-swal.swal2-popup {
+    width: calc(100vw - 24px);
+  }
+  .home-app-share-swal .swal2-title {
+    padding: 24px 56px 0 22px;
+  }
+  .home-app-share-swal .swal2-html-container {
+    padding: 18px 22px 24px;
+  }
+  .home-app-share-modal__scan-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .home-app-share-modal__scan-copy {
+    align-items: center;
+  }
+  .home-app-share-modal__qr {
+    width: 166px;
+    height: 166px;
+  }
+  .home-app-share-modal__qr img {
+    width: 144px;
+    height: 144px;
+  }
+}
+.home-actions-dialog {
+  width: min(760px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 32px));
+  padding: 0;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 8px;
+  background: var(--home-page-nav-bg, #ffffff);
+  color: rgba(15, 23, 42, 0.94);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+}
+.home-actions-dialog:not([open]) {
+  display: none;
+}
+.home-actions-dialog[open] {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  display: block;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+.home-actions-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.32);
+}
+body.dark .home-actions-dialog {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: var(--home-page-nav-bg, #1b1c1d);
+  color: rgba(248, 250, 252, 0.94);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+body.dark .home-actions-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.58);
+}
+.home-actions-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: min(560px, calc(100vh - 48px));
+  overflow: hidden;
+}
+.home-actions-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.09);
+}
+body.dark .home-actions-header {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.home-actions-icon {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+}
+.home-actions-icon img {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.home-actions-heading {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.home-actions-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.home-actions-title-row h2 {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  line-height: 1.2;
+}
+.home-actions-path {
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.58);
+}
+body.dark .home-actions-path {
+  color: rgba(226, 232, 240, 0.58);
+}
+.home-actions-status,
+.home-run-menu-status,
+.home-actions-count {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  max-width: min(260px, 45vw);
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--pinokio-chrome-accent-bg-light);
+  color: var(--pinokio-chrome-accent-fg-light);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.dark .home-actions-status,
+body.dark .home-run-menu-status,
+body.dark .home-actions-count {
+  background: var(--pinokio-chrome-accent-bg-dark);
+  color: var(--pinokio-chrome-accent-fg-dark);
+}
+.home-actions-status--starting {
+  background: rgba(180, 83, 9, 0.08);
+  color: rgba(120, 53, 15, 0.92);
+}
+body.dark .home-actions-status--starting {
+  background: rgba(214, 164, 81, 0.12);
+  color: rgba(252, 211, 146, 0.95);
+}
+.home-actions-close {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.home-actions-close:hover,
+.home-actions-close:focus-visible {
+  background: rgba(15, 23, 42, 0.07);
+  outline: none;
+}
+body.dark .home-actions-close:hover,
+body.dark .home-actions-close:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+.home-actions-body {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 14px 18px 18px;
+}
+.home-actions-section + .home-actions-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(15, 23, 42, 0.09);
+}
+body.dark .home-actions-section + .home-actions-section {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+.home-actions-section-title {
+  margin: 0 0 8px;
+  color: rgba(15, 23, 42, 0.58);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+body.dark .home-actions-section-title {
+  color: rgba(226, 232, 240, 0.56);
+}
+.home-run-menu-list,
+.home-actions-command-list,
+.home-run-menu-children {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.home-run-menu-group {
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 7px;
+  overflow: hidden;
+}
+body.dark .home-run-menu-group {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.home-run-menu-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  list-style: none;
+}
+.home-run-menu-summary::-webkit-details-marker {
+  display: none;
+}
+.home-run-menu-group[open] > .home-run-menu-summary i {
+  transform: rotate(180deg);
+}
+.home-run-menu-children {
+  padding: 0 8px 8px;
+}
+.home-run-menu-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+}
+.home-run-command,
+.home-mode-command {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 0 11px;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 6px;
+  background: rgba(248, 250, 252, 0.72);
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+button.home-run-command,
+button.home-mode-command {
+  font-family: inherit;
+}
+body.dark .home-run-command,
+body.dark .home-mode-command {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+.home-run-command:hover,
+.home-run-command:focus-visible,
+.home-mode-command:hover,
+.home-mode-command:focus-visible,
+.home-run-stop:hover,
+.home-run-stop:focus-visible {
+  border-color: color-mix(in srgb, var(--home-page-accent) 34%, transparent);
+  background: color-mix(in srgb, var(--home-page-accent) 9%, transparent);
+  outline: none;
+}
+.home-run-menu-label,
+.home-mode-command span:first-of-type {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-run-menu-label i,
+.home-mode-command i {
+  width: 16px;
+  text-align: center;
+}
+.home-run-command > i:last-child {
+  flex: 0 0 auto;
+  font-size: 10px;
+  opacity: 0.6;
+}
+.home-run-command.has-block-label,
+.home-run-menu-summary.has-block-label {
+  min-height: 52px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.home-run-menu-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.home-run-menu-label.has-block-content {
+  align-items: flex-start;
+  white-space: normal;
+  line-height: 1.18;
+}
+.home-run-menu-label.has-block-content > i:first-child {
+  margin-top: 1px;
+}
+.home-run-menu-label.has-block-content > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-run-menu-label.has-block-content > div > strong,
+.home-run-menu-label.has-block-content > div > div {
+  line-height: 1.18;
+}
+.home-run-stop {
+  width: 38px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 6px;
+  background: rgba(248, 250, 252, 0.72);
+  color: rgba(185, 28, 28, 0.82);
+  cursor: pointer;
+}
+body.dark .home-run-stop {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(252, 165, 165, 0.86);
+}
+.home-mode-command.is-danger {
+  margin-top: 6px;
+  color: rgba(185, 28, 28, 0.86);
+}
+body.dark .home-mode-command.is-danger {
+  color: rgba(252, 165, 165, 0.9);
+}
+.home-actions-empty {
+  padding: 18px 12px;
+  border: 1px dashed rgba(15, 23, 42, 0.16);
+  border-radius: 7px;
+  color: rgba(15, 23, 42, 0.55);
+  font-size: 12px;
+  font-weight: 700;
+}
+body.dark .home-actions-empty {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(226, 232, 240, 0.58);
+}
+@media only screen and (min-width: 961px) {
+  body.is-home.home-actions-drawer-open main > .container {
+    padding-right: calc(var(--home-actions-drawer-width) + 16px);
+  }
+  @keyframes homeActionsDrawerIn {
+    from {
+      opacity: 0.72;
+      transform: translateX(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes homeActionsDrawerOut {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0.72;
+      transform: translateX(18px);
+    }
+  }
+  .home-actions-dialog.is-docked[open] {
+    top: var(--home-actions-drawer-top);
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: var(--home-actions-drawer-width);
+    max-height: none;
+    height: calc(100vh - var(--home-actions-drawer-top));
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    animation: homeActionsDrawerIn 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+  }
+  body.dark .home-actions-dialog.is-docked[open] {
+    box-shadow: none;
+  }
+  .home-actions-dialog.is-docked.is-closing[open] {
+    pointer-events: none;
+    animation: homeActionsDrawerOut 130ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .home-actions-dialog.is-docked::backdrop {
+    background: transparent;
+  }
+  .home-actions-dialog.is-docked .home-actions-shell {
+    height: 100%;
+    min-height: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-actions-dialog.is-docked[open],
+    .home-actions-dialog.is-docked.is-closing[open] {
+      animation: none;
+      will-change: auto;
+    }
+  }
+}
+#suggestion {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+#suggestion img {
+  width: 50px;
+  height: 50px;
+}
+#suggestion h4 {
+  margin: 0;
+}
+/*
+#suggestion .prompt {
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-left: 10px solid rgba(0,0,0,0.1);
+}
+*/
+body.dark aside .current.selected {
+/*
+  border-left: 10px solid white;
+  */
+}
+/*
+.container {
+  margin-left: 20px;
+}
+*/
+/*
+@media only screen and (max-width: 800px) {
+  body {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+}
+*/
+@media only screen and (max-width: 760px) {
+  .home-search-form {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .home-search-form input[type='search'].flexible {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .home-search-form .home-apps-sort {
+    width: var(--home-filter-control-height);
+    min-width: var(--home-filter-control-height);
+    padding: 0;
+    justify-content: center;
+    margin-left: 0;
+  }
+  .home-search-form .home-apps-sort label,
+  .home-search-form .home-apps-sort .ts-control > .item {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .home-search-form .home-apps-sort .home-apps-sort-icon {
+    font-size: 14px;
+  }
+  .home-search-form .home-apps-sort .home-apps-sort-caret {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    font-size: 7px;
+  }
+  .home-search-form .home-apps-sort select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    min-width: 0;
+    opacity: 0;
+    z-index: 1;
+  }
+  .home-search-form .home-apps-sort .ts-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    opacity: 0;
+    z-index: 1;
+  }
+  .home-search-form .home-apps-sort .ts-dropdown {
+    left: auto !important;
+    right: 0 !important;
+    width: 164px !important;
+    min-width: 164px !important;
+  }
+  header .flexible {
+    min-width: unset;
+  }
+  .home-actions-dialog {
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  .home-actions-shell {
+    min-height: 100vh;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .btn2 {
+    padding: 5px;
+    font-size: 11px;
+  }
+  .menu-btns .home-icon-btn {
+    width: 28px;
+    height: 22px;
+    min-width: 28px;
+    min-height: 22px;
+  }
+  .nav-btns {
+    flex-grow: 1;
+    justify-content: center;
+    padding: 0;
+  }
+}
+</style>
+<script src="/window_storage.js"></script>
+<script src="/hotkeys.min.js"></script>
+<script src="/sweetalert2.js"></script>
+<script src="/noty.js"></script>
+<script src="/notyq.js"></script>
+<script src="/xterm.js"></script>
+<script src="/xterm-addon-fit.js"></script>
+<script src="/xterm-addon-web-links.js"></script>
+<script src="/xterm-theme.js"></script>
+<script src="/Socket.js"></script>
+<script src="/install.js"></script>
+<script src="/common.js"></script>
+<script src="/nav.js"></script>
+<script src="/fuse.js"></script>
+<script src="/report.js"></script>
+<script src="/popper.min.js"></script>
+<script src="/tippy-bundle.umd.min.js"></script>
+<script src="/filepond-plugin-file-validate-type.min.js"></script>
+<script src="/filepond-plugin-image-exif-orientation.min.js"></script>
+<script src="/filepond-plugin-image-preview.min.js"></script>
+<script src="/filepond-plugin-image-edit.min.js"></script>
+<script src="/filepond-plugin-image-crop.min.js"></script>
+<script src="/filepond-plugin-image-resize.min.js"></script>
+<script src="/filepond-plugin-image-transform.min.js"></script>
+<script src="/filepond.min.js"></script>
+<script src="/fscreator.js"></script>
+<script src="/fseditor.js"></script>
+<script src="/urldropdown.js"></script>
+<script src="/tom-select.complete.min.js"></script>
+</head>
+<body class='<%= [theme, "main-sidebar-page", ishome ? "is-home" : ""].filter(Boolean).join(" ") %>' data-agent="<%=agent%>">
+<% if (error) { %>
+<nav class='error-message'>
+  <div><%=error%></div>
+  <div class='flexible'></div>
+  <a class='btn' target="_blank" href="<%=install%>">Download</a>
+</nav>
+<% } %>
+<header class='navheader grabbable'>
+<h1>
+<% if (ishome) { %>
+<a class='home' href="/home"><img class='icon' src="/pinokio-black.png"></a>
+<button class='btn2' id='minimize-header' data-tippy-content="fullscreen" title='fullscreen'>
+  <div><i class="fa-solid fa-expand"></i></div>
+</button>
+<a class='btn2 pinokio-explore-nav-button' href="/home?mode=explore" data-pinokio-explore-nav="true" data-tippy-content="Explore" title="Explore" aria-label="Explore">
+  <div><i class="fa-solid fa-globe" aria-hidden="true"></i></div>
+</a>
+<button class='btn2' id='back' data-tippy-content="back"><div><i class="fa-solid fa-chevron-left"></i></div></button>
+<button class='btn2' id='forward' data-tippy-content="forward"><div><i class="fa-solid fa-chevron-right"></i></div></button>
+<button class='btn2' id='refresh-page' data-tippy-content="refresh"><div><i class="fa-solid fa-rotate-right"></i></div></button>
+<button class='btn2' id='screenshot' data-tippy-content="screen capture"><i class="fa-solid fa-camera"></i></button>
+<button class='btn2' id='inspector' data-tippy-content="X-ray mode"><i class="fa-solid fa-eye"></i></button>
+<button class='btn2 mobile-link-button' id='mobile-link-button' data-tippy-content="enter url"><i class="fa-solid fa-link"></i></button>
+<div class='mobile-flexible'></div>
+<form class='urlbar'>
+  <div class='url-input-container'>
+    <input type='url' placeholder='enter any local url to open in pinokio'>
+    <div class='url-dropdown' id='url-dropdown'></div>
+  </div>
+</form>
+<%- include('partials/home_server_popover') %>
+<a class='btn2' href="/columns" data-tippy-content="split into 2 columns">
+  <div><i class="fa-solid fa-table-columns"></i></div>
+</a>
+<a class='btn2' href="/rows" data-tippy-content="split into 2 rows">
+  <div><i class="fa-solid fa-table-columns fa-rotate-270"></i></div>
+</a>
+<button class='btn2' id='new-window' data-tippy-content="open a new window" title='open a new window' data-agent="<%=agent%>">
+  <div><i class="fa-solid fa-plus"></i></div>
+</button>
+<% } %>
+<% paths.forEach((path) => { %>
+  <% if (path.action) { %>
+    <a class='path nav-button' id="<%=path.id%>" onclick="<%=path.action%>"><%-path.name%></a>
+  <% } else if (path.path) { %>
+    <a class='path' href="<%=path.path%>"><%-path.name%></a>
+  <% } %>
+<% }) %>
+<button class='btn2 hidden' id='close-window' data-tippy-content='close this section'>
+  <div><i class="fa-solid fa-xmark"></i></div>
+</button>
+</h1>
+<% if (!ishome) { %>
+  <div class='runner'>
+    <button class='btn' id='open-fs' data-filepath="<%=filepath%>"><i class="fa-solid fa-eye"></i> View Folder</button>
+  </div>
+<% } %>
+<% if (display.includes("dependencies") && config) { %>
+<div class='dependencies'>
+  <h2>Prerequisites</h2>
+  <div class='item'>Download and install the following dependencies first</div>
+  <div class='requirements'>
+  <% config.dependencies.forEach((dep) => { %>
+    <% if (dep.downloaded) { %>
+      <div class='item'><i class="fa-solid fa-check"></i> <a class='downloaded' href="<%=dep.downloaded%>" target="_blank"><%=dep.uri%></a><div class='flexible'></div></div>
+    <% } else { %>
+      <div class='item'><a class='btn' href="/?mode=download&uri=<%= encodeURIComponent(dep.uri) %>" target="_blank"><i class="fa-solid fa-download"></i> Download</a> <%=dep.uri%><div class='flexible'></div></div>
+    <% } %>
+  <% }) %>
+  </div>
+</div>
+<% } %>
+</header>
+<%- include('partials/home_server_popover_assets') %>
+<main>
+<div id='terminal' class='hidden'></div>
+<div class='container'>
+<% if (ishome) { %>
+  <% const currentHomeSort = (typeof home_sort === "string" ? home_sort : "most_used") %>
+  <form class='search home-search-form'>
+    <% if (display.includes("form")) { %>
+      <input type='search' class="flexible" placeholder='Search apps'>
+    <% } else { %>
+    <% } %>
+    <div class="home-apps-sort">
+      <i class="fa-solid fa-sort home-apps-sort-icon" aria-hidden="true"></i>
+      <label for="home-apps-sort-select">Sort</label>
+      <select id="home-apps-sort-select" aria-label="Sort apps">
+        <option value="most_used" <%= currentHomeSort === "most_used" ? "selected" : "" %>>Most used</option>
+        <option value="last_opened" <%= currentHomeSort === "last_opened" ? "selected" : "" %>>Last opened</option>
+        <option value="az" <%= currentHomeSort === "az" ? "selected" : "" %>>A-Z</option>
+      </select>
+      <i class="fa-solid fa-chevron-down home-apps-sort-caret" aria-hidden="true"></i>
+    </div>
+  </form>
+<% } %>
+<% if (ishome) { %>
+  <% if (running.length > 0) { %>
+    <div class='running-apps'>
+      <% running.forEach((item, index) => { %>
+        <div data-href="<%=item.browser_url%>" data-target="<%=item.target || '_self'%>" data-description="<%=item.description%>" data-index="<%=item.index%>" data-name="<%=item.name%>" data-title="<%=item.name%>" data-uri="<%=item.uri%>" data-icon="<%=item.icon%>" data-path="<%=item.path%>"  data-iconpath="<%=item.iconpath ? item.iconpath : ''%>" data-starred="<%=item.starred ? "1" : "0"%>" data-launch-count-total="<%=item.launch_count_total || 0%>" data-last-launch-at="<%=item.last_launch_at || ''%>" data-autolaunch-starting="<%=item.autolaunch_starting ? "1" : "0"%>" data-autolaunch-app="<%=item.uri%>" data-autolaunch-script="<%=item.autolaunch_script || ''%>" class='line align-top home-app-line <%=item.autolaunch_starting ? "autolaunch-starting" : ""%> <%=item.autolaunch_waiting ? "autolaunch-waiting" : ""%> <%=item.autolaunch_blocked ? "autolaunch-blocked" : ""%>' role='link' tabindex='0'>
+          <h3>
+            <div class='item-icon'>
+              <% if (item.icon) { %>
+                <img src="<%=item.icon%>" onerror="this.src='/pinokio-black.png'"/>
+              <% } else { %>
+                <% if (theme === 'dark') { %>
+                  <img src="/pinokio-white.png">
+                <% } else { %>
+                  <img src="/pinokio-black.png">
+                <% } %>
+              <% } %>
+            </div>
+            <div class='col'>
+              <div class='title'>
+                <i class="fa-solid fa-circle"></i>
+                <span><%=item.name%></span>
+              </div>
+              <div class='uri'><%=item.filepath%></div>
+              <div class='description'><%=item.description%></div>
+              <div class='menu-btns'>
+                <button
+                  type='button'
+                  class='btn home-icon-btn toggle-star <%=item.starred ? "is-starred" : ""%>'
+                  data-app-id="<%=item.uri%>"
+                  data-starred="<%=item.starred ? "1" : "0"%>"
+                  title="<%=item.starred ? "Unstar app" : "Star app"%>"
+                  aria-label="<%=item.starred ? "Unstar app" : "Star app"%>"
+                >
+                  <i class="fa-<%=item.starred ? "solid" : "regular"%> fa-star" aria-hidden="true"></i>
+                </button>
+                <button class='btn open-menu open-actions-modal' type='button' data-dialog-id="home-actions-running-<%=index%>" aria-haspopup="dialog" aria-expanded="false" title="Open actions panel" aria-label="Open actions panel">
+                  <i class="fa-solid fa-list-ul" aria-hidden="true"></i>
+                </button>
+                <% const runningShareReadyUrl = typeof item.ready_url === "string" ? item.ready_url : "" %>
+                <% const runningShareExternalReadyUrls = Array.isArray(item.external_ready_urls) ? item.external_ready_urls : [] %>
+                <button
+                  class='btn home-icon-btn open-app-share-modal'
+                  type='button'
+                  data-app-id="<%= item.uri %>"
+                  data-app-name="<%= item.name %>"
+                  data-app-ready-url="<%= runningShareReadyUrl %>"
+                  data-app-external-ready-urls="<%= JSON.stringify(runningShareExternalReadyUrls) %>"
+                  title="Open on another device"
+                  aria-label="Open <%= item.name %> on another device"
+                >
+                  <i class="fa-solid fa-wifi" aria-hidden="true"></i>
+                </button>
+                <% const autolaunchRunningScript = !!(item.autolaunch_starting && item.autolaunch_script && item.running_scripts && item.running_scripts.some((s) => { const scriptName = s && (s.name || s.script_path || s.path || ""); return scriptName === item.autolaunch_script || String(scriptName).endsWith(`/${item.autolaunch_script}`) })) %>
+                <% if (item.autolaunch_starting && !autolaunchRunningScript) { %>
+                  <% const autolaunchStatusLabel = item.autolaunch_status_label || "Starting automatically" %>
+                  <span class='home-autolaunch-status' title='<%= autolaunchStatusLabel %>'>
+                    <i class='fa-solid <%= item.autolaunch_blocked ? "fa-triangle-exclamation" : "fa-circle-notch fa-spin" %>' aria-hidden='true'></i>
+                    <span><%= autolaunchStatusLabel %></span>
+                  </span>
+                <% } %>
+                <% const runningTerminalOnlineCount = Number(item.terminal_online_count || 0) %>
+                <% const runningTerminalLabel = runningTerminalOnlineCount > 0 ? `${runningTerminalOnlineCount} terminal${runningTerminalOnlineCount === 1 ? "" : "s"} online` : "Terminals" %>
+                <% if (runningTerminalOnlineCount > 0) { %>
+                  <button class='btn browse terminals-link is-online' type='button' data-src="<%=item.dev_url%>" title="<%=runningTerminalLabel%>">
+                    <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+                    <span><%=runningTerminalLabel%></span>
+                    <i class="fa-solid fa-circle-notch fa-spin terminals-link-indicator" aria-hidden="true"></i>
+                  </button>
+                <% } %>
+                <% if (item.running_scripts) { %>
+                  <% item.running_scripts.forEach((s) => { %>
+                  <% const runningScriptName = s.name || "script" %>
+                  <% const isStartingAutolaunchScript = !!(item.autolaunch_starting && !item.autolaunch_waiting && !item.autolaunch_blocked && item.autolaunch_script && (runningScriptName === item.autolaunch_script || String(runningScriptName).endsWith(`/${item.autolaunch_script}`))) %>
+                  <% const stepCurrent = Number(isStartingAutolaunchScript && (s.step_current || item.autolaunch_step_current)) %>
+                  <% const stepTotal = Number(isStartingAutolaunchScript && (s.step_total || item.autolaunch_step_total)) %>
+                  <% const stepLabel = Number.isFinite(stepCurrent) && Number.isFinite(stepTotal) && stepCurrent > 0 && stepTotal > 1 ? ` (${stepCurrent}/${stepTotal})` : "" %>
+                  <% const runningScriptButtonLabel = isStartingAutolaunchScript ? `Starting ${runningScriptName}${stepLabel}` : `Stop ${runningScriptName}` %>
+                  <% if (s.id) { %>
+                      <button class='btn shutdown' type='button' data-id="<%=s.id%>" data-type="<%=s.type ? s.type : ''%>" title="Stop <%=runningScriptName%>" aria-label="Stop <%=runningScriptName%>">
+                        <i class="fa-solid fa-stop" aria-hidden="true"></i>
+                        <span><%= runningScriptButtonLabel %></span>
+                        <% if (isStartingAutolaunchScript) { %>
+                          <i class='home-stop-spinner fa-solid fa-spin fa-circle-notch' aria-hidden='true'></i>
+                        <% } %>
+                      </button>
+                    <% } else { %>
+                      <button class='btn shutdown' type='button' data-src="<%=s.path%>" title="Stop <%=runningScriptName%>" aria-label="Stop <%=runningScriptName%>">
+                        <i class="fa-solid fa-stop" aria-hidden="true"></i>
+                        <span><%= runningScriptButtonLabel %></span>
+                        <% if (isStartingAutolaunchScript) { %>
+                          <i class='home-stop-spinner fa-solid fa-spin fa-circle-notch' aria-hidden='true'></i>
+                        <% } %>
+                      </button>
+                    <% } %>
+                  <% }) %>
+                <% } %>
+              </div>
+              <% if (item.shortcuts && item.shortcuts.length > 0) { %>
+                <div class='btns'>
+                  <% item.shortcuts.forEach((btn) => { %>
+                    <% if (btn.btn) { %>
+                      <button data-action="<%=btn.action ? JSON.stringify(btn.action) : ''%>" class='btn menu-btn'><%-btn.btn%></button>
+                    <% } %>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          </h3>
+          <%- include('partials/home_action_modal', { item, id: `home-actions-running-${index}` }) %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+  <% if (notRunning.length > 0) { %>
+    <div class='not-running-apps'>
+      <% notRunning.forEach((item, index) => { %>
+        <div data-href="<%=item.browser_url%>" data-target="<%=item.target || '_self'%>" data-description="<%=item.description%>" data-index="<%=item.index%>" data-name="<%=item.name%>" data-title="<%=item.name%>" data-uri="<%=item.uri%>" data-icon="<%=item.icon%>" data-path="<%=item.path%>"  data-iconpath="<%=item.iconpath ? item.iconpath : ''%>" data-starred="<%=item.starred ? "1" : "0"%>" data-launch-count-total="<%=item.launch_count_total || 0%>" data-last-launch-at="<%=item.last_launch_at || ''%>" data-autolaunch-starting="<%=item.autolaunch_starting ? "1" : "0"%>" data-autolaunch-app="<%=item.uri%>" data-autolaunch-script="<%=item.autolaunch_script || ''%>" class='line align-top home-app-line <%=item.autolaunch_starting ? "autolaunch-starting" : ""%> <%=item.autolaunch_waiting ? "autolaunch-waiting" : ""%> <%=item.autolaunch_blocked ? "autolaunch-blocked" : ""%>' role='link' tabindex='0'>
+          <h3>
+            <div class='item-icon'>
+              <% if (item.icon) { %>
+                <img src="<%=item.icon%>" onerror="this.src='/pinokio-black.png'"/>
+              <% } else { %>
+                <% if (theme === 'dark') { %>
+                  <img src="/pinokio-white.png">
+                <% } else { %>
+                  <img src="/pinokio-black.png">
+                <% } %>
+              <% } %>
+            </div>
+            <div class='col'>
+              <div class='title'>
+                <i class="fa-solid fa-circle"></i>
+                <span><%=item.name%></span>
+              </div>
+              <div class='uri'><%=item.filepath%></div>
+              <div class='description'><%=item.description%></div>
+              <% const notRunningTerminalOnlineCount = Number(item.terminal_online_count || 0) %>
+              <div class='menu-btns'>
+                <button
+                  type='button'
+                  class='btn home-icon-btn toggle-star <%=item.starred ? "is-starred" : ""%>'
+                  data-app-id="<%=item.uri%>"
+                  data-starred="<%=item.starred ? "1" : "0"%>"
+                  title="<%=item.starred ? "Unstar app" : "Star app"%>"
+                  aria-label="<%=item.starred ? "Unstar app" : "Star app"%>"
+                >
+                  <i class="fa-<%=item.starred ? "solid" : "regular"%> fa-star" aria-hidden="true"></i>
+                </button>
+                <button class='btn open-menu open-actions-modal' type='button' data-dialog-id="home-actions-not-running-<%=index%>" aria-haspopup="dialog" aria-expanded="false" title="Open actions panel" aria-label="Open actions panel">
+                  <i class="fa-solid fa-list-ul" aria-hidden="true"></i>
+                </button>
+                <% if (notRunningTerminalOnlineCount > 0) { %>
+                <% const notRunningTerminalLabel = notRunningTerminalOnlineCount > 0 ? `${notRunningTerminalOnlineCount} terminal${notRunningTerminalOnlineCount === 1 ? "" : "s"} online` : "Terminals" %>
+                  <button class='btn browse terminals-link is-online' type='button' data-src="<%=item.dev_url%>" title="<%=notRunningTerminalLabel%>">
+                    <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+                    <span><%=notRunningTerminalLabel%></span>
+                    <i class="fa-solid fa-circle-notch fa-spin terminals-link-indicator" aria-hidden="true"></i>
+                  </button>
+                <% } %>
+              </div>
+              <div class='fiexible'></div>
+              <% if (item.shortcuts && item.shortcuts.length > 0) { %>
+                <div class='btns'>
+                  <% item.shortcuts.forEach((btn) => { %>
+                    <% if (btn.btn) { %>
+                      <button data-action="<%=btn.action ? JSON.stringify(btn.action) : ''%>" class='btn menu-btn'><%-btn.btn%></button>
+                    <% } %>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          </h3>
+          <%- include('partials/home_action_modal', { item, id: `home-actions-not-running-${index}` }) %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+  <% if (running.length === 0 && notRunning.length === 0) { %>
+    <div class='placeholder'>
+      <h1>Welcome.</h1>
+      <br>
+      <div>Get started by installing or creating some pinokio scripts.</div>
+      <a href="/home?mode=explore" class='btn'><i class="fa-solid fa-globe"></i> Explore</a>
+      <span>&nbsp;or&nbsp;</span>
+      <button type='button' class='btn' data-universal-launcher-open="create_app"><i class="fa-solid fa-wand-magic-sparkles"></i> Create</button>
+    </div>
+  <% } %>
+<% } else { %>
+  <% items.forEach((item, index) => { %>
+    <a target="<%=item.target || '_self'%>" data-description="<%=item.description%>" data-index="<%=index%>" data-name="<%=item.name%>" data-uri="<%=item.uri%>" class='line thick' href="<%=item.url%>">
+      <h3>
+        <% if (item.icon) { %>
+          <i class="<%=item.icon%>"></i>
+        <% } else { %>
+          <i class="fa-regular fa-folder"></i>
+        <% } %>
+          <%=item.name%>
+        </h3>
+      <div class='description'><%=item.description%></div>
+    </a>
+  <% }) %>
+<% } %>
+</div>
+<%- include('partials/main_sidebar', { selected: 'home' }) %>
+</main>
+<script>
+let paths = location.pathname.split("/").filter(x=>x)
+var term
+const n = new N()
+let socket = new Socket()
+window.PinokioHomeGuardNavigate = null;
+if (document.querySelector(".home-search-form")) {
+  document.body.classList.add("is-home");
+}
+<% if (ishome) { %>
+document.addEventListener("DOMContentLoaded", () => {
+  // Run wait_ready for every /home navigation so we only leave when requirements are satisfied
+  const guardNavigate = (href, options = {}) => {
+    const url = new URL(href, location.href);
+    wait_ready(url).then(({ closeModal, ready }) => {
+      if (ready) {
+        if (closeModal) {
+          closeModal()
+        }
+        options?.replace ? location.replace(url) : location.assign(url);
+      } else {
+        const callbackUrl = url
+          ? (url.pathname + url.search + url.hash)
+          : (window.location.pathname + window.location.search + window.location.hash);
+        const callback = encodeURIComponent(callbackUrl);
+        window.location.href = `/setup/dev?callback=${callback}`;
+      }
+    });
+  };
+  // Capture same-window anchor clicks and reroute them through the guard
+  document.addEventListener("click", (event) => {
+    // Ignore clicks the page already handled or anything besides a plain left-click
+    if (event.defaultPrevented || event.button !== 0) return;
+    // Let modifier-assisted shortcuts (open in new tab, etc.) behave normally
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    // Only guard actual anchor navigations
+    const anchor = event.target.closest("a[href]");
+    if (!anchor) return;
+    // Skip downloads so they aren’t blocked by readiness polling
+    if (anchor.hasAttribute("download")) return;
+    // Don’t intercept links that explicitly open in another browsing context
+    const targetAttr = anchor.getAttribute("target");
+    if (targetAttr && targetAttr !== "_self") return;
+    // Ignore hash jumps, javascript: URLs, and empty hrefs
+    const rawHref = anchor.getAttribute("href") || "";
+    if (!rawHref || rawHref.startsWith("#") || /^javascript:/i.test(rawHref)) return;
+    // Prevent cross-origin navigations from being delayed—they don’t hit Pinokio anyway
+    const url = new URL(anchor.href, location.href);
+    if (url.origin !== location.origin) return;
+    event.preventDefault();
+    guardNavigate(url.toString());
+  });
+  window.PinokioHomeGuardNavigate = guardNavigate;
+});
+<% } %>
+const pull = async () => {
+  if (!term) {
+    <% if (theme === "dark") { %>
+    term = await createTerm(xtermTheme.FrontEndDelight)
+    <% } else { %>
+    term = await createTerm(xtermTheme.Tomorrow)
+    <% } %>
+  }
+  socket.close()
+  await new Promise((resolve, reject) => {
+    let cwd
+    let chunks = location.pathname.split("/").filter((x) => { return x })
+    if (chunks.length > 0) {
+      //cwd = chunks.slice(1).join("/")
+      cwd = "~/" + chunks.join("/")
+    } else {
+      cwd = "."
+    }
+    socket.run({
+      method: "shell.run",
+      params: {
+        message: `git pull`,
+//        path: "<%=uri%>",//cwd
+        path: cwd
+      }
+    }, (packet) => {
+      if (packet.type === 'stream') {
+        term.write(packet.data.raw)
+      } else if (packet.type === "result") {
+        resolve()
+      } else if (packet.type === "error") {
+        n.Noty({
+          text: packet.data
+        })
+      }
+    })
+  })
+  <% if (config && config.update) { %>
+    n.Noty({
+      text: "Success! An update script exists. Click to visit and run the update script!",
+      type: "success",
+      callbacks: {
+        onClose: () => {
+          location.href = "<%=config.update%>"
+        }
+      }
+    })
+  <% } else { %>
+    n.Noty({
+      text: "Success! Click to refresh.",
+      type: "success",
+      callbacks: {
+        onClose: () => {
+          location.href = location.href
+        }
+      }
+    })
+  <% } %>
+}
+<% if (display.includes("onboarding")) { %>
+//document.querySelector("#llama").addEventListener("click", async (e) => {
+//  if (!term) term = createTerm()
+//  await install("llama", "https://github.com/malfunctionize/lla", term, socket)
+//})
+<% } %>
+<% if (display.includes("form")) { %>
+let list = []
+document.querySelectorAll(".line").forEach((el, index) => {
+  list.push({
+    index: parseInt(el.getAttribute("data-index")),
+    name: el.getAttribute("data-name"),
+    description: el.getAttribute("data-description"),
+    uri: el.getAttribute("data-uri")
+  })
+})
+const search = (items, value) => {
+  let filtered = []
+  for(let i=0; i<items.length; i++) {
+    let item = items[i]
+    let re = new RegExp(value, "i")
+    if (re.test(item.name)) {
+      filtered.push({ item })
+    } else if (re.test(item.description)) {
+      filtered.push({ item })
+    } else if (re.test(item.uri)) {
+      filtered.push({ item })
+    }
+  }
+  return filtered
+}
+//const fuse = new Fuse(list, {
+//  threshold: 0.3,
+//  keys: [{
+//    name: "name",
+//    weight: 5,
+//  }, {
+//    name: "description",
+//    weight: 1,
+//  }],
+//  includeScore: true,
+//  includeMatches: true
+//})
+
+
+let selectedIndex = -1
+let selectedBtnIndex = 0
+let filteredCount = list.length
+let filteredBtnsCount = 0
+
+const renderSearch = () => {
+  let target = document.querySelector("form input[type=search]")
+  let result
+  if (target.value.trim().length === 0) {
+    result = list.map((i, index) => {
+      return { item: i }
+    })
+  } else {
+    result = search(list, target.value)
+  }
+  let all = document.querySelectorAll(".line")
+  for(let el of all) {
+    el.classList.add("hidden")
+    el.classList.remove("selected")
+  }
+
+  filteredCount = result.length
+  for(let i=0; i<result.length; i++) {
+    let selector = result[i]
+    //let el = document.querySelector(".line[data-name='" + selector.item.name + "']")
+    let el = document.querySelector(".line[data-index='" + selector.item.index + "']")
+    el.classList.remove("hidden")
+    if (i === selectedIndex) {
+      el.classList.add("selected")
+      let btns = el.querySelectorAll(".btns a")
+      filteredBtnsCount = btns.length
+      btns.forEach((_el, j) => {
+        if (selectedBtnIndex === j) {
+          _el.classList.add("selected")
+        } else {
+          _el.classList.remove("selected")
+        }
+      })
+    } else {
+      el.classList.remove("selected")
+      let btns = el.querySelectorAll(".btns a")
+      btns.forEach((_el, j) => {
+        _el.classList.remove("selected")
+      })
+    }
+  }
+
+//  suggest(target.value)
+
+}
+//const suggest = (str) => {
+//  // suggestion
+//  if (str.length > 0) {
+//    document.querySelector("#suggestion").classList.remove("hidden")
+//  } else {
+//    document.querySelector("#suggestion").classList.add("hidden")
+//  }
+//  document.querySelector("#suggestion .prompt").innerHTML = str
+//}
+
+renderSearch()
+
+
+document.querySelector("form input[type=search]").addEventListener("input", (e) => {
+  selectedIndex = 0
+  selectedBtnIndex = 0
+  renderSearch()
+/*
+  if (e.target.value.trim().length === 0) {
+    let all = document.querySelectorAll(".line")
+    for(let el of all) {
+      el.classList.remove("hidden")
+    }
+  } else {
+    let all = document.querySelectorAll(".line")
+    for(let el of all) {
+      el.classList.add("hidden")
+    }
+
+    //let result = fuse.search(e.target.value)
+    let result = search(list, e.target.value)
+//    result.sort((x, y) => {
+//      return y.score - x.score
+//    })
+    let i = 0
+    //for(let selector of result) {
+    for(let i=0; i<result.length; i++) {
+      let selector = result[i]
+      let el = document.querySelector(".line[data-name='" + selector.item.name + "']")
+      el.classList.remove("hidden")
+      if (i === 0) {
+        el.classList.add("selected")
+      }
+    }
+  }
+  */
+})
+document.querySelector("form input[type=search]").focus()
+<% } %>
+
+
+//  if (el) {
+//    let url = el.getAttribute("data-url")
+//    if (url) {
+//      let target = el.getAttribute("data-target")
+//      if (target && target.length > 0) {
+//        let agent = el.getAttribute("data-agent")
+//        if (agent && agent.length > 0) {
+//          window.open(url, target, agent)
+//        } else {
+//          window.open(url, target)
+//        }
+//      } else {
+//        location.href = url
+//      }
+//    }
+//  }
+//document.querySelector(".runner").addEventListener("click", async (e) => {
+//  let el = e.target.closest(".btn")
+//  if (!el) {
+//    if (el.classList.contains("btn")) {
+//      el = e.target
+//    }
+//  }
+//
+//  if (el) {
+//    let url = el.getAttribute("data-url")
+//    if (url) {
+//      let target = el.getAttribute("data-target")
+//      if (target && target.length > 0) {
+//        let agent = el.getAttribute("data-agent")
+//        if (agent && agent.length > 0) {
+//          window.open(url, target, agent)
+//        } else {
+//          window.open(url, target)
+//        }
+//      } else {
+//        location.href = url
+//      }
+//    }
+//  }
+//})
+<% if (display.includes("install")) { %>
+document.querySelector("#install").addEventListener("click", async (e) => {
+  const targetUrl = e.target.getAttribute("data-url");
+  if (window.PinokioHomeGuardNavigate) {
+    window.PinokioHomeGuardNavigate(targetUrl);
+  } else {
+    location.href = targetUrl;
+  }
+})
+<% } %>
+//Reporter()
+/*
+<% if (display.includes("dependencies")) { %>
+document.querySelector(".requirements").addEventListener("click", (e) => {
+  e.preventDefault()
+  e.stopPropagation()
+  let el = e.target.closest(".opener")
+  if (!el) {
+    if (e.target.classList.contains("opener")) {
+      el = e.target
+    }
+  }
+  if (el) {
+    window.open(el.getAttribute("data-href"), "_blank", "app")
+  }
+})
+<% } %>
+*/
+const HOME_SORT_DEFAULT = "most_used"
+const HOME_SORT_STORAGE_KEY = "pinokio.home.apps.sort"
+const normalizeHomeSortMode = (value) => {
+  const normalized = String(value || "").trim().toLowerCase()
+  if (normalized === "most_used" || normalized === "most-used") {
+    return "most_used"
+  }
+  if (normalized === "last_opened" || normalized === "last-opened") {
+    return "last_opened"
+  }
+  if (normalized === "az" || normalized === "a-z") {
+    return "az"
+  }
+  return HOME_SORT_DEFAULT
+}
+const readStoredHomeSortMode = () => {
+  try {
+    if (!window || !window.localStorage) {
+      return HOME_SORT_DEFAULT
+    }
+    return normalizeHomeSortMode(window.localStorage.getItem(HOME_SORT_STORAGE_KEY))
+  } catch (_) {
+    return HOME_SORT_DEFAULT
+  }
+}
+const persistHomeSortMode = (value) => {
+  const normalized = normalizeHomeSortMode(value)
+  try {
+    if (window && window.localStorage) {
+      window.localStorage.setItem(HOME_SORT_STORAGE_KEY, normalized)
+    }
+  } catch (_) {}
+  return normalized
+}
+const updateSearchParam = (name, value, options = {}) => {
+  const params = new URLSearchParams(location.search)
+  if (typeof value === "string" && value.trim().length > 0) {
+    params.set(name, value)
+  } else {
+    params.delete(name)
+  }
+  const query = params.toString()
+  const nextPath = query ? `${location.pathname}?${query}` : location.pathname
+  if (options && options.replace) {
+    window.history.replaceState({ path: nextPath }, "", nextPath)
+  } else {
+    window.history.pushState({ path: nextPath }, "", nextPath)
+  }
+  return nextPath
+}
+let params = new URLSearchParams(location.search)
+let selected = params.get("selected")
+if (selected) {
+  document.querySelector("form input[type=search]").value = selected 
+  document.querySelector("form input[type=search]").dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+}
+if (document.querySelector("form input[type=search]")) {
+  document.querySelector("form input[type=search]").addEventListener("input", (e) => {
+    updateSearchParam("selected", e.target.value || "", { replace: false })
+  })
+}
+const homeSortSelect = document.querySelector("#home-apps-sort-select")
+if (homeSortSelect) {
+  const sortFromQueryRaw = params.get("sort")
+  const hasSortQuery = typeof sortFromQueryRaw === "string" && sortFromQueryRaw.trim().length > 0
+  const initialSort = hasSortQuery
+    ? normalizeHomeSortMode(sortFromQueryRaw)
+    : readStoredHomeSortMode()
+  if (homeSortSelect.value !== initialSort) {
+    homeSortSelect.value = initialSort
+  }
+  persistHomeSortMode(initialSort)
+  if (!hasSortQuery) {
+    updateSearchParam("sort", initialSort, { replace: true })
+  }
+  homeSortSelect.addEventListener("change", (event) => {
+    const nextSort = persistHomeSortMode(event.target.value)
+    event.target.value = nextSort
+    reorderHomeSectionsByPreference(nextSort)
+    updateSearchParam("sort", nextSort, { replace: true })
+  })
+}
+<% if (ishome) { %>
+// Autolaunch display update. It is always installed on home because startup
+// status can appear after the initial HTML render.
+let refreshHomeStatusOnce = null
+const startHomeAutolaunchPolling = () => {
+  const getStartingLines = () => Array.from(document.querySelectorAll('[data-autolaunch-starting="1"]'))
+  const hasVisibleStartupRows = () => getStartingLines().length > 0
+  const initialLaunchComplete = <%= launch_complete ? "true" : "false" %>
+  const getHomeAppLines = () => Array.from(document.querySelectorAll(".home-app-line[data-autolaunch-app]"))
+  const activeHomeAutolaunchApps = new Set()
+  const isPreparingAutolaunchState = (status) => {
+    return !!(status && status.state !== "ready")
+  }
+  const ownerIds = (status) => {
+    if (!status) {
+      return []
+    }
+    const ids = []
+    const add = (value) => {
+      const id = String(value || "").trim()
+      if (id && !ids.includes(id)) {
+        ids.push(id)
+      }
+    }
+    if (Array.isArray(status.owner_app_ids)) {
+      status.owner_app_ids.forEach(add)
+    }
+    add(status.owner_app_id)
+    return ids
+  }
+  const hasActiveOwner = (status, apps, runningApps) => {
+    const owners = ownerIds(status)
+    return owners.length === 0 || owners.some((ownerId) => !!apps[ownerId] || runningApps.has(ownerId))
+  }
+  const shouldDisplayAutolaunchStatus = (app, status, apps, runningApps) => {
+    if (!status) {
+      return false
+    }
+    if (runningApps.has(app)) {
+      return true
+    }
+    return isPreparingAutolaunchState(status) && hasActiveOwner(status, apps, runningApps)
+  }
+  const getAutolaunchLines = (state) => {
+    const lines = new Set(getStartingLines())
+    const apps = state && state.autolaunch && state.autolaunch.apps ? state.autolaunch.apps : {}
+    const runningApps = new Set(Array.isArray(state && state.running_apps) ? state.running_apps : [])
+    const trackedApps = new Set(Object.entries(apps)
+      .filter(([app, status]) => shouldDisplayAutolaunchStatus(app, status, apps, runningApps))
+      .map(([app]) => app))
+    for (const app of runningApps) {
+      trackedApps.add(app)
+    }
+    for (const app of activeHomeAutolaunchApps) {
+      trackedApps.add(app)
+    }
+    if (trackedApps.size > 0) {
+      for (const line of getHomeAppLines()) {
+        if (trackedApps.has(line.getAttribute("data-autolaunch-app"))) {
+          lines.add(line)
+        }
+      }
+    }
+    return Array.from(lines)
+  }
+  let attempts = 0
+  const maxPollAttempts = 240
+  let interval = null
+  let hadStartingLines = getStartingLines().length > 0
+  const stopPolling = () => {
+    if (interval) {
+      clearInterval(interval)
+      interval = null
+    }
+  }
+  const scriptIdentity = (script) => {
+    if (!script) {
+      return ""
+    }
+    return script.home_path || script.id || script.path || script.script_path || ""
+  }
+  const scriptName = (script) => {
+    return (script && (script.script_path || script.name || script.path)) || "script"
+  }
+  const scriptStepLabel = (source) => {
+    const stepCurrent = Number(source && source.step_current)
+    const stepTotal = Number(source && source.step_total)
+    if (!Number.isFinite(stepCurrent) || !Number.isFinite(stepTotal) || stepCurrent <= 0 || stepTotal <= 1) {
+      return ""
+    }
+    return ` (${stepCurrent}/${stepTotal})`
+  }
+  const scriptMatches = (script, expected) => {
+    const name = scriptName(script)
+    return !!expected && (name === expected || String(name).endsWith(`/${expected}`))
+  }
+  const syncStopButtonSpinner = (button, show) => {
+    let spinner = button.querySelector(".home-stop-spinner")
+    if (show) {
+      if (!spinner) {
+        spinner = document.createElement("i")
+        spinner.className = "home-stop-spinner fa-solid fa-spin fa-circle-notch"
+        spinner.setAttribute("aria-hidden", "true")
+        button.appendChild(spinner)
+      }
+    } else if (spinner) {
+      spinner.remove()
+    }
+  }
+  const createStopButton = (script, displayLabel = "") => {
+    const label = (script && (script.script_path || script.path)) || "script"
+    const button = document.createElement("button")
+    button.type = "button"
+    button.className = "btn shutdown"
+    button.title = `Stop ${label}`
+    button.setAttribute("aria-label", `Stop ${label}`)
+    if (script && script.home_path) {
+      button.setAttribute("data-src", script.home_path)
+    } else if (script && script.id) {
+      button.setAttribute("data-id", script.id)
+    }
+
+    const stopIcon = document.createElement("i")
+    stopIcon.className = "fa-solid fa-stop"
+    stopIcon.setAttribute("aria-hidden", "true")
+    button.appendChild(stopIcon)
+
+    const text = document.createElement("span")
+    text.textContent = displayLabel || `Stop ${label}`
+    button.appendChild(text)
+
+    syncStopButtonSpinner(button, !!displayLabel)
+    return button
+  }
+  const updateStopButton = (button, script, displayLabel = "") => {
+    const label = (script && (script.script_path || script.path)) || "script"
+    button.title = `Stop ${label}`
+    button.setAttribute("aria-label", `Stop ${label}`)
+    const text = button.querySelector("span")
+    if (text) {
+      text.textContent = displayLabel || `Stop ${label}`
+    }
+    syncStopButtonSpinner(button, !!displayLabel)
+  }
+  const syncStopButtons = (line, scripts, displayLabelForScript = null) => {
+    const menuButtons = line.querySelector(".menu-btns")
+    if (!menuButtons || !Array.isArray(scripts)) {
+      return
+    }
+    const existing = new Map(Array.from(menuButtons.querySelectorAll(".shutdown")).map((button) => {
+      return [button.getAttribute("data-src") || button.getAttribute("data-id") || "", button]
+    }))
+    const active = new Set()
+    for (const script of scripts) {
+      const identity = scriptIdentity(script)
+      if (!identity) {
+        continue
+      }
+      active.add(identity)
+      const displayLabel = typeof displayLabelForScript === "function"
+        ? displayLabelForScript(script)
+        : displayLabelForScript
+      const button = existing.get(identity)
+      if (button) {
+        updateStopButton(button, script, displayLabel || "")
+      } else {
+        menuButtons.appendChild(createStopButton(script, displayLabel || ""))
+      }
+    }
+    for (const [identity, button] of existing) {
+      if (!active.has(identity)) {
+        button.remove()
+      }
+    }
+  }
+  const updateHomeActionStatus = (line, label, starting = false) => {
+    const menuButton = line.querySelector(".open-actions-modal")
+    const dialogId = menuButton ? menuButton.getAttribute("data-dialog-id") : ""
+    const dialog = dialogId ? document.getElementById(dialogId) : null
+    if (!dialog) {
+      return
+    }
+    let status = dialog.querySelector(".home-actions-status")
+    if (!label) {
+      if (status) {
+        status.remove()
+      }
+      dialog.querySelectorAll("[data-disable]").forEach((control) => control.removeAttribute("data-disable"))
+      return
+    }
+    if (!status) {
+      status = document.createElement("span")
+      status.className = "home-actions-status"
+      const titleRow = dialog.querySelector(".home-actions-title-row")
+      if (titleRow) {
+        titleRow.appendChild(status)
+      }
+    }
+    status.textContent = label
+    status.title = label
+    status.classList.toggle("home-actions-status--starting", starting)
+  }
+  const clearStartingVisuals = (line) => {
+    line.setAttribute("data-autolaunch-starting", "0")
+    line.classList.remove("autolaunch-starting")
+    line.classList.remove("autolaunch-waiting")
+    line.classList.remove("autolaunch-blocked")
+    const titleIcon = line.querySelector(".title > i")
+    if (titleIcon) {
+      titleIcon.className = "fa-solid fa-circle"
+      titleIcon.removeAttribute("title")
+    }
+    const status = line.querySelector(".home-autolaunch-status")
+    if (status) {
+      status.remove()
+    }
+  }
+  const getOrCreateRunningSection = () => {
+    let section = document.querySelector(".running-apps")
+    if (section) {
+      return section
+    }
+    section = document.createElement("div")
+    section.className = "running-apps"
+    const notRunningSection = document.querySelector(".not-running-apps")
+    if (notRunningSection) {
+      notRunningSection.insertAdjacentElement("beforebegin", section)
+    } else {
+      const placeholder = document.querySelector(".placeholder")
+      if (placeholder) {
+        placeholder.insertAdjacentElement("beforebegin", section)
+      }
+    }
+    return section
+  }
+  const markAutolaunchRunning = (line, scripts) => {
+    activeHomeAutolaunchApps.add(line.getAttribute("data-autolaunch-app"))
+    clearStartingVisuals(line)
+    updateHomeActionStatus(line, "Running")
+    syncStopButtons(line, scripts)
+    const runningSection = getOrCreateRunningSection()
+    if (runningSection && line.parentElement !== runningSection) {
+      runningSection.appendChild(line)
+      return true
+    }
+    return false
+  }
+  const getOrCreateNotRunningSection = () => {
+    let section = document.querySelector(".not-running-apps")
+    if (section) {
+      return section
+    }
+    section = document.createElement("div")
+    section.className = "not-running-apps"
+    const runningSection = document.querySelector(".running-apps")
+    if (runningSection) {
+      runningSection.insertAdjacentElement("afterend", section)
+    } else {
+      const placeholder = document.querySelector(".placeholder")
+      if (placeholder) {
+        placeholder.insertAdjacentElement("beforebegin", section)
+      }
+    }
+    return section
+  }
+  const markAutolaunchIdle = (line) => {
+    clearStartingVisuals(line)
+    updateHomeActionStatus(line, "")
+    syncStopButtons(line, [])
+    activeHomeAutolaunchApps.delete(line.getAttribute("data-autolaunch-app"))
+    const notRunningSection = getOrCreateNotRunningSection()
+    if (notRunningSection && line.parentElement !== notRunningSection) {
+      notRunningSection.appendChild(line)
+      return true
+    }
+    return false
+  }
+  const autolaunchDependencyLabel = (autolaunch, dependencyId) => {
+    const apps = autolaunch && autolaunch.apps ? autolaunch.apps : {}
+    const status = apps[dependencyId]
+    return status && status.title ? status.title : dependencyId
+  }
+  const updateAutolaunchWaitingVisuals = (line, status, autolaunch, runningScripts = []) => {
+    if (!status) return
+    hadStartingLines = true
+    activeHomeAutolaunchApps.add(line.getAttribute("data-autolaunch-app"))
+    let label = "Starting automatically"
+    let iconClass = "fa-solid fa-circle-notch fa-spin"
+    let showStatusChip = true
+    line.setAttribute("data-autolaunch-starting", "1")
+    line.classList.add("autolaunch-starting")
+    if (status.script) {
+      line.setAttribute("data-autolaunch-script", status.script)
+    }
+    const waitingFor = Array.isArray(status.waiting_for) ? status.waiting_for : []
+    if (waitingFor.length > 0 && !["ready", "blocked"].includes(status.state || "")) {
+      label = `Waiting for ${waitingFor.map((id) => autolaunchDependencyLabel(autolaunch, id)).join(", ")}`
+      updateHomeActionStatus(line, label, true)
+      line.classList.add("autolaunch-waiting")
+      line.classList.remove("autolaunch-blocked")
+    } else if (status.state === "blocked") {
+      label = status.blocked_reason || "Startup blocked"
+      iconClass = "fa-solid fa-triangle-exclamation"
+      updateHomeActionStatus(line, label, true)
+      line.classList.add("autolaunch-blocked")
+      line.classList.remove("autolaunch-waiting")
+    } else {
+      const expectedScript = status.script || line.getAttribute("data-autolaunch-script") || ""
+      const matchingScript = Array.isArray(runningScripts)
+        ? runningScripts.find((script) => scriptMatches(script, expectedScript))
+        : null
+      const statusHasProgress = status && Number.isFinite(Number(status.step_current)) && Number.isFinite(Number(status.step_total))
+      const progressSource = statusHasProgress ? status : matchingScript
+      label = expectedScript ? `Starting ${expectedScript}${scriptStepLabel(progressSource)}` : "Starting automatically"
+      updateHomeActionStatus(line, label, true)
+      line.classList.remove("autolaunch-waiting")
+      line.classList.remove("autolaunch-blocked")
+      if (matchingScript) {
+        syncStopButtons(line, runningScripts, (script) => {
+          return scriptMatches(script, expectedScript) ? label : ""
+        })
+        showStatusChip = false
+      }
+    }
+    let chip = line.querySelector(".home-autolaunch-status")
+    if (!showStatusChip) {
+      if (chip) {
+        chip.remove()
+      }
+      return
+    }
+    if (!chip) {
+      const menuButtons = line.querySelector(".menu-btns")
+      if (!menuButtons) {
+        return
+      }
+      chip = document.createElement("span")
+      chip.className = "home-autolaunch-status"
+      chip.innerHTML = '<i class="fa-solid" aria-hidden="true"></i><span></span>'
+      menuButtons.appendChild(chip)
+    }
+    if (chip) {
+      chip.title = label
+      const icon = chip.querySelector("i")
+      if (icon) {
+        icon.className = iconClass
+      }
+      const text = chip.querySelector("span")
+      if (text) {
+        text.textContent = label
+      }
+    }
+  }
+  const applyHomeStatus = (state) => {
+    const lines = getAutolaunchLines(state)
+    if (lines.length === 0) {
+      return
+    }
+    const runningApps = new Set(Array.isArray(state.running_apps) ? state.running_apps : [])
+    const scriptsByApp = new Map()
+    for (const script of Array.isArray(state.running_scripts) ? state.running_scripts : []) {
+      if (!script || !script.app) {
+        continue
+      }
+      if (!scriptsByApp.has(script.app)) {
+        scriptsByApp.set(script.app, [])
+      }
+      scriptsByApp.get(script.app).push(script)
+    }
+    const autolaunch = state.autolaunch || {}
+    const apps = autolaunch.apps || {}
+    let shouldReorder = false
+    for (const line of lines) {
+      const app = line.getAttribute("data-autolaunch-app")
+      const autolaunchState = apps[app]
+      const runningScripts = scriptsByApp.get(app) || []
+      if (autolaunchState && !shouldDisplayAutolaunchStatus(app, autolaunchState, apps, runningApps)) {
+        shouldReorder = markAutolaunchIdle(line) || shouldReorder
+      } else if (isPreparingAutolaunchState(autolaunchState)) {
+        updateAutolaunchWaitingVisuals(line, autolaunchState, autolaunch, runningScripts)
+      } else if (runningApps.has(app)) {
+        shouldReorder = markAutolaunchRunning(line, runningScripts) || shouldReorder
+      } else if (state.launch_complete) {
+        shouldReorder = markAutolaunchIdle(line) || shouldReorder
+      } else {
+        updateAutolaunchWaitingVisuals(line, autolaunchState, autolaunch, runningScripts)
+      }
+    }
+    if (getStartingLines().length === 0) {
+      if (hadStartingLines) {
+        hadStartingLines = false
+        shouldReorder = true
+      }
+    }
+    if (shouldReorder) {
+      reorderHomeSectionsByPreference()
+    }
+  }
+  const requestHomeStatus = () => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open("GET", `/pinokio/home_status?t=${Date.now()}`, true)
+      xhr.setRequestHeader("Cache-Control", "no-cache")
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState !== 4) {
+          return
+        }
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.responseText))
+          } catch (error) {
+            reject(error)
+          }
+        } else {
+          reject(new Error(`home_status ${xhr.status}`))
+        }
+      }
+      xhr.onerror = () => reject(new Error("home_status request failed"))
+      xhr.send()
+    })
+  }
+  refreshHomeStatusOnce = (appId = "") => {
+    const trackedApp = String(appId || "").trim()
+    if (trackedApp) {
+      activeHomeAutolaunchApps.add(trackedApp)
+    }
+    return requestHomeStatus().then((state) => {
+      applyHomeStatus(state)
+      return state
+    })
+  }
+  window.refreshHomeStatusOnce = refreshHomeStatusOnce
+  if (initialLaunchComplete && !hasVisibleStartupRows()) {
+    return
+  }
+  const shouldContinueHomeStatusPolling = (state) => {
+    if (attempts >= maxPollAttempts) {
+      return false
+    }
+    if (hasVisibleStartupRows()) {
+      return true
+    }
+    return !(state && state.launch_complete)
+  }
+  const poll = async () => {
+    attempts += 1
+    try {
+      const state = await refreshHomeStatusOnce()
+      if (!shouldContinueHomeStatusPolling(state)) {
+        stopPolling()
+      }
+    } catch (error) {
+      console.warn("[home] autolaunch status update failed", error)
+      if (attempts >= maxPollAttempts) {
+        stopPolling()
+      }
+    }
+  }
+  interval = setInterval(poll, 500)
+  setTimeout(poll, 100)
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      poll()
+    }
+  })
+  window.addEventListener("beforeunload", () => {
+    stopPolling()
+  })
+}
+startHomeAutolaunchPolling()
+document.addEventListener("keydown", (e) => {
+  e = e || window.event;
+  if (e.key === "Escape" && !hasHomeActionsBlockingOverlay() && closeActiveHomeActionsDrawer()) {
+    e.preventDefault()
+    return
+  }
+  if (e.key === "ArrowUp") {
+    console.log("up arrow pressed");
+    selectedIndex = Math.max(selectedIndex-1, 0)
+    selectedBtnIndex = 0
+    renderSearch()
+    let selected = document.querySelector(".line.selected")
+    selected.scrollIntoView(false)
+    // 
+  } else if (e.key === "ArrowDown") {
+    console.log("before selectedIndex", selectedIndex)
+    selectedIndex = Math.min(filteredCount-1, selectedIndex+1)
+    selectedBtnIndex = 0
+    console.log("after selectedIndex", selectedIndex)
+    renderSearch()
+    console.log("down arrow pressed");
+    let selected = document.querySelector(".line.selected")
+    selected.scrollIntoView(false)
+  } else if (e.key === "ArrowLeft") {
+    selectedBtnIndex = Math.max(selectedBtnIndex-1, 0)
+    console.log("left arrow pressed");
+    console.log("selectedBtnIndex", selectedBtnIndex)
+    renderSearch()
+  } else if (e.key === "ArrowRight") {
+    console.log("right arrow pressed");
+    selectedBtnIndex = Math.min(filteredBtnsCount-1, selectedBtnIndex+1)
+    console.log("selectedBtnIndex", selectedBtnIndex)
+    renderSearch()
+  } else if (e.key === "Enter") {
+    //let selected = document.querySelector(".line.selected:not(.hidden) .btns a.selected")
+    //let selected = document.querySelector(".line.selected:not(.hidden) .title a")
+    let selected = document.querySelector(".line.selected:not(.hidden)")
+    console.log("selected", selected)
+    if (selected) {
+      e.preventDefault()
+      e.stopPropagation()
+      selected.click()
+    }
+  }
+});
+const supportsNativePopovers = typeof document.createElement('div').showPopover === 'function'
+if (!supportsNativePopovers) {
+  document.querySelectorAll('.context-menu[popover]').forEach((menu) => {
+    menu.style.display = 'none'
+  })
+}
+const getMenuDimensions = (menu) => {
+  let width = parseFloat(menu.dataset.cachedWidth)
+  let height = parseFloat(menu.dataset.cachedHeight)
+  if (!width || !height) {
+    const prev = {
+      visibility: menu.style.visibility,
+      display: menu.style.display,
+      position: menu.style.position,
+      top: menu.style.top,
+      left: menu.style.left,
+    }
+    menu.style.visibility = 'hidden'
+    menu.style.display = 'block'
+    menu.style.position = 'fixed'
+    menu.style.top = '0'
+    menu.style.left = '0'
+    width = menu.offsetWidth
+    height = menu.offsetHeight
+    if (width > 0) {
+      menu.dataset.cachedWidth = width
+    }
+    if (height > 0) {
+      menu.dataset.cachedHeight = height
+    }
+    menu.style.visibility = prev.visibility
+    menu.style.display = prev.display
+    menu.style.position = prev.position
+    menu.style.top = prev.top
+    menu.style.left = prev.left
+  }
+  return {
+    width: width || 0,
+    height: height || 0
+  }
+}
+const closeContextMenuForNode = (node) => {
+  const contextMenu = node && typeof node.closest === 'function'
+    ? node.closest('.context-menu')
+    : null
+  if (contextMenu) {
+    const hasNativePopover = supportsNativePopovers && typeof contextMenu.hidePopover === 'function'
+    if (hasNativePopover) {
+      if (contextMenu.matches(':popover-open')) {
+        contextMenu.hidePopover()
+      }
+    } else {
+      contextMenu.style.display = 'none'
+      contextMenu.dataset.open = 'false'
+    }
+  }
+}
+window.PinokioHomeCloseContextMenu = closeContextMenuForNode
+const homeActionsDrawerMedia = window.matchMedia('(min-width: 961px)')
+const homeActionsReducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)')
+const isHomeActionsDrawerViewport = () => homeActionsDrawerMedia.matches
+const syncHomeActionsDrawerState = () => {
+  const hasDockedDialog = Boolean(document.querySelector('.home-actions-dialog.is-docked[open]'))
+  document.body.classList.toggle('home-actions-drawer-open', hasDockedDialog)
+}
+const setHomeActionsDrawerOffset = () => {
+  const header = document.querySelector('body.is-home > header.navheader')
+  const top = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0
+  document.body.style.setProperty('--home-actions-drawer-top', `${top}px`)
+}
+const homeActionsDrawerHeader = document.querySelector('body.is-home > header.navheader')
+if (homeActionsDrawerHeader && typeof ResizeObserver === 'function') {
+  new ResizeObserver(setHomeActionsDrawerOffset).observe(homeActionsDrawerHeader)
+}
+const setHomeActionsTriggerExpanded = (dialog, expanded) => {
+  if (!dialog || !dialog.id) {
+    return
+  }
+  document.querySelectorAll('.open-actions-modal').forEach((button) => {
+    if (button.getAttribute('data-dialog-id') === dialog.id) {
+      button.setAttribute('aria-expanded', expanded ? 'true' : 'false')
+    }
+  })
+}
+const closeHomeActionsDialog = (dialog) => {
+  if (!dialog || !dialog.open) {
+    return
+  }
+  const shouldAnimate = dialog.classList.contains('is-docked')
+    && isHomeActionsDrawerViewport()
+    && !homeActionsReducedMotionMedia.matches
+  if (!shouldAnimate) {
+    if (typeof dialog.close === 'function') {
+      dialog.close()
+    } else {
+      dialog.removeAttribute('open')
+      dialog.classList.remove('is-docked', 'is-closing')
+      setHomeActionsTriggerExpanded(dialog, false)
+      syncHomeActionsDrawerState()
+    }
+    return
+  }
+  if (dialog.classList.contains('is-closing')) {
+    return
+  }
+  dialog.classList.add('is-closing')
+  let finished = false
+  const finishClose = () => {
+    if (finished) {
+      return
+    }
+    finished = true
+    dialog.removeEventListener('animationend', finishClose)
+    if (dialog.open) {
+      dialog.close()
+    }
+  }
+  dialog.addEventListener('animationend', finishClose)
+  window.setTimeout(finishClose, 180)
+}
+const closeHomeActionsDialogs = (exceptDialog = null) => {
+  document.querySelectorAll('.home-actions-dialog[open]').forEach((dialog) => {
+    if (dialog === exceptDialog) {
+      return
+    }
+    if (typeof dialog.close === 'function') {
+      dialog.close()
+    } else {
+      dialog.removeAttribute('open')
+      dialog.classList.remove('is-docked', 'is-closing')
+      setHomeActionsTriggerExpanded(dialog, false)
+    }
+  })
+  syncHomeActionsDrawerState()
+}
+document.querySelectorAll('.home-actions-dialog').forEach((dialog) => {
+  if (dialog.dataset.homeActionsBound === 'true') {
+    return
+  }
+  dialog.dataset.homeActionsBound = 'true'
+  dialog.addEventListener('close', () => {
+    dialog.classList.remove('is-docked', 'is-closing')
+    setHomeActionsTriggerExpanded(dialog, false)
+    syncHomeActionsDrawerState()
+  })
+})
+const openHomeActionsDialog = (button) => {
+  if (!button) {
+    return
+  }
+  const dialogId = button.getAttribute('data-dialog-id')
+  const dialog = dialogId ? document.getElementById(dialogId) : null
+  if (!dialog) {
+    return
+  }
+  if (dialog.open) {
+    closeHomeActionsDialog(dialog)
+    return
+  }
+  closeHomeActionsDialogs(dialog)
+  if (isHomeActionsDrawerViewport()) {
+    setHomeActionsDrawerOffset()
+    dialog.classList.remove('is-closing')
+    dialog.classList.add('is-docked')
+    if (!dialog.open) {
+      if (typeof dialog.show === 'function') {
+        dialog.show()
+      } else {
+        dialog.setAttribute('open', '')
+      }
+    }
+    button.setAttribute('aria-expanded', 'true')
+    syncHomeActionsDrawerState()
+  } else if (typeof dialog.showModal === 'function') {
+    dialog.classList.remove('is-docked')
+    dialog.showModal()
+    button.setAttribute('aria-expanded', 'true')
+  } else {
+    dialog.classList.remove('is-docked')
+    dialog.setAttribute('open', '')
+    button.setAttribute('aria-expanded', 'true')
+  }
+}
+const closeActiveHomeActionsDrawer = () => {
+  const dialog = document.querySelector('.home-actions-dialog.is-docked[open]')
+  if (!dialog) {
+    return false
+  }
+  if (typeof dialog.close === 'function') {
+    closeHomeActionsDialog(dialog)
+  } else {
+    dialog.removeAttribute('open')
+    dialog.classList.remove('is-docked', 'is-closing')
+    setHomeActionsTriggerExpanded(dialog, false)
+    syncHomeActionsDrawerState()
+  }
+  return true
+}
+const hasHomeActionsBlockingOverlay = () => {
+  return Boolean(document.querySelector('.swal2-container.swal2-shown, .swal2-container.swal2-backdrop-show'))
+}
+const handleHomeActionsDrawerMediaChange = () => {
+  closeHomeActionsDialogs()
+}
+if (typeof homeActionsDrawerMedia.addEventListener === 'function') {
+  homeActionsDrawerMedia.addEventListener('change', handleHomeActionsDrawerMediaChange)
+} else if (typeof homeActionsDrawerMedia.addListener === 'function') {
+  homeActionsDrawerMedia.addListener(handleHomeActionsDrawerMediaChange)
+}
+const navigateHomeAppLine = (line) => {
+  if (!line) {
+    return
+  }
+  const href = line.getAttribute('data-href')
+  if (!href) {
+    return
+  }
+  const target = line.getAttribute('data-target')
+  if (target && target !== '_self') {
+    window.open(href, target)
+    return
+  }
+  if (window.PinokioHomeGuardNavigate) {
+    window.PinokioHomeGuardNavigate(href)
+  } else {
+    location.href = href
+  }
+}
+const shouldIgnoreHomeLineNavigation = (event) => {
+  if (!event || event.defaultPrevented) {
+    return true
+  }
+  const target = event.target
+  if (!(target instanceof Element)) {
+    return false
+  }
+  return Boolean(target.closest('button, a, input, select, textarea, dialog, summary, [role="tab"]'))
+}
+const stopHomeRunMenuItem = (target) => {
+  const shellId = target.getAttribute('data-shell-id')
+  const scriptId = target.getAttribute('data-script-id')
+  const href = target.getAttribute('data-href')
+  let method
+  let params
+  if (shellId) {
+    method = "kernel.bin.shell_kill"
+    params = { id: shellId }
+  } else if (scriptId) {
+    method = "kernel.api.stop"
+    params = { id: scriptId }
+  } else if (href) {
+    method = "kernel.api.stop"
+    params = { uri: "~" + new URL(href, location.href).pathname }
+  }
+  if (!method) {
+    return
+  }
+  target.disabled = true
+  const icon = target.querySelector('i')
+  if (icon) {
+    icon.className = 'fa-solid fa-circle-notch fa-spin'
+  }
+  const stopSocket = new Socket()
+  stopSocket.run({ method, params }, (packet) => {
+    if (packet.type === "result") {
+      stopSocket.close()
+      if (icon) {
+        icon.className = 'fa-solid fa-check'
+      }
+      setTimeout(() => {
+        location.href = location.href
+      }, 250)
+    } else if (packet.type === "error") {
+      stopSocket.close()
+      target.disabled = false
+      if (icon) {
+        icon.className = 'fa-solid fa-stop'
+      }
+      n.Noty({
+        text: packet.data || "Failed to stop",
+        silent: true
+      })
+    }
+  })
+}
+const parseLineStarSortMeta = (line) => {
+  if (!line) {
+    return {
+      starred: 0,
+      launchCount: 0,
+      lastLaunch: 0,
+      index: Number.MAX_SAFE_INTEGER,
+      name: "",
+    }
+  }
+  const starred = line.getAttribute("data-starred") === "1" ? 1 : 0
+  const launchCount = Number.parseInt(line.getAttribute("data-launch-count-total") || "0", 10)
+  const lastLaunchRaw = line.getAttribute("data-last-launch-at") || ""
+  const lastLaunch = lastLaunchRaw ? (Date.parse(lastLaunchRaw) || 0) : 0
+  const index = Number.parseInt(line.getAttribute("data-index") || String(Number.MAX_SAFE_INTEGER), 10)
+  const name = (line.getAttribute("data-name") || "").toLowerCase()
+  return {
+    starred,
+    launchCount: Number.isFinite(launchCount) ? launchCount : 0,
+    lastLaunch,
+    index: Number.isFinite(index) ? index : Number.MAX_SAFE_INTEGER,
+    name
+  }
+}
+const readCurrentHomeSortMode = () => {
+  const sortSelect = document.querySelector("#home-apps-sort-select")
+  if (sortSelect) {
+    return normalizeHomeSortMode(sortSelect.value)
+  }
+  const currentParams = new URLSearchParams(location.search)
+  return normalizeHomeSortMode(currentParams.get("sort"))
+}
+const compareLinesByPreference = (a, b, sortMode = readCurrentHomeSortMode()) => {
+  const aa = parseLineStarSortMeta(a)
+  const bb = parseLineStarSortMeta(b)
+  if (aa.starred !== bb.starred) {
+    return bb.starred - aa.starred
+  }
+  if (sortMode === "last_opened") {
+    if (aa.lastLaunch !== bb.lastLaunch) {
+      return bb.lastLaunch - aa.lastLaunch
+    }
+    if (aa.launchCount !== bb.launchCount) {
+      return bb.launchCount - aa.launchCount
+    }
+    const byName = aa.name.localeCompare(bb.name)
+    if (byName !== 0) {
+      return byName
+    }
+  } else if (sortMode === "az") {
+    const byName = aa.name.localeCompare(bb.name)
+    if (byName !== 0) {
+      return byName
+    }
+  } else {
+    if (aa.launchCount !== bb.launchCount) {
+      return bb.launchCount - aa.launchCount
+    }
+    if (aa.lastLaunch !== bb.lastLaunch) {
+      return bb.lastLaunch - aa.lastLaunch
+    }
+    const byName = aa.name.localeCompare(bb.name)
+    if (byName !== 0) {
+      return byName
+    }
+  }
+  if (aa.index !== bb.index) {
+    return aa.index - bb.index
+  }
+  return aa.name.localeCompare(bb.name)
+}
+const reorderHomeSectionsByPreference = (sortMode = readCurrentHomeSortMode()) => {
+  const sections = [".running-apps", ".not-running-apps"]
+  for (const selector of sections) {
+    const section = document.querySelector(selector)
+    if (!section) {
+      continue
+    }
+    const lines = Array.from(section.querySelectorAll(":scope > .line"))
+    lines.sort((x, y) => compareLinesByPreference(x, y, sortMode))
+    for (const line of lines) {
+      section.appendChild(line)
+    }
+  }
+}
+if (homeSortSelect) {
+  reorderHomeSectionsByPreference(normalizeHomeSortMode(homeSortSelect.value))
+  if (typeof window.TomSelect === "function" && !homeSortSelect.tomselect) {
+    const sortDropdownParent = homeSortSelect.closest(".home-apps-sort")
+    new TomSelect(homeSortSelect, {
+      create: false,
+      maxItems: 1,
+      allowEmptyOption: false,
+      searchField: [],
+      controlInput: null,
+      dropdownParent: sortDropdownParent || undefined
+    })
+  }
+  const sortContainer = homeSortSelect.closest(".home-apps-sort")
+  if (sortContainer && sortContainer.dataset.clickBound !== "true") {
+    sortContainer.dataset.clickBound = "true"
+    sortContainer.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element) || event.target.closest(".ts-dropdown")) {
+        return
+      }
+      const sortControl = homeSortSelect.tomselect
+      if (sortControl && !event.target.closest(".ts-control")) {
+        sortControl.focus()
+        sortControl.open()
+        return
+      }
+      if (!event.target.closest("select")) {
+        homeSortSelect.focus()
+        homeSortSelect.click()
+      }
+    })
+  }
+}
+let homeStarToast = null
+const showHomeStarToast = () => {
+  if (typeof n === "undefined" || !n || typeof n.Noty !== "function") {
+    return
+  }
+  if (homeStarToast && typeof homeStarToast.close === "function") {
+    homeStarToast.close()
+  }
+  homeStarToast = n.Noty({
+    type: "notification",
+    className: "home-star-toast",
+    timeout: 5200,
+    progressBar: false,
+    closeWith: ["click"],
+    silent: true,
+    text: `
+      <div class="home-star-toast__row">
+        <div class="home-star-toast__icon">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="home-star-toast__content">
+          <div class="home-star-toast__title">Starred apps get priority</div>
+          <div class="home-star-toast__text">AI agents rank starred apps higher when searching for tools to use.</div>
+        </div>
+      </div>
+    `
+  })
+}
+const escapeHomeShareHtml = (value = "") => {
+  return String(value || "").replace(/[&<>"']/g, (char) => {
+    return ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char] || char
+  })
+}
+const copyHomeShareText = async (text) => {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+  const textarea = document.createElement("textarea")
+  textarea.value = text
+  textarea.setAttribute("readonly", "")
+  textarea.style.position = "fixed"
+  textarea.style.opacity = "0"
+  document.body.appendChild(textarea)
+  textarea.select()
+  document.execCommand("copy")
+  textarea.remove()
+}
+const parseHomeShareExternalUrls = (raw = "") => {
+  try {
+    const parsed = JSON.parse(raw || "[]")
+    return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.url === "string" && item.url.trim()) : []
+  } catch (_) {
+    return []
+  }
+}
+const requestHomeAppShareStatus = async (appId = "") => {
+  const normalizedAppId = String(appId || "").trim()
+  if (!normalizedAppId) {
+    return null
+  }
+  try {
+    const response = await fetch(`/apps/status/${encodeURIComponent(normalizedAppId)}`, { cache: "no-store" })
+    if (!response.ok) {
+      return null
+    }
+    return await response.json()
+  } catch (_) {
+    return null
+  }
+}
+const updateHomeShareButtonStatus = (button, status) => {
+  if (!button || !status || typeof status !== "object") {
+    return
+  }
+  if (typeof status.ready_url === "string") {
+    button.setAttribute("data-app-ready-url", status.ready_url)
+  }
+  if (Array.isArray(status.external_ready_urls)) {
+    button.setAttribute("data-app-external-ready-urls", JSON.stringify(status.external_ready_urls))
+  }
+  if (typeof status.title === "string" && status.title.trim()) {
+    button.setAttribute("data-app-name", status.title.trim())
+  }
+}
+const requestHomeNetworkSharingStatus = async () => {
+  try {
+    const response = await fetch("/info/network-sharing", { cache: "no-store" })
+    if (!response.ok) {
+      return null
+    }
+    return await response.json()
+  } catch (_) {
+    return null
+  }
+}
+const homeShareSetupUrl = () => {
+  const currentPath = `${window.location.pathname}${window.location.search}`
+  return `/setup/network?callback=${encodeURIComponent(currentPath || "/home")}`
+}
+const homeShareActionHtml = (href, label, primary = true) => {
+  return `<a class="home-app-share-modal__action${primary ? " is-primary" : ""}" href="${escapeHomeShareHtml(href)}">${escapeHomeShareHtml(label)}</a>`
+}
+const homeShareTitleHtml = (label) => {
+  return `<span class="home-app-share-modal__title-icon" aria-hidden="true"><i class="fa-solid fa-wifi"></i></span><span class="home-app-share-modal__title-copy"><span class="home-app-share-modal__title-text">${escapeHomeShareHtml(label)}</span><span class="home-app-share-modal__title-meta">Home Server</span></span>`
+}
+const renderHomeShareAvailableHtml = ({ appName, wifiUrl }) => {
+  const safeUrl = escapeHomeShareHtml(wifiUrl)
+  const qr = `/qr?data=${encodeURIComponent(wifiUrl)}&s=4&m=0`
+  return `
+    <div class="home-app-share-modal">
+      <div class="home-app-share-modal__scan-card">
+        <div class="home-app-share-modal__scan-copy">
+          <div class="home-app-share-modal__eyebrow">Scan to open</div>
+          <div class="home-app-share-modal__intro">Use a phone, tablet, or another computer on this network.</div>
+        </div>
+        <div class="home-app-share-modal__qr">
+          <img src="${escapeHomeShareHtml(qr)}" alt="QR code for ${escapeHomeShareHtml(appName)} Home Server link">
+        </div>
+      </div>
+      <div class="home-app-share-modal__share-card">
+        <div class="home-app-share-modal__url">
+          <i class="fa-solid fa-wifi" aria-hidden="true"></i>
+          <span>${safeUrl}</span>
+        </div>
+        <div class="home-app-share-modal__actions">
+          <button type="button" class="home-app-share-modal__action is-primary" data-home-share-copy="${safeUrl}">
+            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+            <span>Copy link</span>
+          </button>
+          <a class="home-app-share-modal__action" href="${safeUrl}" target="_blank" rel="noreferrer">
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            <span>Open</span>
+          </a>
+        </div>
+      </div>
+      <div class="home-app-share-modal__note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>Only devices on this local network can open this link.</span></div>
+    </div>`
+}
+const renderHomeShareSetupHtml = ({ detail, actions }) => {
+  return `
+    <div class="home-app-share-modal">
+      <div class="home-app-share-modal__setup-card">
+        <div class="home-app-share-modal__intro">${escapeHomeShareHtml(detail)}</div>
+      </div>
+      <div class="home-app-share-modal__actions">${actions.join("")}</div>
+    </div>`
+}
+const showHomeAppShareModal = async (button) => {
+  if (!button) {
+    return
+  }
+  const appId = button.getAttribute("data-app-id") || ""
+  let appName = button.getAttribute("data-app-name") || "This app"
+  let readyUrl = button.getAttribute("data-app-ready-url") || ""
+  let externalUrls = parseHomeShareExternalUrls(button.getAttribute("data-app-external-ready-urls") || "")
+  const status = await requestHomeNetworkSharingStatus()
+  const appStatus = await requestHomeAppShareStatus(appId)
+  if (appStatus) {
+    updateHomeShareButtonStatus(button, appStatus)
+    if (typeof appStatus.title === "string" && appStatus.title.trim()) {
+      appName = appStatus.title.trim()
+    }
+    if (typeof appStatus.ready_url === "string") {
+      readyUrl = appStatus.ready_url
+    }
+    if (Array.isArray(appStatus.external_ready_urls)) {
+      externalUrls = appStatus.external_ready_urls.filter((item) => item && typeof item.url === "string" && item.url.trim())
+    }
+  }
+  const wifiUrl = externalUrls.length > 0 ? externalUrls[0].url : ""
+  let title = `Open ${appName} on another device`
+  let html
+  if (status && status.installed === false) {
+    title = "Install Home Server support"
+    html = renderHomeShareSetupHtml({
+      detail: "Pinokio needs its local networking component before it can share app Web UIs on your home network.",
+      actions: [homeShareActionHtml(homeShareSetupUrl(), "Install Home Server support")]
+    })
+  } else if (status && status.active === false) {
+    title = "Turn on Home Server"
+    html = renderHomeShareSetupHtml({
+      detail: "Home Server support is installed but turned off. Turn it on to open running app Web UIs from phones, tablets, and other computers on this network.",
+      actions: [homeShareActionHtml("/network", "Open Home Server settings")]
+    })
+  } else if (status && status.running === false) {
+    title = "Home Server is starting"
+    html = renderHomeShareSetupHtml({
+      detail: "Pinokio is preparing home-network links for app Web UIs. Open Home Server settings to check it.",
+      actions: [homeShareActionHtml("/network", "Open Home Server settings")]
+    })
+  } else if (wifiUrl) {
+    html = renderHomeShareAvailableHtml({ appName, wifiUrl })
+  } else if (readyUrl) {
+    title = "Home Server link is not ready yet"
+    html = renderHomeShareSetupHtml({
+      detail: `${appName} is running locally, but its Home Server link is not ready yet.`,
+      actions: [
+        `<button type="button" class="home-app-share-modal__action is-primary" data-home-share-retry>Retry</button>`,
+        homeShareActionHtml("/network", "Open Home Server settings", false)
+      ]
+    })
+  } else {
+    title = "No Web UI address yet"
+    html = renderHomeShareSetupHtml({
+      detail: `${appName} is running, but Pinokio has not found a Web UI URL to open from another device yet.`,
+      actions: [`<button type="button" class="home-app-share-modal__action is-primary" data-home-share-retry>Retry</button>`]
+    })
+  }
+  await Swal.fire({
+    title: homeShareTitleHtml(title),
+    html,
+    showConfirmButton: false,
+    showCloseButton: true,
+    customClass: {
+      popup: "home-app-share-swal"
+    },
+    didOpen: (popup) => {
+      const copyButton = popup.querySelector("[data-home-share-copy]")
+      if (copyButton) {
+        copyButton.addEventListener("click", async () => {
+          const url = copyButton.getAttribute("data-home-share-copy") || ""
+          if (!url) {
+            return
+          }
+          try {
+            await copyHomeShareText(url)
+            copyButton.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i><span>Copied</span>'
+            window.setTimeout(() => {
+              copyButton.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copy link</span>'
+            }, 1200)
+          } catch (_) {}
+        })
+      }
+      const retryButton = popup.querySelector("[data-home-share-retry]")
+      if (retryButton) {
+        retryButton.addEventListener("click", () => {
+          Swal.close()
+          window.setTimeout(() => showHomeAppShareModal(button), 80)
+        })
+      }
+    }
+  })
+}
+document.addEventListener("click", async (e) => {
+  let target
+  if (e.target.classList.contains("open-actions-modal")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".open-actions-modal")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    openHomeActionsDialog(target)
+    return
+  }
+  if (e.target.classList.contains("open-app-share-modal") || e.target.classList.contains("home-share-app")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".open-app-share-modal, .home-share-app")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    closeContextMenuForNode(target)
+    await showHomeAppShareModal(target)
+    return
+  }
+  if (e.target.classList.contains("home-actions-close")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".home-actions-close")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    const dialog = target.closest(".home-actions-dialog")
+    if (dialog) {
+      closeHomeActionsDialog(dialog)
+    }
+    return
+  }
+  if (e.target.classList.contains("home-actions-dialog")) {
+    closeHomeActionsDialog(e.target)
+    return
+  }
+  if (e.target.classList.contains("home-run-stop")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".home-run-stop")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    stopHomeRunMenuItem(target)
+    return
+  }
+  if (e.target.classList.contains("home-run-command")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".home-run-command")
+  }
+  if (target) {
+    const confirmText = target.getAttribute("data-confirm")
+    if (confirmText && !confirm(confirmText)) {
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
+  }
+  target = e.target.closest(".home-app-line")
+  if (target && !shouldIgnoreHomeLineNavigation(e)) {
+    e.preventDefault()
+    e.stopPropagation()
+    navigateHomeAppLine(target)
+    return
+  }
+  if (e.target.classList.contains("toggle-star")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".toggle-star")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (target.dataset.pending === "1") {
+      return
+    }
+    const appId = target.getAttribute("data-app-id")
+    if (!appId) {
+      return
+    }
+    const currentlyStarred = target.getAttribute("data-starred") === "1"
+    const nextStarred = !currentlyStarred
+    target.dataset.pending = "1"
+    try {
+      const response = await fetch(`/apps/preferences/${encodeURIComponent(appId)}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ starred: nextStarred })
+      })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok || !payload || !payload.preference) {
+        throw new Error(payload && payload.error ? payload.error : "Failed to update app star")
+      }
+      target.setAttribute("data-starred", payload.preference.starred ? "1" : "0")
+      if (payload.preference.starred) {
+        target.classList.add("is-starred")
+      } else {
+        target.classList.remove("is-starred")
+      }
+      const icon = target.querySelector("i")
+      if (icon) {
+        icon.className = payload.preference.starred ? "fa-solid fa-star" : "fa-regular fa-star"
+      }
+      const starLabel = payload.preference.starred ? "Unstar app" : "Star app"
+      target.setAttribute("title", starLabel)
+      target.setAttribute("aria-label", starLabel)
+      const label = target.querySelector("span")
+      if (label) {
+        label.textContent = payload.preference.starred ? "Starred" : "Star"
+      }
+      const line = target.closest(".line")
+      if (line) {
+        line.setAttribute("data-starred", payload.preference.starred ? "1" : "0")
+        line.setAttribute("data-launch-count-total", String(payload.preference.launch_count_total || 0))
+        line.setAttribute("data-last-launch-at", payload.preference.last_launch_at || "")
+      }
+      reorderHomeSectionsByPreference()
+      if (payload.preference.starred) {
+        showHomeStarToast()
+      }
+    } catch (error) {
+      alert(error && error.message ? error.message : "Failed to update app star")
+    } finally {
+      delete target.dataset.pending
+    }
+    return
+  }
+  if (e.target.classList.contains("shutdown")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".shutdown")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    let src = target.getAttribute("data-src")
+    let id = target.getAttribute('data-id')
+    let type = target.getAttribute('data-type')
+    console.log({ id, src, type })
+    target.disabled = true
+    const stopIcon = target.querySelector("i.fa-stop")
+    const spinIcon = target.querySelector("i.fa-spin")
+    if (stopIcon) {
+      stopIcon.classList.add("hidden")
+    }
+    if (spinIcon) {
+      spinIcon.classList.remove("hidden")
+    }
+
+    let params = {}
+    if (id) params.id = id
+    if (src) params.uri = "~/" + src
+
+    if (type === "shell") {
+      socket.run({
+        method: "kernel.bin.shell_kill",
+        params: { id }
+      }, (packet) => {
+        console.log("packet", packet)
+        if (packet.type === "result") {
+          socket.close()
+          target.querySelector("i.fa-stop").className = "fa-solid fa-check"
+          const resultSpinIcon = target.querySelector("i.fa-spin")
+          if (resultSpinIcon) {
+            resultSpinIcon.classList.add("hidden")
+          }
+          n.Noty({
+            text: `stopped`,
+            silent: true
+          })
+          setTimeout(() => {
+            location.href = location.href
+          }, 500)
+        }
+      })
+    } else {
+      socket.run({
+        method: "kernel.api.stop",
+        params,
+      }, (packet) => {
+        console.log("packet", packet)
+        if (packet.type === "result") {
+          socket.close()
+          target.querySelector("i.fa-stop").className = "fa-solid fa-check"
+          const resultSpinIcon = target.querySelector("i.fa-spin")
+          if (resultSpinIcon) {
+            resultSpinIcon.classList.add("hidden")
+          }
+          n.Noty({
+            text: `stopped ${src}`,
+            silent: true
+          })
+          setTimeout(() => {
+            if (typeof refreshHomeStatusOnce === "function") {
+              const stoppedLine = target.closest(".home-app-line")
+              const stoppedApp = stoppedLine ? stoppedLine.getAttribute("data-autolaunch-app") : ""
+              refreshHomeStatusOnce(stoppedApp).catch((error) => {
+                console.warn("[home] stop status refresh failed", error)
+                location.href = location.href
+              })
+            } else {
+              location.href = location.href
+            }
+          }, 500)
+        }
+      })
+    }
+
+
+    return
+  }
+  if (e.target.classList.contains("open-menu")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".open-menu")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    let popoverId = target.getAttribute('popovertarget')
+    let contextMenu
+    if (popoverId) {
+      contextMenu = document.getElementById(popoverId)
+    }
+    if (!contextMenu) {
+      contextMenu = target.closest(".col")?.querySelector(".context-menu")
+    }
+    if (contextMenu) {
+      const hasNativePopover = supportsNativePopovers && typeof contextMenu.showPopover === 'function'
+      const isOpen = hasNativePopover ? contextMenu.matches(':popover-open') : contextMenu.dataset.open === 'true'
+      if (isOpen) {
+        if (hasNativePopover) {
+          contextMenu.hidePopover()
+        } else {
+          contextMenu.style.display = 'none'
+          contextMenu.dataset.open = 'false'
+        }
+        return
+      }
+      if (hasNativePopover) {
+        document.querySelectorAll('.context-menu[popover]').forEach((menuEl) => {
+          if (menuEl !== contextMenu && menuEl.matches(':popover-open') && typeof menuEl.hidePopover === 'function') {
+            menuEl.hidePopover()
+          }
+        })
+      } else {
+        document.querySelectorAll('.context-menu[data-open="true"]').forEach((menuEl) => {
+          if (menuEl !== contextMenu) {
+            menuEl.style.display = 'none'
+            menuEl.dataset.open = 'false'
+          }
+        })
+      }
+      const buttonRect = target.getBoundingClientRect()
+      const menuRect = getMenuDimensions(contextMenu)
+      const viewportPadding = 12
+      let left = Math.min(buttonRect.left, window.innerWidth - menuRect.width - viewportPadding)
+      left = Math.max(viewportPadding, left)
+      let top = buttonRect.bottom + 6
+      if (top + menuRect.height + viewportPadding > window.innerHeight) {
+        top = buttonRect.top - menuRect.height - 6
+      }
+      const maxTop = Math.max(viewportPadding, window.innerHeight - menuRect.height - viewportPadding)
+      top = Math.min(Math.max(viewportPadding, top), maxTop)
+      if (hasNativePopover) {
+        contextMenu.style.position = 'fixed'
+        contextMenu.style.left = left + 'px'
+        contextMenu.style.top = top + 'px'
+        contextMenu.style.right = 'auto'
+        contextMenu.style.bottom = 'auto'
+        contextMenu.togglePopover()
+      } else {
+        const btnContainer = target.closest('.menu-btns')
+        if (!btnContainer) {
+          return
+        }
+        const containerRect = btnContainer.getBoundingClientRect()
+        contextMenu.style.left = Math.max(0, left - containerRect.left) + 'px'
+        contextMenu.style.top = top - containerRect.top + 'px'
+        contextMenu.style.right = 'auto'
+        contextMenu.style.bottom = 'auto'
+        contextMenu.style.display = 'block'
+        contextMenu.dataset.open = 'true'
+      }
+    }
+    return
+  }
+  if (e.target.classList.contains("move-menu")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".move-menu")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    closeContextMenuForNode(target)
+
+    let disable_message = target.getAttribute('data-disable')
+    if (disable_message && disable_message.length > 0) {
+      alert(disable_message)
+      return
+    }
+
+    let line = target.closest(".line")
+    let title = line.getAttribute("data-title")
+    let icon = line.getAttribute("data-icon")
+    let iconpath = line.getAttribute("data-iconpath")
+    let path = line.getAttribute("data-path")
+    let description = line.getAttribute("data-description")
+    await FSEditor({
+      title,
+      description,
+      old_path: path,
+      icon,
+      iconpath,
+      move: true,
+      edit: true,
+      redirect: (new_path) => {
+        return location.href
+      }
+    })
+    return
+  }
+
+  if (e.target.classList.contains("copy-menu")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".copy-menu")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    closeContextMenuForNode(target)
+    let line = target.closest(".line")
+    let title = line.getAttribute("data-title")
+    let icon = line.getAttribute("data-icon")
+    let iconpath = line.getAttribute("data-iconpath")
+    let path = line.getAttribute("data-path")
+    let description = line.getAttribute("data-description")
+    await FSEditor({
+      title,
+      description,
+      old_path: path,
+      icon,
+      iconpath,
+      copy: true,
+      edit: true,
+      redirect: (new_path) => {
+        return location.href
+      }
+    })
+    return
+  }
+
+  if (e.target.classList.contains("edit-menu")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".edit-menu")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    closeContextMenuForNode(target)
+    let line = target.closest(".line")
+    let title = line.getAttribute("data-title")
+    let icon = line.getAttribute("data-icon")
+    let iconpath = line.getAttribute("data-iconpath")
+    let path = line.getAttribute("data-path")
+    let description = line.getAttribute("data-description")
+    await FSEditor({
+      title,
+      description,
+      old_path: path,
+      icon,
+      iconpath,
+      edit: true,
+      redirect: (new_path) => {
+        return location.href
+      }
+    })
+    return
+  }
+
+
+
+
+  if (e.target.classList.contains("browse") || e.target.classList.contains("home-browse")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".browse, .home-browse")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    closeContextMenuForNode(target)
+    let src = target.getAttribute("data-src")
+    if (window.PinokioHomeGuardNavigate) {
+      window.PinokioHomeGuardNavigate(src)
+    } else {
+      location.href = src
+    }
+    return
+  }
+
+
+  // delete
+  if (e.target.classList.contains("del")) {
+    target = e.target
+  } else {
+    target = e.target.closest(".del")
+  }
+  if (target) {
+    e.preventDefault()
+    e.stopPropagation()
+    closeContextMenuForNode(target)
+
+    let disable_message = target.getAttribute('data-disable')
+    if (disable_message && disable_message.length > 0) {
+      alert(disable_message)
+      return
+    }
+
+    let confirmed = confirm("Are you sure you want to delete the folder? All files in the folder will be gone.")
+    if (confirmed) {
+      let itemEl = target.closest(".line[data-uri]")
+      let name = itemEl.getAttribute("data-uri")
+      console.log("delete", name)
+      Swal.fire({
+        html: '<i class="fa-solid fa-circle-notch fa-spin"></i> Deleting',
+        customClass: {
+          container: "loader-container",
+          popup: "loader-popup",
+          htmlContainer: "loader-dialog",
+          footer: "hidden",
+          actions: "hidden"
+        }
+      });
+      let res = await PinokioPathRemoval.remove({ name })
+      console.log("res", res)
+      Swal.close()
+      if (res) {
+        debugger
+        if (res.success) {
+          location.href = "/home"
+        } else if (res.error) {
+          alert(res.error)
+        }
+      }
+    } else {
+    }
+    return
+  }
+
+
+
+  if (document.querySelector(".container")) {
+    document.querySelector(".container").addEventListener("click", async (e) => {
+      //let el = e.target.closest(".menu-btn")
+      //if (!el) {
+      //  if (el.classList.contains("menu-btn")) {
+      //    el = e.target
+      //  }
+      //}
+
+      let el
+      if (e.target.classList.contains("menu-btn")) {
+        el = e.target
+      } else {
+        if (e.target.closest(".menu-btn")) {
+          el = e.target
+        }
+      }
+
+      console.log("EL", el)
+
+      if (el) {
+        e.preventDefault()
+        e.stopPropagation()
+        let actionStr = el.getAttribute("data-action")
+        if (actionStr) {
+          let action = JSON.parse(actionStr)
+          console.log("action", action)
+          if (action.method === "stop" && action.uri) {
+            socket.run({
+              method: "kernel.api.stop",
+              params: {
+                uri: action.uri//"~" + location.pathname
+              }
+            }, (packet) => {
+              console.log("packet", packet)
+              if (packet.type === "result") {
+                socket.close()
+                location.href = location.href
+              }
+            })
+            return
+          }
+        }
+
+      }
+    })
+  }
+
+
+
+
+/*
+  target = (e.target.classList.contains(".btn") ? e.target : e.target.closest(".btn"))
+  if (target) {
+    target.classList.add("clicked")   
+    document.querySelectorAll(".line .btns .btn").forEach((e) => {
+      e.classList.remove("selected")
+    })
+    target.classList.add("selected")
+    target.closest(".line").classList.add("selected")
+    return
+  }
+  */
+
+
+})
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" && e.key !== " ") {
+    return
+  }
+  const line = e.target && e.target.closest ? e.target.closest(".home-app-line") : null
+  if (!line || shouldIgnoreHomeLineNavigation(e)) {
+    return
+  }
+  e.preventDefault()
+  navigateHomeAppLine(line)
+})
+<% if (proxy) { %>
+  if (document.querySelector("#wifi-qr")) {
+    document.querySelector("#wifi-qr").addEventListener("click", async (e) => {
+      await Swal.fire({
+        title: "Local Share",
+        customClass: {
+          popup: "min-popup",
+          title: "min-title"
+        },
+        showConfirmButton: false,
+        html: `<div class='min-modal'>
+        <div>Access Pinokio from</div>
+        <div>any local network device</div>
+        <div><img src="<%=qr%>"></div>
+    <a href="<%=proxy.proxy%>" target="_blank"><%=proxy.proxy%></a>
+    </div>`
+      })
+    })
+  }
+  if (document.querySelector("#wifi-stop")) {
+    document.querySelector("#wifi-stop").addEventListener("click", async (e) => {
+      let res = await fetch("/unpublish", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          type: "local"
+        })
+      }).then((res) => {
+        return res.json()
+      })
+      console.log(res)
+      location.href = location.href
+    })
+  }
+<% } %>
+<% if (cloudflare_pub) { %>
+  if (document.querySelector("#cloudflare-qr")) {
+    document.querySelector("#cloudflare-qr").addEventListener("click", async (e) => {
+      await Swal.fire({
+        title: "Public Share",
+        customClass: {
+          popup: "min-popup",
+          title: "min-title"
+        },
+        showConfirmButton: false,
+        html: `<div class='min-modal'>
+        <div>Access Pinokio from anywhere</div>
+        <div>(powered by cloudflare tunnel)</div>
+        <div><img src="<%=qr_cloudflare%>"></div>
+    <a href="<%=cloudflare_pub%>" target="_blank"><%=cloudflare_pub%></a>
+    </div>`
+      })
+    })
+  }
+  if (document.querySelector("#cloudflare-stop")) {
+    document.querySelector("#cloudflare-stop").addEventListener("click", async (e) => {
+      let res = await fetch("/unpublish", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          type: "cloudflare"
+        })
+      }).then((res) => {
+        return res.json()
+      })
+      console.log(res)
+      location.href = location.href
+    })
+  }
+<% } %>
+if (document.querySelector("#wifi")) { 
+  document.querySelector("#wifi").addEventListener("click", async (e) => {
+    document.querySelector("#wifi").classList.add("hidden")
+    document.querySelector("#wifi-starting").classList.remove("hidden")
+    let res = await fetch("/publish", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        type: "local"
+      })
+    }).then((res) => {
+      return res.json()
+    })
+    console.log(res)
+    location.href = location.href
+  })
+}
+if (document.querySelector("#cloudflare")) {
+  document.querySelector("#cloudflare").addEventListener("click", async (e) => {
+    document.querySelector("#cloudflare").classList.add("hidden")
+    document.querySelector("#cloudflare-starting").classList.remove("hidden")
+    let res = await fetch("/publish", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        type: "cloudflare"
+      })
+    }).then((res) => {
+      return res.json()
+    })
+    console.log(res)
+    location.href = location.href
+  })
+}
+<% } %>
+
+// Initialize URL Dropdown with empty behavior
+document.addEventListener('DOMContentLoaded', function() {
+  initUrlDropdown({
+    clearBehavior: 'empty'
+  });
+});
+
+</script>
+<script src="/opener.js"></script>
+</body>
+</html>
