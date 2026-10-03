@@ -2,6 +2,15 @@
 
 Launch Anything.
 
+> **Repo layout (Tartarus fork):** this repo contains both halves of the app.
+> The Electron desktop shell lives at the root, and the backend server + UI
+> (forked from [pinokiod](https://github.com/pinokiocomputer/pinokiod), MIT)
+> lives in `backend/`. The root `package.json` installs it via
+> `"pinokiod": "file:./backend"`, so edits in `backend/` are picked up directly.
+> Upstream: [pinokio](https://github.com/pinokiocomputer/pinokio) and
+> [pinokiod](https://github.com/pinokiocomputer/pinokiod). Pull upstream backend
+> changes with `git subtree pull --prefix=backend https://github.com/pinokiocomputer/pinokiod.git main`.
+
 # Script Policy
 
 Pinokio is a 1-click launcher for any open-source project. Think of it as a terminal application with a user-friendly interface that can programmatically interact with scripts.
