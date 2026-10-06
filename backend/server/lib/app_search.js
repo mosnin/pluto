@@ -38,6 +38,7 @@ const APP_SEARCH_STOP_TERMS = new Set([
 ])
 const APP_SEARCH_BOOST = { title: 6, file: 2, text: 1 }
 const APP_SEARCH_ROOT_FILES = new Set([
+  'tartarus.js',
   'pinokio.json',
   'pinokio.js',
   'install.js',

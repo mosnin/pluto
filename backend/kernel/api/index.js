@@ -41,28 +41,33 @@ class Api {
     this.logSessions = new AppLogSessions({ kernel })
     this.lproxy = new Lproxy()
   }
+  // Where an app's launcher script can live, in priority order. Tartarus apps
+  // use tartarus.js (or tartarus/tartarus.js); pinokio.js is still read so
+  // existing Pinokio launchers keep working.
+  launcher_candidates() {
+    return [
+      { file: "tartarus.js", root: "" },
+      { file: "tartarus/tartarus.js", root: "tartarus" },
+      { file: "pinokio.js", root: "" },
+      { file: "pinokio/pinokio.js", root: "pinokio" },
+    ]
+  }
+  // The launcher file inside a launcher directory: tartarus.js, else pinokio.js.
+  async launcher_file(dir) {
+    const tartarus = path.resolve(dir, "tartarus.js")
+    if (await this.exists(tartarus)) return tartarus
+    return path.resolve(dir, "pinokio.js")
+  }
   async launcher_path(name) {
     let root_path = this.kernel.path("api", name)
-    let primary_path = path.resolve(root_path, "pinokio.js")
-    let exists = await this.exists(primary_path)
-    if (exists) {
-      return root_path
-    } else {
-      let secondary_path = path.resolve(root_path, "pinokio/pinokio.js")
-      let exists = await this.exists(secondary_path)
-      if (exists) {
-        return path.resolve(root_path, "pinokio")
+    for (const candidate of this.launcher_candidates()) {
+      if (await this.exists(path.resolve(root_path, candidate.file))) {
+        return candidate.root ? path.resolve(root_path, candidate.root) : root_path
       }
     }
-    // default is the 
     return root_path
   }
   async launcher(name) {
-    /*
-      look for:
-      1. pinokio.js
-      2. ./pinokio/pinokio.js
-    */
     let root_path
     if (typeof name === "object") {
       if (name.name) {
@@ -73,20 +78,21 @@ class Api {
     } else {
       root_path = this.kernel.path("api", name)
     }
-    let primary_path = path.resolve(root_path, "pinokio.js")
-    let secondary_path = path.resolve(root_path, "pinokio/pinokio.js")
-    let pinokio = (await this.kernel.loader.load(primary_path)).resolved
-    let launcher_root = ""
-    if (!pinokio) {
-      pinokio = (await this.kernel.loader.load(secondary_path)).resolved
-      if (pinokio) {
-        launcher_root = "pinokio"
+    for (const candidate of this.launcher_candidates()) {
+      const script = (await this.kernel.loader.load(path.resolve(root_path, candidate.file))).resolved
+      if (script) {
+        return {
+          script,
+          root: root_path,
+          launcher_root: candidate.root,
+          launcher_file: candidate.file,
+        }
       }
     }
     return {
-      script: pinokio,
+      script: undefined,
       root: root_path,
-      launcher_root
+      launcher_root: ""
     }
   }
 //  async createMeta(formData) {
@@ -187,7 +193,7 @@ class Api {
     if (!api_root_path) {
       api_root_path = api_path
     }
-    p1 = path.resolve(api_path, "pinokio.js")
+    p1 = await this.launcher_file(api_path)
     p2 = path.resolve(api_path, "pinokio_meta.json")
     p3 = path.resolve(api_path, "pinokio.json")
     let pinokio = (await this.kernel.loader.load(p1)).resolved
@@ -1882,8 +1888,8 @@ class Api {
       let chunks = relative.split(path.sep)
       if (chunks.length == 2) {
         // the script is requesting a uri of the git repo
-        // look for pinokio.js
-        let p = path.resolve(await this.launcher_path(request.path), "pinokio.js")
+        // look for tartarus.js / pinokio.js
+        let p = await this.launcher_file(await this.launcher_path(request.path))
         let exists = await this.exists(p)
         if (exists) {
           await this.launch(request, p)

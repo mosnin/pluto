@@ -1,0 +1,378 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Explore · Tartarus</title>
+<link href="/xterm.min.css" rel="stylesheet" />
+<link href="/css/fontawesome.min.css" rel="stylesheet">
+<link href="/css/solid.min.css" rel="stylesheet">
+<link href="/css/regular.min.css" rel="stylesheet">
+<link href="/css/brands.min.css" rel="stylesheet">
+<link href="/noty.css" rel="stylesheet"/>
+<link href="/style.css" rel="stylesheet"/>
+<link href="/task-launcher.css" rel="stylesheet"/>
+<link href="/urldropdown.css" rel="stylesheet" />
+<% if (agent === "electron") { %>
+  <link href="/electron.css" rel="stylesheet"/>
+<% } %>
+<style>
+main {
+  display: flex;
+}
+body.tartarus-explore-page .task-container {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+.tx-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 28px 64px;
+  color: #ededed;
+}
+.tx-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #1c1c1c;
+  margin-bottom: 24px;
+}
+.tx-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.tx-subtitle {
+  margin: 6px 0 0;
+  color: #8a8a8a;
+  font-size: 13px;
+}
+.tx-search {
+  width: min(280px, 100%);
+  padding: 9px 12px 9px 34px;
+  background: #0a0a0a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='1.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px center / 15px 15px;
+  border: 1px solid #1c1c1c;
+  border-radius: 10px;
+  color: #ededed;
+  font-size: 13px;
+  outline: none;
+}
+.tx-search:focus {
+  border-color: #3a3a3a;
+}
+.tx-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.tx-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: #050505;
+  border: 1px solid #1c1c1c;
+  border-radius: 14px;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.tx-card:hover {
+  border-color: #2e2e2e;
+  background: #080808;
+}
+.tx-card[hidden] {
+  display: none;
+}
+.tx-card-top {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.tx-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  border: 1px solid #1c1c1c;
+  background: #000;
+  object-fit: cover;
+}
+.tx-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tx-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.tx-badge {
+  padding: 2px 7px;
+  border: 1px solid #2a2a2a;
+  border-radius: 999px;
+  color: #a3a3a3;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tx-badge.is-installed {
+  border-color: #ededed;
+  color: #ededed;
+}
+.tx-tagline {
+  margin: 4px 0 0;
+  color: #d4d4d4;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.tx-description {
+  margin: 0;
+  color: #8a8a8a;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.tx-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: #6e6e6e;
+  font-size: 11.5px;
+}
+.tx-meta i {
+  margin-right: 5px;
+}
+.tx-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tx-tag {
+  padding: 3px 8px;
+  background: #0d0d0d;
+  border: 1px solid #1a1a1a;
+  border-radius: 6px;
+  color: #8a8a8a;
+  font-size: 11px;
+}
+.tx-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+.tx-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid #2a2a2a;
+  background: transparent;
+  color: #ededed;
+  font: inherit;
+  font-size: 12.5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tx-button:hover {
+  border-color: #4a4a4a;
+}
+.tx-button.is-primary {
+  flex: 1;
+  background: #ededed;
+  border-color: #ededed;
+  color: #000;
+  font-weight: 600;
+}
+.tx-button.is-primary:hover {
+  background: #ffffff;
+}
+.tx-button[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+.tx-empty {
+  padding: 48px 0;
+  color: #6e6e6e;
+  text-align: center;
+  font-size: 13px;
+}
+.tx-footnote {
+  margin-top: 28px;
+  color: #5c5c5c;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+.tx-footnote code {
+  color: #8a8a8a;
+}
+@media only screen and (max-width: 600px) {
+  .tx-shell {
+    padding: 20px 16px 48px;
+  }
+  .tx-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tx-search {
+    width: 100%;
+  }
+}
+</style>
+<script src="/window_storage.js"></script>
+<script src="/hotkeys.min.js"></script>
+<script src="/sweetalert2.js"></script>
+<script src="/noty.js"></script>
+<script src="/notyq.js"></script>
+<script src="/xterm.js"></script>
+<script src="/xterm-addon-fit.js"></script>
+<script src="/xterm-addon-web-links.js"></script>
+<script src="/xterm-theme.js"></script>
+<script src="/Socket.js"></script>
+<script src="/common.js"></script>
+<script src="/opener.js"></script>
+<script src="/nav.js"></script>
+<script src="/urldropdown.js"></script>
+<script src="/report.js"></script>
+</head>
+<body class='<%=theme%> main-sidebar-page task-launcher-page task-page tartarus-explore-page' data-agent="<%=agent%>">
+<%- include('partials/app_navheader', { agent }) %>
+<main>
+  <div class='task-container'>
+    <section class='tx-shell'>
+      <header class='tx-header'>
+        <div>
+          <h1 class='tx-title'>Explore</h1>
+          <p class='tx-subtitle'><%= catalog.description || 'Apps from the Tartarus ecosystem.' %></p>
+        </div>
+        <input class='tx-search' type='search' placeholder='Search apps' aria-label='Search apps' autocomplete='off' spellcheck='false'>
+      </header>
+      <% if (catalogError) { %>
+        <div class='tx-empty'>The app catalog could not be read: <%= catalogError %></div>
+      <% } else if (!catalog.apps.length) { %>
+        <div class='tx-empty'>No apps in the catalog yet.</div>
+      <% } else { %>
+      <div class='tx-grid'>
+        <% catalog.apps.forEach((app) => { %>
+        <article class='tx-card' data-app-id='<%= app.id %>' data-search='<%= [app.name, app.tagline, app.description, app.category, ...(app.tags || [])].join(" ").toLowerCase() %>'>
+          <div class='tx-card-top'>
+            <% if (app.icon) { %>
+              <img class='tx-icon' src='<%= app.icon %>' alt=''>
+            <% } else { %>
+              <img class='tx-icon' src='/pinokio-black.png' alt=''>
+            <% } %>
+            <div>
+              <div class='tx-name-row'>
+                <h2 class='tx-name'><%= app.name %></h2>
+                <% if (app.installed) { %>
+                  <span class='tx-badge is-installed'>Installed</span>
+                <% } else if (app.status === 'beta') { %>
+                  <span class='tx-badge'>Beta</span>
+                <% } else if (app.status === 'in-development') { %>
+                  <span class='tx-badge'>In development</span>
+                <% } %>
+              </div>
+              <p class='tx-tagline'><%= app.tagline %></p>
+            </div>
+          </div>
+          <% if (app.description) { %>
+            <p class='tx-description'><%= app.description %></p>
+          <% } %>
+          <div class='tx-meta'>
+            <% if (app.category) { %><span><i class='fa-solid fa-layer-group'></i><%= app.category %></span><% } %>
+            <% if (app.license) { %><span><i class='fa-regular fa-file-lines'></i><%= app.license %></span><% } %>
+            <% if (app.private) { %><span><i class='fa-solid fa-lock'></i>Private</span><% } %>
+            <% if (app.branch && app.branch !== 'main') { %><span><i class='fa-solid fa-code-branch'></i><%= app.branch %></span><% } %>
+          </div>
+          <% if (app.tags && app.tags.length) { %>
+            <div class='tx-tags'>
+              <% app.tags.forEach((tag) => { %><span class='tx-tag'><%= tag %></span><% }) %>
+            </div>
+          <% } %>
+          <div class='tx-actions'>
+            <% if (app.installed) { %>
+              <a class='tx-button is-primary' href='/p/<%= encodeURIComponent(app.id) %>'><i class='fa-solid fa-arrow-up-right-from-square'></i>Open</a>
+            <% } else { %>
+              <button type='button' class='tx-button is-primary' data-install='<%= app.id %>' data-name='<%= app.name %>' data-private='<%= app.private ? "1" : "" %>'><i class='fa-solid fa-download'></i>Install</button>
+            <% } %>
+            <a class='tx-button' href='<%= app.repo %><%= app.branch ? "/tree/" + app.branch : "" %>' target='_blank' rel='noopener noreferrer' aria-label='Source on GitHub'><i class='fa-brands fa-github'></i>Source</a>
+          </div>
+        </article>
+        <% }) %>
+      </div>
+      <div class='tx-empty' data-no-results hidden>No apps match that search.</div>
+      <% } %>
+      <p class='tx-footnote'>
+        This list comes from <code>backend/catalog/apps.json</code>. Add an app there,
+        with a Tartarus launcher in <code>backend/catalog/apps/&lt;id&gt;/tartarus</code>
+        or a <code>tartarus/</code> folder in the app's own repository.
+      </p>
+    </section>
+  </div>
+  <%- include('partials/main_sidebar', { selected: 'explore' }) %>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const search = document.querySelector(".tx-search")
+  const cards = Array.from(document.querySelectorAll(".tx-card"))
+  const noResults = document.querySelector("[data-no-results]")
+  if (search) {
+    search.addEventListener("input", () => {
+      const query = search.value.trim().toLowerCase()
+      let shown = 0
+      cards.forEach((card) => {
+        const match = !query || (card.getAttribute("data-search") || "").includes(query)
+        card.hidden = !match
+        if (match) shown++
+      })
+      if (noResults) noResults.hidden = shown > 0
+    })
+  }
+
+  document.querySelectorAll("[data-install]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const id = button.getAttribute("data-install")
+      const name = button.getAttribute("data-name") || id
+      const label = button.innerHTML
+      button.disabled = true
+      button.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i>Downloading"
+      try {
+        const response = await fetch("/tartarus/catalog/install", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id })
+        })
+        const payload = await response.json().catch(() => ({}))
+        if (payload.setup && payload.url) {
+          location.href = payload.url
+          return
+        }
+        if (!response.ok || !payload.ok) {
+          throw Object.assign(new Error(payload.error || "Install failed."), { privateRepo: payload.private === true })
+        }
+        location.href = payload.url
+      } catch (error) {
+        button.disabled = false
+        button.innerHTML = label
+        Swal.fire({
+          title: `Could not install ${name}`,
+          text: error.message,
+          showCancelButton: error.privateRepo,
+          confirmButtonText: error.privateRepo ? "Connect GitHub" : "OK",
+          cancelButtonText: "Close"
+        }).then((result) => {
+          if (error.privateRepo && result.isConfirmed) {
+            location.href = "/github"
+          }
+        })
+      }
+    })
+  })
+})
+</script>
+</body>
+</html>

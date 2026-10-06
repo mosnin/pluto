@@ -124,7 +124,7 @@ class ServerAutolaunch {
       return false
     }
     const base = path.basename(filename || "").toLowerCase()
-    return !["package.json", "pinokio.js", "pinokio.json", "pinokio_meta.json"].includes(base)
+    return !["package.json", "tartarus.js", "pinokio.js", "pinokio.json", "pinokio_meta.json"].includes(base)
   }
   stripLabel(value) {
     if (typeof value !== "string") {

@@ -1,0 +1,9 @@
+# Tartarus settings for Bident.
+# Bident works without API keys. Add optional provider keys inside the running
+# app (POWER UP chip, bottom-right); Bident stores them in its own
+# pinokio/ENVIRONMENT file with owner-only permissions.
+
+# Keep sharing off: Bident's launcher refuses to create a public tunnel.
+PINOKIO_SHARE_CLOUDFLARE=false
+PINOKIO_SHARE_LOCAL=false
+PINOKIO_SHARE_VAR=__gev_sharing_disabled__

@@ -79,6 +79,7 @@ const Setup = require("../kernel/bin/setup")
 const { createTerminalSessionHelpers } = require("./lib/terminal_session_helpers")
 const { createLauncherInstructionBootstrap } = require("./lib/launcher_instruction_bootstrap")
 const { createTerminalGitResetHandler } = require("./lib/terminal_git_reset")
+const TartarusCatalog = require("./lib/tartarus_catalog")
 const { createDesktopEventRouter } = require("./lib/desktop_event_router")
 const { deletePluginFolder } = require("./lib/plugin_delete")
 const { createInjectRouter, resolveInjectList } = require("./lib/inject_router")
@@ -3169,25 +3170,24 @@ class Server {
     if (pathComponents.length === 0 && req.query.mode === "explore") {
       const peerAccess = await this.composePeerAccessPayload()
       let list = this.getPeers()
-      res.render("explore", {
+      // Tartarus: Explore shows the Tartarus app catalog instead of pinokio.co.
+      let catalog = { name: "Tartarus", description: "", apps: [] }
+      let catalogError = null
+      try {
+        catalog = await TartarusCatalog.listApps(this.kernel)
+      } catch (error) {
+        catalogError = error && error.message ? error.message : String(error)
+      }
+      res.render("tartarus_explore", {
         current_host: this.kernel.peer.host,
         ...peerAccess,
         list,
-        discover_dark: this.discover_dark,
-        discover_light: this.discover_light,
+        catalog,
+        catalogError,
         portal: this.portal,
-        version: this.version,
-        schema: this.kernel.schema,
         logo: this.logo,
         theme: this.theme,
         agent: req.agent,
-        stars_selected: (req.query.sort === "stars" || !req.query.sort ? "selected" : ""),
-        forks_selected: (req.query.sort === "forks" ? "selected" : ""),
-        updated_selected: (req.query.sort === "updated" ? "selected" : ""),
-        sort: (req.query.sort ? req.query.sort : "stars"),
-        direction: "desc",
-        paths,
-        display: ["form"]
       })
     } else if (pathComponents.length === 0 && req.query.mode === "download") {
       let { requirements, install_required, requirements_pending, error } = await this.kernel.bin.check({
@@ -3664,7 +3664,7 @@ class Server {
 
         let config
         for(let file of f.files) {
-          if (file.name === "pinokio.js") {
+          if (file.name === "tartarus.js" || file.name === "pinokio.js") {
             let p = path.resolve(filepath, file.name)
             config  = (await this.kernel.loader.load(p)).resolved
 
@@ -11889,6 +11889,40 @@ class Server {
         res.status(status).json({
           ok: false,
           error: error && error.message ? error.message : "Failed to prepare launcher target."
+        })
+      }
+    }))
+    this.app.use("/tartarus/catalog/icons", express.static(path.join(TartarusCatalog.CATALOG_ROOT, "icons")))
+    this.app.post("/tartarus/catalog/install", ex(async (req, res) => {
+      const id = req.body && typeof req.body.id === "string" ? req.body.id.trim() : ""
+      // Installing needs git; send first-time users through setup, like the download page does.
+      const { install_required, requirements_pending } = await this.kernel.bin.check({
+        bin: this.kernel.bin.preset("dev"),
+      })
+      if (requirements_pending || install_required) {
+        res.status(409).json({
+          ok: false,
+          setup: true,
+          url: `/setup/dev?callback=${encodeURIComponent("/home?mode=explore")}`,
+          error: "Tartarus needs to finish setting up its tools before it can install apps."
+        })
+        return
+      }
+      try {
+        const app = await TartarusCatalog.installApp(this.kernel, id, { env: { ...NON_INTERACTIVE_GIT_ENV } })
+        await this.refreshTopLevelAppInventory()
+        res.json({ ok: true, url: `/initialize/${encodeURIComponent(app.id)}` })
+      } catch (error) {
+        const status = Number.isInteger(error && error.status) ? error.status : 500
+        let isPrivate = false
+        try {
+          const catalog = await TartarusCatalog.loadCatalog()
+          isPrivate = catalog.apps.some((entry) => entry.id === id && entry.private)
+        } catch (_) {}
+        res.status(status).json({
+          ok: false,
+          error: error && error.message ? error.message : "Install failed.",
+          private: isPrivate && status === 502
         })
       }
     }))
