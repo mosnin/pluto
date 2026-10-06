@@ -1,0 +1,37 @@
+{
+  "$schema": "./apps.schema.json",
+  "name": "Tartarus",
+  "owner": "mosnin",
+  "description": "Apps and agent operating systems from the Tartarus ecosystem.",
+  "apps": [
+    {
+      "id": "bident",
+      "name": "Bident",
+      "kind": "app",
+      "status": "ready",
+      "featured": true,
+      "tagline": "A live 3D intelligence console for planet Earth.",
+      "description": "Photorealistic 3D globe with live aircraft, ships, satellites, earthquakes, traffic and public cameras, plus hands-free voice control. Works without API keys; optional keys are added inside the app.",
+      "repo": "https://github.com/mosnin/Bident",
+      "icon": "icons/bident.png",
+      "category": "Intelligence",
+      "tags": ["3d-globe", "geospatial", "osint", "voice"],
+      "platforms": ["mac", "linux", "windows"],
+      "license": "MIT"
+    },
+    {
+      "id": "e2e-testing-os",
+      "name": "E2E Testing OS",
+      "kind": "skill",
+      "status": "in-development",
+      "tagline": "End-to-end testing operating system for coding agents.",
+      "description": "Skill pack for planning, writing and running end-to-end tests with your agents. Installs into the agent skill folders Tartarus manages.",
+      "repo": "https://github.com/mosnin/e2e-testing-os",
+      "private": true,
+      "icon": "icons/e2e-testing-os.svg",
+      "category": "Engineering",
+      "tags": ["testing", "e2e", "agents"],
+      "platforms": ["mac", "linux", "windows"]
+    }
+  ]
+}
