@@ -1,4 +1,4 @@
-// Writes an e2e config and an example test into the folder you pick.
+// Scaffolds e2e in the folder you pick with this checkout's CLI; it offers to install the project's dependencies.
 module.exports = {
   run: [
     {
@@ -10,7 +10,11 @@ module.exports = {
       method: 'shell.run',
       params: {
         path: '{{input.paths[0]}}',
-        message: 'node "{{cwd}}/../packages/e2e/dist/cli/bin.js" init',
+        message: { _: ['node', '{{cwd}}/../packages/e2e/dist/cli/bin.js', 'init'] },
+        on: [
+          { event: '/error:/i', break: false },
+          { event: '/errno /i', break: false },
+        ],
       },
     },
   ],

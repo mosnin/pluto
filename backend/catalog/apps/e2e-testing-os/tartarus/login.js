@@ -3,7 +3,14 @@ module.exports = {
   run: [
     {
       method: 'shell.run',
-      params: { path: '..', message: 'node packages/e2e/dist/cli/bin.js login' },
+      params: {
+        path: '..',
+        message: { _: ['node', 'packages/e2e/dist/cli/bin.js', 'login'] },
+        on: [
+          { event: '/error:/i', break: false },
+          { event: '/errno /i', break: false },
+        ],
+      },
     },
   ],
 };

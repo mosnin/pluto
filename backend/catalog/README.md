@@ -59,5 +59,6 @@ status, so updates with `git pull` stay clean.
   repo ships its own `tartarus/` launcher with separate Tartarus state, and
   that one is used instead.
 - **E2E Testing OS** (`mosnin/e2e-testing-os`, `agent-coverage-and-ux`): builds
-  the `e2e` CLI with pnpm 12, then runs `init`, `run`, `explore` or `login`
-  against a project folder you pick.
+  only the `e2e` package with pnpm 12. Its menu uses that CLI for `init` and
+  `login`, and the picked project's own `e2e` to run tests or `explore` (bugs
+  or UX). The same launcher is proposed for the repo in mosnin/e2e-testing-os#3.

@@ -1,4 +1,5 @@
-// pnpm 12 is pinned by the repo's packageManager field; npx fetches it.
+// Installs and builds only the e2e package and what it depends on. pnpm 12 is
+// pinned by the repo's packageManager field; npx fetches it.
 module.exports = {
   run: [
     {
@@ -6,14 +7,10 @@ module.exports = {
       params: {
         path: '..',
         message: [
-          'npx --yes pnpm@12.3.4 install --frozen-lockfile',
-          'npx --yes pnpm@12.3.4 run build',
+          { _: ['npx', '--yes', 'pnpm@12.3.4', 'install', '--frozen-lockfile', '--filter', 'e2e...'] },
+          { _: ['npx', '--yes', 'pnpm@12.3.4', '--filter', 'e2e', 'run', 'build'] },
         ],
       },
-    },
-    {
-      method: 'fs.write',
-      params: { path: '.installed', text: 'installed' },
     },
   ],
 };

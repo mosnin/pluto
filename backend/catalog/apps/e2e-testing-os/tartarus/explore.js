@@ -1,23 +1,6 @@
-// Lets an agent explore a project's app toward a goal and report what it finds.
+// Lets an agent explore the project's app and report the bugs it finds.
 module.exports = {
   run: [
-    {
-      method: 'input',
-      params: {
-        title: 'Explore an app',
-        form: [{
-          key: 'goal',
-          title: 'Goal',
-          description: 'What should the agent try to do? For example: sign up and reach the dashboard.',
-          placeholder: 'sign up and reach the dashboard',
-          required: true,
-        }],
-      },
-    },
-    {
-      method: 'local.set',
-      params: { goal: '{{input.goal}}' },
-    },
     {
       method: 'filepicker.open',
       params: { title: 'Pick the project to explore', type: 'folder' },
@@ -27,7 +10,11 @@ module.exports = {
       method: 'shell.run',
       params: {
         path: '{{input.paths[0]}}',
-        message: 'node "{{cwd}}/../packages/e2e/dist/cli/bin.js" explore {{JSON.stringify(local.goal)}}',
+        message: { _: ['npx', '--no', 'e2e', 'explore'] },
+        on: [
+          { event: '/error:/i', break: false },
+          { event: '/errno /i', break: false },
+        ],
       },
     },
   ],

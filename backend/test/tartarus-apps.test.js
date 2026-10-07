@@ -136,7 +136,12 @@ test('launcher menus follow the install state', async () => {
   const e2e = require(path.join(Catalog.CATALOG_ROOT, 'apps', 'e2e-testing-os', 'tartarus', 'tartarus.js'))
   assert.equal((await e2e.menu(kernelWith(false), info()))[0].href, 'install.js')
   const ready = await e2e.menu(kernelWith(true), info())
-  assert.deepEqual(ready.map((item) => item.href).slice(0, 4), ['init.js', 'run.js', 'explore.js', 'login.js'])
+  assert.deepEqual(ready.map((item) => item.href).slice(0, 5), ['init.js', 'run.js', 'explore.js', 'explore-ux.js', 'login.js'])
+  // A running project command adds its terminal link and keeps the rest of the menu.
+  const running = await e2e.menu(kernelWith(true), info(['run.js']))
+  assert.equal(running[0].href, 'run.js')
+  assert.equal(running.filter((item) => item.default).length, 0)
+  assert.ok(running.some((item) => item.href === 'update.js'))
 })
 
 test('catalog launcher scripts are valid CommonJS', () => {
