@@ -11,7 +11,6 @@
       "tagline": "A live 3D intelligence console for planet Earth.",
       "description": "Photorealistic 3D globe with live aircraft, ships, satellites, earthquakes, traffic and public cameras, plus hands-free voice control. Works without API keys; optional keys are added inside the app.",
       "repo": "https://github.com/mosnin/Bident",
-      "branch": "main",
       "launcher": "apps/bident/tartarus",
       "icon": "icons/bident.png",
       "category": "Intelligence",

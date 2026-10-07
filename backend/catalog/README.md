@@ -52,9 +52,12 @@ status, so updates with `git pull` stay clean.
 
 ## Current apps
 
-- **Bident** (`mosnin/Bident`, `main`): starts Bident's local server and opens
-  the globe. It reuses Bident's own setup scripts, which keep their state in
-  Bident's `pinokio/` folder.
+- **Bident** (`mosnin/Bident`, its default branch; `main` there is the
+  unmodified upstream project): starts Bident's local server and opens the
+  globe. This catalog launcher reuses Bident's own setup scripts, which keep
+  their state in Bident's `pinokio/` folder. Once mosnin/Bident#2 merges, the
+  repo ships its own `tartarus/` launcher with separate Tartarus state, and
+  that one is used instead.
 - **E2E Testing OS** (`mosnin/e2e-testing-os`, `agent-coverage-and-ux`): builds
   the `e2e` CLI with pnpm 12, then runs `init`, `run`, `explore` or `login`
   against a project folder you pick.

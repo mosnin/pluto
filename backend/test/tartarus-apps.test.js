@@ -74,6 +74,8 @@ test('every catalog app has a valid repo, launcher and icon', async () => {
     const icon = path.join(Catalog.CATALOG_ROOT, app.icon.replace('/tartarus/catalog/', ''))
     await fs.access(icon)
   }
+  // Bident's main branch is the unmodified upstream project; install its default branch.
+  assert.equal(catalog.apps.find((app) => app.id === 'bident').branch, '')
   const e2e = catalog.apps.find((app) => app.id === 'e2e-testing-os')
   assert.equal(e2e.branch, 'agent-coverage-and-ux')
   assert.equal(e2e.private, true)
